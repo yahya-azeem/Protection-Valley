@@ -1,5 +1,7 @@
 import { writable, derived } from 'svelte/store'
-import { browser } from '$app/environment'
+
+// Check if we're in a browser environment
+const browser = typeof window !== 'undefined'
 
 export type UserRole = 'retail' | 'wholesale' | 'admin'
 
