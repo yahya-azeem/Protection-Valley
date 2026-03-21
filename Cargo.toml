@@ -3,9 +3,11 @@ name = "toolpro-api"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "api"
+path = "api/main.rs"
+
 [dependencies]
-actix-web = "4.4"
-actix-cors = "0.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.34", features = ["full"] }
@@ -18,7 +20,6 @@ env_logger = "0.11"
 log = "0.4"
 reqwest = { version = "0.11", features = ["json"] }
 vercel_runtime = "1.1"
-actix-web-httpauth = "0.8"
 
 [dev-dependencies]
-actix-rt = "2.9"
+# No direct Actix dependency needed

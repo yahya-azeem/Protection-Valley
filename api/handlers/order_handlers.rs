@@ -1,58 +1,70 @@
-use actix_web::{web, HttpResponse, Responder};
+use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{CreateOrderRequest, OrderStatus};
 use crate::services::order_service::OrderService;
 
-pub async fn get_orders() -> impl Responder {
+pub async fn get_orders() -> Result<Response<Body>, Error> {
     let service = OrderService::new();
     match service.get_all_orders().await {
-        Ok(orders) => HttpResponse::Ok().json(orders),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to fetch orders: {}", e)
-        })),
+        Ok(orders) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&orders)?))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn get_order(path: web::Path<String>) -> impl Responder {
+pub async fn get_order(id: String) -> Result<Response<Body>, Error> {
     let service = OrderService::new();
-    let id = path.into_inner();
     
     match service.get_order_by_id(&id).await {
-        Ok(Some(order)) => HttpResponse::Ok().json(order),
-        Ok(None) => HttpResponse::NotFound().json(serde_json::json!({
-            "error": "Order not found"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to fetch order: {}", e)
-        })),
+        Ok(Some(order)) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&order)?))?),
+        Ok(None) => Ok(Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Order not found" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn create_order(body: web::Json<CreateOrderRequest>) -> impl Responder {
+pub async fn create_order(req: CreateOrderRequest) -> Result<Response<Body>, Error> {
     let service = OrderService::new();
     
-    match service.create_order(body.into_inner()).await {
-        Ok(order) => HttpResponse::Created().json(order),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to create order: {}", e)
-        })),
+    match service.create_order(req).await {
+        Ok(order) => Ok(Response::builder()
+            .status(StatusCode::CREATED)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&order)?))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn update_order_status(
-    path: web::Path<String>,
-    body: web::Json<OrderStatus>,
-) -> impl Responder {
+pub async fn update_order_status(id: String, status: OrderStatus) -> Result<Response<Body>, Error> {
     let service = OrderService::new();
-    let id = path.into_inner();
-    let status = body.into_inner();
     
     match service.update_order_status(&id, status).await {
-        Ok(Some(order)) => HttpResponse::Ok().json(order),
-        Ok(None) => HttpResponse::NotFound().json(serde_json::json!({
-            "error": "Order not found"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to update order status: {}", e)
-        })),
+        Ok(Some(order)) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&order)?))?),
+        Ok(None) => Ok(Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Order not found" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }

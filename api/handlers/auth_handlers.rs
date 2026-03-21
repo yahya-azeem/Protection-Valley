@@ -1,35 +1,46 @@
-use actix_web::{web, HttpResponse, Responder};
+use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{LoginRequest, RegisterRequest};
 use crate::services::auth_service::AuthService;
 
-pub async fn login(body: web::Json<LoginRequest>) -> impl Responder {
+pub async fn login(req: LoginRequest) -> Result<Response<Body>, Error> {
     let service = AuthService::new();
     
-    match service.login(&body.email, &body.password).await {
-        Ok(Some(response)) => HttpResponse::Ok().json(response),
-        Ok(None) => HttpResponse::Unauthorized().json(serde_json::json!({
-            "error": "Invalid email or password"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Login failed: {}", e)
-        })),
+    match service.login(&req.email, &req.password).await {
+        Ok(Some(response)) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&response)?))?),
+        Ok(None) => Ok(Response::builder()
+            .status(StatusCode::UNAUTHORIZED)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Invalid email or password" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn register(body: web::Json<RegisterRequest>) -> impl Responder {
+pub async fn register(req: RegisterRequest) -> Result<Response<Body>, Error> {
     let service = AuthService::new();
     
-    match service.register(body.into_inner()).await {
-        Ok(response) => HttpResponse::Created().json(response),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Registration failed: {}", e)
-        })),
+    match service.register(req).await {
+        Ok(response) => Ok(Response::builder()
+            .status(StatusCode::CREATED)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&response)?))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn get_me() -> impl Responder {
-    // In a real implementation, this would extract the user from the JWT token
-    HttpResponse::Ok().json(serde_json::json!({
-        "message": "Get current user endpoint - implement JWT validation"
-    }))
+pub async fn get_me() -> Result<Response<Body>, Error> {
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "application/json")
+        .body(Body::from(serde_json::json!({
+            "message": "Get current user endpoint - implement JWT validation"
+        }).to_string()))?)
 }

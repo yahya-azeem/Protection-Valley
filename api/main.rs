@@ -1,5 +1,5 @@
 use vercel_runtime::{run, Body, Error, Request, Response, StatusCode};
-use actix_web::web;
+use serde_json::json;
 
 mod handlers;
 mod models;
@@ -15,17 +15,116 @@ async fn main() -> Result<(), Error> {
 
 pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
     let path = req.uri().path();
-    let method = req.method();
+    let method = req.method().as_str();
 
-    // Simple routing for Vercel
-    if path.starts_with("/api/v1/products") {
-        // Dispatch to product_handlers
-        // Note: For a real migration, we would adapt handlers to take vercel_runtime::Request
-        // For now, returning a mock response or adapting the call
+    // Routing
+    match path {
+        "/api/v1/products" => {
+            match method {
+                "GET" => product_handlers::get_products().await,
+                "POST" => {
+                    let body: models::CreateProductRequest = serde_json::from_slice(req.body())?;
+                    product_handlers::create_product(body).await
+                }
+                _ => method_not_allowed(),
+            }
+        }
+        p if p.starts_with("/api/v1/products/") => {
+            let id_str = &p["/api/v1/products/".len()..];
+            if let Ok(id) = id_str.parse::<i64>() {
+                match method {
+                    "GET" => product_handlers::get_product(id).await,
+                    "PUT" => {
+                        let body: models::UpdateProductRequest = serde_json::from_slice(req.body())?;
+                        product_handlers::update_product(id, body).await
+                    }
+                    "DELETE" => product_handlers::delete_product(id).await,
+                    _ => method_not_allowed(),
+                }
+            } else {
+                not_found()
+            }
+        }
+        "/api/v1/orders" => {
+            match method {
+                "GET" => order_handlers::get_orders().await,
+                "POST" => {
+                    let body: models::CreateOrderRequest = serde_json::from_slice(req.body())?;
+                    order_handlers::create_order(body).await
+                }
+                _ => method_not_allowed(),
+            }
+        }
+        p if p.starts_with("/api/v1/orders/") => {
+            // Check for status update route first
+            if p.ends_with("/status") {
+                let id_str = &p["/api/v1/orders/".len()..p.len() - "/status".len()];
+                if method == "PATCH" {
+                    let body: models::OrderStatus = serde_json::from_slice(req.body())?;
+                    order_handlers::update_order_status(id_str.to_string(), body).await
+                } else {
+                    method_not_allowed()
+                }
+            } else {
+                let id_str = &p["/api/v1/orders/".len()..];
+                if method == "GET" {
+                    order_handlers::get_order(id_str.to_string()).await
+                } else {
+                    method_not_allowed()
+                }
+            }
+        }
+        "/api/v1/auth/login" => {
+            if method == "POST" {
+                let body: models::LoginRequest = serde_json::from_slice(req.body())?;
+                auth_handlers::login(body).await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/register" => {
+            if method == "POST" {
+                let body: models::RegisterRequest = serde_json::from_slice(req.body())?;
+                auth_handlers::register(body).await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/me" => {
+            if method == "GET" {
+                auth_handlers::get_me().await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/ebay/sync" => {
+            if method == "POST" {
+                ebay_handlers::sync_inventory().await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/ebay/products" => {
+            if method == "GET" {
+                ebay_handlers::get_ebay_products().await
+            } else {
+                method_not_allowed()
+            }
+        }
+        _ => not_found(),
     }
+}
 
+fn not_found() -> Result<Response<Body>, Error> {
     Ok(Response::builder()
-        .status(StatusCode::OK)
+        .status(StatusCode::NOT_FOUND)
         .header("Content-Type", "application/json")
-        .body(Body::from(r#"{"message": "ToolPro API on Vercel"}"#))?)
+        .body(Body::from(json!({ "error": "Not Found" }).to_string()))?)
+}
+
+fn method_not_allowed() -> Result<Response<Body>, Error> {
+    Ok(Response::builder()
+        .status(StatusCode::METHOD_NOT_ALLOWED)
+        .header("Content-Type", "application/json")
+        .body(Body::from(json!({ "error": "Method Not Allowed" }).to_string()))?)
 }

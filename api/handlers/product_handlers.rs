@@ -1,72 +1,88 @@
-use actix_web::{web, HttpResponse, Responder};
+use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{CreateProductRequest, UpdateProductRequest};
 use crate::services::product_service::ProductService;
 
-pub async fn get_products() -> impl Responder {
+pub async fn get_products() -> Result<Response<Body>, Error> {
     let service = ProductService::new();
     match service.get_all_products().await {
-        Ok(products) => HttpResponse::Ok().json(products),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to fetch products: {}", e)
-        })),
+        Ok(products) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&products)?))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn get_product(path: web::Path<i64>) -> impl Responder {
+pub async fn get_product(id: i64) -> Result<Response<Body>, Error> {
     let service = ProductService::new();
-    let id = path.into_inner();
     
     match service.get_product_by_id(id).await {
-        Ok(Some(product)) => HttpResponse::Ok().json(product),
-        Ok(None) => HttpResponse::NotFound().json(serde_json::json!({
-            "error": "Product not found"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to fetch product: {}", e)
-        })),
+        Ok(Some(product)) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&product)?))?),
+        Ok(None) => Ok(Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Product not found" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn create_product(body: web::Json<CreateProductRequest>) -> impl Responder {
+pub async fn create_product(req: CreateProductRequest) -> Result<Response<Body>, Error> {
     let service = ProductService::new();
     
-    match service.create_product(body.into_inner()).await {
-        Ok(product) => HttpResponse::Created().json(product),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to create product: {}", e)
-        })),
+    match service.create_product(req).await {
+        Ok(product) => Ok(Response::builder()
+            .status(StatusCode::CREATED)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&product)?))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn update_product(
-    path: web::Path<i64>,
-    body: web::Json<UpdateProductRequest>,
-) -> impl Responder {
+pub async fn update_product(id: i64, req: UpdateProductRequest) -> Result<Response<Body>, Error> {
     let service = ProductService::new();
-    let id = path.into_inner();
     
-    match service.update_product(id, body.into_inner()).await {
-        Ok(Some(product)) => HttpResponse::Ok().json(product),
-        Ok(None) => HttpResponse::NotFound().json(serde_json::json!({
-            "error": "Product not found"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to update product: {}", e)
-        })),
+    match service.update_product(id, req).await {
+        Ok(Some(product)) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::to_string(&product)?))?),
+        Ok(None) => Ok(Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Product not found" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
 
-pub async fn delete_product(path: web::Path<i64>) -> impl Responder {
+pub async fn delete_product(id: i64) -> Result<Response<Body>, Error> {
     let service = ProductService::new();
-    let id = path.into_inner();
     
     match service.delete_product(id).await {
-        Ok(true) => HttpResponse::NoContent().finish(),
-        Ok(false) => HttpResponse::NotFound().json(serde_json::json!({
-            "error": "Product not found"
-        })),
-        Err(e) => HttpResponse::InternalServerError().json(serde_json::json!({
-            "error": format!("Failed to delete product: {}", e)
-        })),
+        Ok(true) => Ok(Response::builder()
+            .status(StatusCode::NO_CONTENT)
+            .body(Body::Empty)?),
+        Ok(false) => Ok(Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": "Product not found" }).to_string()))?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
