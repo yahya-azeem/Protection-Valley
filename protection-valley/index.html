@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -19,18 +20,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: {
-                            DEFAULT: '#d4a84b',
-                            dark: '#b8923f',
-                            light: '#e4bc6a'
-                        },
-                        dark: {
-                            bg: '#0a0a0a',
-                            card: '#141414',
-                            border: '#1f1f1f',
-                            text: '#e5e5e5',
-                            muted: '#737373'
-                        }
+                        primary: { DEFAULT: '#d4a84b', dark: '#b8923f', light: '#e4bc6a' },
+                        dark: { bg: '#0a0a0a', card: '#141414', border: '#1f1f1f', text: '#e5e5e5', muted: '#737373' }
                     },
                     fontFamily: {
                         serif: ['DM Serif Display', 'serif'],
@@ -40,63 +31,29 @@
             }
         }
     </script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e5e5; }
-        h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; }
-        .btn-primary { background-color: #d4a84b; color: #0a0a0a; padding: 0.75rem 1.5rem; font-weight: 500; transition: all 0.3s; }
-        .btn-primary:hover { background-color: #b8923f; }
-        .btn-secondary { border: 2px solid #d4a84b; color: #d4a84b; padding: 0.75rem 1.5rem; font-weight: 500; transition: all 0.3s; }
-        .btn-secondary:hover { background-color: #d4a84b; color: #0a0a0a; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .color-option { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .color-option:hover { transform: scale(1.1); }
-        .color-option.active { border-color: #d4a84b; box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #d4a84b; }
-        .size-option { padding: 0.5rem 1rem; border: 1px solid #1f1f1f; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s; }
-        .size-option:hover { border-color: #d4a84b; }
-        .size-option.active { background-color: #d4a84b; color: #0a0a0a; border-color: #d4a84b; }
-        .size-option.disabled { opacity: 0.3; cursor: not-allowed; }
-        .search-input { background-color: #141414; border: 1px solid #1f1f1f; color: #e5e5e5; }
-        .search-input:focus { border-color: #d4a84b; outline: none; }
-        .search-result-highlight { background-color: rgba(212, 168, 75, 0.2); }
-    </style>
 </head>
 <body class="bg-dark-bg text-dark-text">
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-dark-bg/95 backdrop-blur-md border-b border-dark-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <!-- Logo -->
                 <a href="#" onclick="showPage('home')" class="flex items-center space-x-3">
                     <img src="images/logo.png" alt="Protection Valley" class="h-12 w-auto">
                 </a>
-                
-                <!-- Desktop Nav -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#" onclick="showPage('home')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Home</a>
                     <a href="#" onclick="showPage('catalog')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Catalog</a>
                     <a href="#" onclick="showPage('about')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">About</a>
                     <a href="#" onclick="showPage('contact')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Contact</a>
                 </div>
-                
-                <!-- Right Side -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search Button -->
                     <button onclick="toggleSearch()" class="p-2 text-dark-text hover:text-primary transition-colors">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </button>
-                    
-                    <!-- Cart -->
                     <button onclick="toggleCart()" class="relative p-2 text-dark-text hover:text-primary transition-colors">
                         <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-dark-bg text-xs rounded-full flex items-center justify-center hidden">0</span>
                     </button>
-                    
-                    <!-- User -->
                     <button onclick="showPage('login')" id="user-btn" class="p-2 text-dark-text hover:text-primary transition-colors">
                         <i data-lucide="user" class="w-5 h-5"></i>
                     </button>
@@ -112,27 +69,18 @@
             <div class="max-w-3xl mx-auto">
                 <div class="relative">
                     <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-muted"></i>
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        placeholder="Search products..." 
-                        class="w-full pl-12 pr-4 py-4 search-input rounded-lg text-lg"
-                        oninput="handleSearch(this.value)"
-                    >
+                    <input type="text" id="search-input" placeholder="Search products..." class="w-full pl-12 pr-4 py-4 search-input rounded-lg text-lg" oninput="handleSearch(this.value)">
                     <button onclick="toggleSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark-text">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="search-results" class="mt-4 max-h-96 overflow-y-auto scrollbar-hide">
-                    <!-- Search results loaded by JS -->
-                </div>
+                <div id="search-results" class="mt-4 max-h-96 overflow-y-auto scrollbar-hide"></div>
             </div>
         </div>
     </div>
 
     <!-- Home Page -->
     <div id="page-home" class="page">
-        <!-- Hero Section -->
         <section class="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('images/hero-bg.jpg');"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
@@ -140,7 +88,7 @@
                 <p class="text-primary font-medium tracking-widest uppercase mb-4 animate-fade-in">Protection Valley</p>
                 <h1 class="text-5xl md:text-7xl font-serif mb-6 animate-fade-in" style="animation-delay: 0.2s">Gear That Protects<br/>Your Craft</h1>
                 <p class="text-xl text-dark-muted mb-8 max-w-2xl mx-auto animate-fade-in" style="animation-delay: 0.4s">
-                    Premium workgear crafted for professionals who demand durability and comfort. 
+                    Premium workgear crafted for professionals who demand durability and comfort.
                     Tool belts, pouches, aprons, and protective equipment.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.6s">
@@ -150,7 +98,6 @@
             </div>
         </section>
 
-        <!-- Categories -->
         <section class="py-20 bg-dark-bg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12">
@@ -186,7 +133,6 @@
             </div>
         </section>
 
-        <!-- Featured Products -->
         <section class="py-20 bg-dark-card">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between mb-12">
@@ -198,9 +144,7 @@
                         View All <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Featured products loaded by JS -->
-                </div>
+                <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
             </div>
         </section>
     </div>
@@ -208,7 +152,6 @@
     <!-- Catalog Page -->
     <div id="page-catalog" class="page hidden">
         <div class="bg-dark-bg min-h-screen">
-            <!-- Header -->
             <div class="bg-dark-card border-b border-dark-border">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -222,12 +165,9 @@
                     </div>
                 </div>
             </div>
-
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <!-- Filters -->
                 <div class="bg-dark-card rounded-lg p-6 mb-8 border border-dark-border">
                     <div class="flex flex-col lg:flex-row gap-6">
-                        <!-- Type Filter -->
                         <div class="flex-1">
                             <label class="block text-sm font-medium mb-3 text-dark-muted">Material Type</label>
                             <div class="flex flex-wrap gap-2">
@@ -237,8 +177,6 @@
                                 <button onclick="filterByType('Nylon')" class="filter-type px-4 py-2 rounded-full text-sm font-medium bg-dark-bg border border-dark-border text-dark-text hover:border-primary transition-colors" data-type="Nylon">Nylon</button>
                             </div>
                         </div>
-                        
-                        <!-- Category Filter -->
                         <div class="flex-1">
                             <label class="block text-sm font-medium mb-3 text-dark-muted">Category</label>
                             <div class="flex flex-wrap gap-2">
@@ -249,8 +187,6 @@
                                 <button onclick="filterByCategory('Accessories')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-dark-bg border border-dark-border text-dark-text hover:border-primary transition-colors" data-category="Accessories">Accessories</button>
                             </div>
                         </div>
-
-                        <!-- Sort -->
                         <div>
                             <label class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label>
                             <select onchange="sortProducts(this.value)" class="px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-dark-text focus:border-primary focus:outline-none">
@@ -262,19 +198,11 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Active Filters -->
                 <div id="active-filters" class="flex flex-wrap gap-2 mb-6 hidden">
                     <span class="text-sm text-dark-muted">Active filters:</span>
                     <button onclick="clearFilters()" class="text-sm text-primary hover:underline">Clear all</button>
                 </div>
-
-                <!-- Products Grid -->
-                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <!-- Products loaded by JS -->
-                </div>
-
-                <!-- Empty State -->
+                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
                 <div id="catalog-empty" class="hidden text-center py-16">
                     <i data-lucide="package-x" class="w-16 h-16 text-dark-border mx-auto mb-4"></i>
                     <h3 class="text-xl font-medium mb-2">No products found</h3>
@@ -290,13 +218,9 @@
         <div class="bg-dark-bg min-h-screen">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <button onclick="goBack()" class="flex items-center text-dark-muted hover:text-primary mb-6">
-                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
-                    Back
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back
                 </button>
-                
-                <div id="product-detail-content" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <!-- Product detail loaded by JS -->
-                </div>
+                <div id="product-detail-content" class="grid grid-cols-1 lg:grid-cols-2 gap-12"></div>
             </div>
         </div>
     </div>
@@ -310,12 +234,11 @@
                     <img src="images/logo.png" alt="Protection Valley" class="h-24 w-auto mx-auto mb-8">
                     <h1 class="text-5xl md:text-6xl font-serif mb-6">Our Story</h1>
                     <p class="text-xl text-dark-muted max-w-3xl mx-auto">
-                        At Protection Valley, we believe that quality workgear is essential for every tradesperson. 
+                        At Protection Valley, we believe that quality workgear is essential for every tradesperson.
                         Our mission is to protect your craft with gear that's built to last.
                     </p>
                 </div>
             </section>
-
             <section class="py-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -354,7 +277,6 @@
                     <h1 class="text-4xl font-serif mb-4">Get in Touch</h1>
                     <p class="text-dark-muted">Have questions? We're here to help.</p>
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                     <div class="bg-dark-card p-6 rounded-lg text-center border border-dark-border">
                         <i data-lucide="phone" class="w-8 h-8 text-primary mx-auto mb-4"></i>
@@ -385,9 +307,7 @@
                     <h1 class="text-3xl font-serif mb-2">Welcome Back</h1>
                     <p class="text-dark-muted">Sign in to access your account</p>
                 </div>
-                
                 <div class="bg-dark-card rounded-lg p-8 border border-dark-border">
-                    <!-- OAuth Buttons -->
                     <div class="space-y-3 mb-6">
                         <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
                             <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -398,12 +318,10 @@
                             Continue with Apple
                         </button>
                     </div>
-                    
                     <div class="relative mb-6">
                         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dark-border"></div></div>
                         <div class="relative flex justify-center"><span class="bg-dark-card px-4 text-sm text-dark-muted">Or continue with email</span></div>
                     </div>
-                    
                     <form onsubmit="handleEmailLogin(event)">
                         <div class="space-y-4">
                             <div>
@@ -417,7 +335,6 @@
                             <button type="submit" class="w-full btn-primary py-3">Sign In</button>
                         </div>
                     </form>
-                    
                     <p class="mt-4 text-center text-sm text-dark-muted">
                         Don't have an account? <a href="#" class="text-primary hover:underline">Sign up</a>
                     </p>
@@ -488,801 +405,16 @@
                 </div>
             </div>
             <div class="mt-12 pt-8 border-t border-dark-border text-center text-dark-muted text-sm">
-                <p>© 2024 Protection Valley. All rights reserved.</p>
+                <p>&copy; 2025 Protection Valley. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Products data
-        const products = [
-            {
-                id: 1,
-                name: 'Heritage Leather Tool Belt',
-                price: 189.99,
-                wholesalePrice: 149.99,
-                category: 'Tool Belts',
-                type: 'Leather',
-                image: 'images/toolbelt-1.jpg',
-                images: ['images/toolbelt-1.jpg', 'images/toolbelt-3.jpg', 'images/rig-1.jpg'],
-                description: 'Handcrafted from full-grain leather, this tool belt features 7 pockets, hammer loop, and tape measure clip. Built to last a lifetime.',
-                sizes: ['S', 'M', 'L', 'XL', '2XL'],
-                colors: [
-                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/toolbelt-1.jpg' },
-                    { name: 'Tan', hex: '#8b6914', image: 'images/toolbelt-3.jpg' },
-                    { name: 'Black', hex: '#1a1a1a', image: 'images/suspenders-1.jpg' }
-                ],
-                stock: 25
-            },
-            {
-                id: 2,
-                name: 'Pro Canvas Tool Belt',
-                price: 129.99,
-                wholesalePrice: 99.99,
-                category: 'Tool Belts',
-                type: 'Canvas',
-                image: 'images/toolbelt-2.jpg',
-                images: ['images/toolbelt-2.jpg'],
-                description: 'Heavy-duty canvas construction with leather reinforcements. Perfect for electricians and HVAC technicians.',
-                sizes: ['M', 'L', 'XL'],
-                colors: [
-                    { name: 'Black', hex: '#1a1a1a', image: 'images/toolbelt-2.jpg' }
-                ],
-                stock: 40
-            },
-            {
-                id: 3,
-                name: 'Master Craftsman Apron',
-                price: 159.99,
-                wholesalePrice: 124.99,
-                category: 'Aprons',
-                type: 'Leather',
-                image: 'images/apron-1.jpg',
-                images: ['images/apron-1.jpg'],
-                description: 'Full-coverage leather apron with cross-back straps for all-day comfort. 5 pockets plus towel loop.',
-                sizes: ['S/M', 'L/XL'],
-                colors: [
-                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/apron-1.jpg' }
-                ],
-                stock: 18
-            },
-            {
-                id: 4,
-                name: 'Quick-Clip Tool Pouch',
-                price: 49.99,
-                wholesalePrice: 39.99,
-                category: 'Pouches',
-                type: 'Leather',
-                image: 'images/pouch-1.jpg',
-                images: ['images/pouch-1.jpg', 'images/pouch-3.jpg'],
-                description: 'Compact single-pocket pouch with metal clip. Perfect for tape measure, knife, or small tools.',
-                sizes: ['One Size'],
-                colors: [
-                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/pouch-1.jpg' },
-                    { name: 'Tan', hex: '#8b6914', image: 'images/pouch-3.jpg' }
-                ],
-                stock: 60
-            },
-            {
-                id: 5,
-                name: 'Multi-Pocket Pro Pouch',
-                price: 79.99,
-                wholesalePrice: 64.99,
-                category: 'Pouches',
-                type: 'Nylon',
-                image: 'images/pouch-2.jpg',
-                images: ['images/pouch-2.jpg'],
-                description: 'Nylon pouch with 4 compartments and belt loop. Water-resistant and lightweight.',
-                sizes: ['One Size'],
-                colors: [
-                    { name: 'Black', hex: '#1a1a1a', image: 'images/pouch-2.jpg' }
-                ],
-                stock: 45
-            },
-            {
-                id: 6,
-                name: 'Heavy-Duty Suspenders',
-                price: 89.99,
-                wholesalePrice: 69.99,
-                category: 'Accessories',
-                type: 'Leather',
-                image: 'images/suspenders-1.jpg',
-                images: ['images/suspenders-1.jpg'],
-                description: 'Leather suspenders with tool loops to distribute weight evenly. Compatible with all our tool belts.',
-                sizes: ['M', 'L', 'XL'],
-                colors: [
-                    { name: 'Black', hex: '#1a1a1a', image: 'images/suspenders-1.jpg' }
-                ],
-                stock: 30
-            },
-            {
-                id: 7,
-                name: 'Magna-Fix Wristband',
-                price: 24.99,
-                wholesalePrice: 19.99,
-                category: 'Accessories',
-                type: 'Nylon',
-                image: 'images/wristband-1.jpg',
-                images: ['images/wristband-1.jpg'],
-                description: 'Magnetic wristband holds screws, nails, and small metal parts. Adjustable fit.',
-                sizes: ['One Size'],
-                colors: [
-                    { name: 'Black/Orange', hex: '#1a1a1a', image: 'images/wristband-1.jpg' }
-                ],
-                stock: 100
-            },
-            {
-                id: 8,
-                name: 'Gel-Pro Knee Pads',
-                price: 59.99,
-                wholesalePrice: 47.99,
-                category: 'Accessories',
-                type: 'Nylon',
-                image: 'images/kneepads-1.jpg',
-                images: ['images/kneepads-1.jpg'],
-                description: 'Professional knee pads with gel cushioning and hard caps. All-day comfort protection.',
-                sizes: ['S/M', 'L/XL'],
-                colors: [
-                    { name: 'Black', hex: '#1a1a1a', image: 'images/kneepads-1.jpg' }
-                ],
-                stock: 35
-            },
-            {
-                id: 9,
-                name: 'Heritage Tool Roll',
-                price: 69.99,
-                wholesalePrice: 54.99,
-                category: 'Accessories',
-                type: 'Leather',
-                image: 'images/toolroll-1.jpg',
-                images: ['images/toolroll-1.jpg'],
-                description: 'Leather roll-up tool organizer with 8 slots. Perfect for wrenches, screwdrivers, and hand tools.',
-                sizes: ['One Size'],
-                colors: [
-                    { name: 'Tan', hex: '#8b6914', image: 'images/toolroll-1.jpg' }
-                ],
-                stock: 28
-            },
-            {
-                id: 10,
-                name: 'Pro Tool Tote',
-                price: 149.99,
-                wholesalePrice: 119.99,
-                category: 'Accessories',
-                type: 'Leather',
-                image: 'images/toolbag-1.jpg',
-                images: ['images/toolbag-1.jpg'],
-                description: 'Leather tool tote with brass hardware, shoulder strap, and multiple pockets.',
-                sizes: ['One Size'],
-                colors: [
-                    { name: 'Brown', hex: '#5c4033', image: 'images/toolbag-1.jpg' }
-                ],
-                stock: 20
-            },
-            {
-                id: 11,
-                name: 'Iron Hand Work Gloves',
-                price: 34.99,
-                wholesalePrice: 27.99,
-                category: 'Accessories',
-                type: 'Leather',
-                image: 'images/gloves-1.jpg',
-                images: ['images/gloves-1.jpg'],
-                description: 'Heavy-duty leather work gloves with reinforced palms and adjustable wrist strap.',
-                sizes: ['S', 'M', 'L', 'XL'],
-                colors: [
-                    { name: 'Brown/Tan', hex: '#8b7355', image: 'images/gloves-1.jpg' }
-                ],
-                stock: 50
-            },
-            {
-                id: 12,
-                name: 'Complete Tool Rig',
-                price: 299.99,
-                wholesalePrice: 239.99,
-                category: 'Tool Belts',
-                type: 'Leather',
-                image: 'images/rig-1.jpg',
-                images: ['images/rig-1.jpg', 'images/toolbelt-1.jpg'],
-                description: 'Complete tool belt system with suspenders, 10+ pockets, hammer holder, and tape clip.',
-                sizes: ['M', 'L', 'XL', '2XL'],
-                colors: [
-                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/rig-1.jpg' }
-                ],
-                stock: 15
-            }
-        ];
-
-        // State
-        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        let isWholesale = localStorage.getItem('userRole') === 'wholesale';
-        let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
-        let selectedProduct = null;
-        let selectedSize = null;
-        let selectedColor = null;
-        let selectedImageIndex = 0;
-        let currentType = 'All';
-        let currentCategory = 'All';
-        let previousPage = 'home';
-
-        // Show page
-        function showPage(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${page}`).classList.remove('hidden');
-            window.scrollTo(0, 0);
-            lucide.createIcons();
-            if (page !== 'product-detail') {
-                previousPage = page;
-            }
-        }
-
-        // Go back
-        function goBack() {
-            showPage(previousPage);
-        }
-
-        // Search functionality
-        function toggleSearch() {
-            const overlay = document.getElementById('search-overlay');
-            overlay.classList.toggle('hidden');
-            if (!overlay.classList.contains('hidden')) {
-                document.getElementById('search-input').focus();
-            }
-        }
-
-        function handleSearch(query) {
-            const resultsContainer = document.getElementById('search-results');
-            
-            if (!query.trim()) {
-                resultsContainer.innerHTML = '';
-                return;
-            }
-            
-            const searchTerm = query.toLowerCase();
-            const results = products.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) ||
-                p.category.toLowerCase().includes(searchTerm) ||
-                p.type.toLowerCase().includes(searchTerm) ||
-                p.description.toLowerCase().includes(searchTerm)
-            );
-            
-            if (results.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="text-center py-8 text-dark-muted">
-                        <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-2"></i>
-                        <p>No products found</p>
-                    </div>
-                `;
-            } else {
-                resultsContainer.innerHTML = results.map(p => `
-                    <div onclick="selectSearchResult(${p.id})" class="flex items-center gap-4 p-3 hover:bg-dark-bg rounded-lg cursor-pointer transition-colors">
-                        <img src="${p.image}" alt="${p.name}" class="w-16 h-16 object-cover rounded-lg">
-                        <div class="flex-1">
-                            <h4 class="font-medium">${highlightMatch(p.name, searchTerm)}</h4>
-                            <p class="text-sm text-dark-muted">${p.category} • ${p.type}</p>
-                        </div>
-                        <span class="text-primary font-medium">$${(isWholesale ? p.wholesalePrice : p.price).toFixed(2)}</span>
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        }
-
-        function highlightMatch(text, searchTerm) {
-            const regex = new RegExp(`(${searchTerm})`, 'gi');
-            return text.replace(regex, '<span class="text-primary">$1</span>');
-        }
-
-        function selectSearchResult(productId) {
-            toggleSearch();
-            showProductDetail(productId);
-        }
-
-        // Filter functions
-        function filterByType(type) {
-            currentType = type;
-            updateFilterButtons();
-            renderCatalog();
-            updateActiveFilters();
-        }
-
-        function filterByCategory(category) {
-            currentCategory = category;
-            updateFilterButtons();
-            showPage('catalog');
-            renderCatalog();
-            updateActiveFilters();
-        }
-
-        function updateFilterButtons() {
-            document.querySelectorAll('.filter-type').forEach(btn => {
-                const isActive = btn.dataset.type === currentType;
-                btn.classList.toggle('bg-primary', isActive);
-                btn.classList.toggle('text-dark-bg', isActive);
-                btn.classList.toggle('bg-dark-bg', !isActive);
-                btn.classList.toggle('border-dark-border', !isActive);
-                btn.classList.toggle('text-dark-text', !isActive);
-            });
-            
-            document.querySelectorAll('.filter-category').forEach(btn => {
-                const isActive = btn.dataset.category === currentCategory;
-                btn.classList.toggle('bg-primary', isActive);
-                btn.classList.toggle('text-dark-bg', isActive);
-                btn.classList.toggle('bg-dark-bg', !isActive);
-                btn.classList.toggle('border-dark-border', !isActive);
-                btn.classList.toggle('text-dark-text', !isActive);
-            });
-        }
-
-        function updateActiveFilters() {
-            const container = document.getElementById('active-filters');
-            const hasFilters = currentType !== 'All' || currentCategory !== 'All';
-            
-            if (hasFilters) {
-                container.classList.remove('hidden');
-            } else {
-                container.classList.add('hidden');
-            }
-        }
-
-        function clearFilters() {
-            currentType = 'All';
-            currentCategory = 'All';
-            updateFilterButtons();
-            renderCatalog();
-            updateActiveFilters();
-        }
-
-        function sortProducts(sortBy) {
-            renderCatalog(sortBy);
-        }
-
-        // Get filtered products
-        function getFilteredProducts() {
-            return products.filter(p => {
-                const typeMatch = currentType === 'All' || p.type === currentType;
-                const categoryMatch = currentCategory === 'All' || p.category === currentCategory;
-                return typeMatch && categoryMatch;
-            });
-        }
-
-        // Render product card
-        function renderProductCard(product) {
-            const price = isWholesale ? product.wholesalePrice : product.price;
-            const originalPrice = isWholesale ? product.price : null;
-            
-            return `
-                <div class="bg-dark-card rounded-lg overflow-hidden border border-dark-border hover:border-primary transition-colors group cursor-pointer" onclick="showProductDetail(${product.id})">
-                    <div class="aspect-square overflow-hidden bg-dark-bg">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="p-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-xs text-primary">${product.type}</span>
-                            <span class="text-xs text-dark-muted">•</span>
-                            <span class="text-xs text-dark-muted">${product.category}</span>
-                        </div>
-                        <h3 class="font-medium text-lg mb-2 group-hover:text-primary transition-colors">${product.name}</h3>
-                        <div class="flex items-center gap-2">
-                            ${originalPrice ? `
-                                <span class="text-xl font-serif text-primary">$${price.toFixed(2)}</span>
-                                <span class="text-sm text-dark-muted line-through">$${originalPrice.toFixed(2)}</span>
-                            ` : `
-                                <span class="text-xl font-serif text-primary">$${price.toFixed(2)}</span>
-                            `}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render catalog
-        function renderCatalog(sortBy = 'featured') {
-            let filtered = getFilteredProducts();
-            
-            // Sort
-            if (sortBy === 'price-low') {
-                filtered.sort((a, b) => (isWholesale ? a.wholesalePrice : a.price) - (isWholesale ? b.wholesalePrice : b.price));
-            } else if (sortBy === 'price-high') {
-                filtered.sort((a, b) => (isWholesale ? b.wholesalePrice : b.price) - (isWholesale ? a.wholesalePrice : a.price));
-            } else if (sortBy === 'name') {
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-            }
-            
-            const grid = document.getElementById('catalog-grid');
-            const emptyState = document.getElementById('catalog-empty');
-            const countEl = document.getElementById('catalog-count');
-            
-            if (countEl) countEl.textContent = filtered.length;
-            
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                grid.innerHTML = filtered.map(renderProductCard).join('');
-            }
-        }
-
-        // Render featured products
-        function renderFeaturedProducts() {
-            const featured = products.slice(0, 4);
-            const grid = document.getElementById('featured-products');
-            if (grid) {
-                grid.innerHTML = featured.map(renderProductCard).join('');
-            }
-        }
-
-        // Show product detail
-        function showProductDetail(productId) {
-            selectedProduct = products.find(p => p.id === productId);
-            selectedSize = selectedProduct.sizes[0];
-            selectedColor = selectedProduct.colors[0];
-            selectedImageIndex = 0;
-            
-            const price = isWholesale ? selectedProduct.wholesalePrice : selectedProduct.price;
-            const originalPrice = isWholesale ? selectedProduct.price : null;
-            
-            const content = document.getElementById('product-detail-content');
-            content.innerHTML = `
-                <!-- Image Gallery -->
-                <div>
-                    <div class="aspect-square bg-dark-card rounded-lg overflow-hidden mb-4 border border-dark-border">
-                        <img id="main-image" src="${selectedProduct.images[selectedImageIndex]}" alt="${selectedProduct.name}" class="w-full h-full object-cover">
-                    </div>
-                    ${selectedProduct.images.length > 1 ? `
-                        <div class="flex gap-2">
-                            ${selectedProduct.images.map((img, i) => `
-                                <button onclick="selectImage(${i})" class="w-20 h-20 rounded-lg overflow-hidden border-2 ${i === 0 ? 'border-primary' : 'border-dark-border'} hover:border-primary transition-colors">
-                                    <img src="${img}" class="w-full h-full object-cover">
-                                </button>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <!-- Product Info -->
-                <div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="text-sm text-primary">${selectedProduct.type}</span>
-                        <span class="text-sm text-dark-muted">•</span>
-                        <span class="text-sm text-dark-muted">${selectedProduct.category}</span>
-                    </div>
-                    <h1 class="text-3xl font-serif mb-4">${selectedProduct.name}</h1>
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="text-3xl font-serif text-primary">$${price.toFixed(2)}</span>
-                        ${originalPrice ? `<span class="text-lg text-dark-muted line-through">$${originalPrice.toFixed(2)}</span>` : ''}
-                    </div>
-                    <p class="text-dark-muted mb-8">${selectedProduct.description}</p>
-                    
-                    <!-- Color Selection -->
-                    ${selectedProduct.colors.length > 1 ? `
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium mb-3">Color: <span id="selected-color-name" class="text-dark-muted">${selectedColor.name}</span></label>
-                            <div class="flex gap-3">
-                                ${selectedProduct.colors.map((color, i) => `
-                                    <button onclick="selectColor(${i})" class="color-option ${i === 0 ? 'active' : ''}" style="background-color: ${color.hex};" title="${color.name}"></button>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <!-- Size Selection -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium mb-3">Size: <span id="selected-size-name" class="text-dark-muted">${selectedSize}</span></label>
-                        <div class="flex flex-wrap gap-2">
-                            ${selectedProduct.sizes.map((size, i) => `
-                                <button onclick="selectSize('${size}')" class="size-option ${size === selectedSize ? 'active' : ''}">${size}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Add to Cart -->
-                    <div class="flex gap-4">
-                        <button onclick="addToCartWithOptions()" class="flex-1 btn-primary py-4 text-lg">Add to Cart</button>
-                    </div>
-                    
-                    <!-- Features -->
-                    <div class="mt-8 pt-8 border-t border-dark-border">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex items-center gap-2 text-dark-muted">
-                                <i data-lucide="truck" class="w-5 h-5 text-primary"></i>
-                                <span class="text-sm">Free shipping over $100</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-dark-muted">
-                                <i data-lucide="shield-check" class="w-5 h-5 text-primary"></i>
-                                <span class="text-sm">Lifetime warranty</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-dark-muted">
-                                <i data-lucide="rotate-ccw" class="w-5 h-5 text-primary"></i>
-                                <span class="text-sm">30-day returns</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-dark-muted">
-                                <i data-lucide="package" class="w-5 h-5 text-primary"></i>
-                                <span class="text-sm">${selectedProduct.stock} in stock</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            showPage('product-detail');
-            lucide.createIcons();
-        }
-
-        // Select image
-        function selectImage(index) {
-            selectedImageIndex = index;
-            document.getElementById('main-image').src = selectedProduct.images[index];
-        }
-
-        // Select color
-        function selectColor(index) {
-            selectedColor = selectedProduct.colors[index];
-            document.getElementById('selected-color-name').textContent = selectedColor.name;
-            document.getElementById('main-image').src = selectedColor.image;
-            document.querySelectorAll('.color-option').forEach((el, i) => {
-                el.classList.toggle('active', i === index);
-            });
-        }
-
-        // Select size
-        function selectSize(size) {
-            selectedSize = size;
-            document.getElementById('selected-size-name').textContent = size;
-            document.querySelectorAll('.size-option').forEach(el => {
-                el.classList.toggle('active', el.textContent === size);
-            });
-        }
-
-        // Add to cart with options
-        function addToCartWithOptions() {
-            if (!selectedProduct) return;
-            
-            const cartItem = {
-                id: selectedProduct.id,
-                name: selectedProduct.name,
-                price: isWholesale ? selectedProduct.wholesalePrice : selectedProduct.price,
-                image: selectedProduct.images[selectedImageIndex],
-                color: selectedColor.name,
-                size: selectedSize,
-                quantity: 1
-            };
-            
-            const existingItem = cart.find(item => 
-                item.id === cartItem.id && 
-                item.color === cartItem.color && 
-                item.size === cartItem.size
-            );
-            
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cart.push(cartItem);
-            }
-            
-            saveCart();
-            updateCartUI();
-            showToast('Added to cart!');
-        }
-
-        // Add to cart (simple)
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            
-            const cartItem = {
-                id: product.id,
-                name: product.name,
-                price: isWholesale ? product.wholesalePrice : product.price,
-                image: product.image,
-                color: product.colors[0].name,
-                size: product.sizes[0],
-                quantity: 1
-            };
-            
-            const existingItem = cart.find(item => 
-                item.id === cartItem.id && 
-                item.color === cartItem.color && 
-                item.size === cartItem.size
-            );
-            
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cart.push(cartItem);
-            }
-            
-            saveCart();
-            updateCartUI();
-            showToast('Added to cart!');
-        }
-
-        // Remove from cart
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            saveCart();
-            updateCartUI();
-        }
-
-        // Update quantity
-        function updateQuantity(index, delta) {
-            cart[index].quantity += delta;
-            if (cart[index].quantity <= 0) {
-                removeFromCart(index);
-            } else {
-                saveCart();
-                updateCartUI();
-            }
-        }
-
-        // Save cart
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        // Update cart UI
-        function updateCartUI() {
-            const cartCount = document.getElementById('cart-count');
-            const cartItems = document.getElementById('cart-items');
-            const cartFooter = document.getElementById('cart-footer');
-            const cartTotal = document.getElementById('cart-total');
-            
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            if (totalItems > 0) {
-                cartCount.textContent = totalItems;
-                cartCount.classList.remove('hidden');
-                cartFooter.classList.remove('hidden');
-                cartTotal.textContent = '$' + totalPrice.toFixed(2);
-                
-                cartItems.innerHTML = cart.map((item, i) => `
-                    <div class="flex gap-4 mb-4">
-                        <div class="w-20 h-20 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0 border border-dark-border">
-                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-medium text-sm">${item.name}</h3>
-                            <p class="text-xs text-dark-muted">${item.color}, ${item.size}</p>
-                            <div class="flex items-center justify-between mt-2">
-                                <div class="flex items-center border border-dark-border rounded">
-                                    <button onclick="updateQuantity(${i}, -1)" class="px-2 py-1 hover:bg-dark-bg text-dark-muted">-</button>
-                                    <span class="px-3 text-sm">${item.quantity}</span>
-                                    <button onclick="updateQuantity(${i}, 1)" class="px-2 py-1 hover:bg-dark-bg text-dark-muted">+</button>
-                                </div>
-                                <span class="font-medium text-primary">$${(item.price * item.quantity).toFixed(2)}</span>
-                            </div>
-                        </div>
-                        <button onclick="removeFromCart(${i})" class="text-dark-muted hover:text-red-500">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `).join('');
-            } else {
-                cartCount.classList.add('hidden');
-                cartFooter.classList.add('hidden');
-                cartItems.innerHTML = `
-                    <div class="text-center py-8">
-                        <i data-lucide="shopping-bag" class="w-16 h-16 text-dark-border mx-auto mb-4"></i>
-                        <p class="text-dark-muted">Your cart is empty</p>
-                    </div>
-                `;
-            }
-            lucide.createIcons();
-        }
-
-        // Toggle cart
-        function toggleCart() {
-            document.getElementById('cart-sidebar').classList.toggle('hidden');
-        }
-
-        // Checkout
-        function checkout() {
-            alert('Checkout would integrate with Stripe here!');
-        }
-
-        // Show toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            toastMessage.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // OAuth Login functions
-        function loginWithGoogle() {
-            const user = {
-                name: 'John Smith',
-                email: 'john@gmail.com',
-                role: 'retail',
-                provider: 'google'
-            };
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('userRole', 'retail');
-            currentUser = user;
-            isWholesale = false;
-            updateUserUI();
-            showToast('Signed in with Google!');
-            showPage('home');
-        }
-
-        function loginWithApple() {
-            const user = {
-                name: 'Jane Doe',
-                email: 'jane@icloud.com',
-                role: 'retail',
-                provider: 'apple'
-            };
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('userRole', 'retail');
-            currentUser = user;
-            isWholesale = false;
-            updateUserUI();
-            showToast('Signed in with Apple!');
-            showPage('home');
-        }
-
-        function handleEmailLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            if (email === 'wholesale@protectionvalley.com' && password === 'password') {
-                const user = { name: 'Wholesale Customer', email: email, role: 'wholesale' };
-                localStorage.setItem('user', JSON.stringify(user));
-                localStorage.setItem('userRole', 'wholesale');
-                currentUser = user;
-                isWholesale = true;
-                updateUserUI();
-                showToast('Signed in as wholesale!');
-                showPage('home');
-            } else {
-                const user = { name: 'Customer', email: email, role: 'retail' };
-                localStorage.setItem('user', JSON.stringify(user));
-                localStorage.setItem('userRole', 'retail');
-                currentUser = user;
-                isWholesale = false;
-                updateUserUI();
-                showToast('Signed in!');
-                showPage('home');
-            }
-        }
-
-        function updateUserUI() {
-            const userBtn = document.getElementById('user-btn');
-            if (currentUser) {
-                userBtn.innerHTML = `<span class="text-sm">${currentUser.name}</span>`;
-                userBtn.onclick = logout;
-            } else {
-                userBtn.innerHTML = `<i data-lucide="user" class="w-5 h-5"></i>`;
-                userBtn.onclick = () => showPage('login');
-            }
-            lucide.createIcons();
-            renderCatalog();
-            renderFeaturedProducts();
-        }
-
-        function logout() {
-            localStorage.removeItem('user');
-            localStorage.removeItem('userRole');
-            currentUser = null;
-            isWholesale = false;
-            updateUserUI();
-            showToast('Signed out');
-        }
-
-        // Initialize
-        renderCatalog();
-        renderFeaturedProducts();
-        updateCartUI();
-        updateUserUI();
-    </script>
+    <!-- JavaScript Modules -->
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
