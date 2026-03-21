@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ToolPro Supply - Premium workgear for professionals. Tool belts, pouches, aprons, and more. Dark mode optimized.">
+    <meta name="keywords" content="workgear, tool belt, tool pouch, work apron, leather tools, professional gear">
+    <meta property="og:title" content="ToolPro Supply - Premium Workgear">
+    <meta property="og:description" content="Professional workgear for tradespeople. Tool belts, pouches, aprons.">
+    <title>ToolPro Supply - Premium Workgear</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#c9a86c',
+                            dark: '#a88b5a',
+                            light: '#d4b87d'
+                        },
+                        dark: {
+                            bg: '#0a0a0a',
+                            card: '#141414',
+                            border: '#1f1f1f',
+                            text: '#e5e5e5',
+                            muted: '#737373'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['DM Serif Display', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #e5e5e5; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; }
+        .btn-primary { background-color: #c9a86c; color: #0a0a0a; padding: 0.75rem 1.5rem; font-weight: 500; transition: all 0.3s; }
+        .btn-primary:hover { background-color: #a88b5a; }
+        .btn-secondary { border: 2px solid #c9a86c; color: #c9a86c; padding: 0.75rem 1.5rem; font-weight: 500; transition: all 0.3s; }
+        .btn-secondary:hover { background-color: #c9a86c; color: #0a0a0a; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .color-option { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .color-option:hover { transform: scale(1.1); }
+        .color-option.active { border-color: #c9a86c; box-shadow: 0 0 0 2px #0a0a0a, 0 0 0 4px #c9a86c; }
+        .size-option { padding: 0.5rem 1rem; border: 1px solid #1f1f1f; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s; }
+        .size-option:hover { border-color: #c9a86c; }
+        .size-option.active { background-color: #c9a86c; color: #0a0a0a; border-color: #c9a86c; }
+        .size-option.disabled { opacity: 0.3; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-dark-bg text-dark-text">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-dark-bg/95 backdrop-blur-md border-b border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="#" onclick="showPage('home')" class="flex items-center space-x-2">
+                    <span class="text-2xl font-serif text-primary">ToolPro</span>
+                    <span class="text-sm text-dark-muted hidden sm:inline">Supply</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" onclick="showPage('home')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Home</a>
+                    <a href="#" onclick="showPage('products')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Shop</a>
+                    <a href="#" onclick="showPage('about')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">About</a>
+                    <a href="#" onclick="showPage('contact')" class="text-sm font-medium text-dark-text hover:text-primary transition-colors">Contact</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleCart()" class="relative p-2 text-dark-text hover:text-primary transition-colors">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-dark-bg text-xs rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+                    <button onclick="showPage('login')" id="user-btn" class="p-2 text-dark-text hover:text-primary transition-colors">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="page-home" class="page">
+        <!-- Hero Section -->
+        <section class="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('images/hero-bg.jpg');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+                <p class="text-primary font-medium tracking-widest uppercase mb-4 animate-fade-in">Premium Workgear</p>
+                <h1 class="text-5xl md:text-7xl font-serif mb-6 animate-fade-in" style="animation-delay: 0.2s">Built for the<br/>Hardworking</h1>
+                <p class="text-xl text-dark-muted mb-8 max-w-2xl mx-auto animate-fade-in" style="animation-delay: 0.4s">
+                    Professional tool belts, pouches, and workgear crafted from premium leather. 
+                    Designed for durability, built for comfort.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.6s">
+                    <button onclick="showPage('products')" class="btn-primary text-lg">Shop Collection</button>
+                    <button onclick="showPage('about')" class="btn-secondary text-lg">Our Story</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="py-20 bg-dark-bg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <p class="text-primary font-medium tracking-widest uppercase mb-2">Browse by Category</p>
+                    <h2 class="text-4xl font-serif">Find Your Gear</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="filterByCategory('Tool Belts')" class="group relative aspect-square overflow-hidden rounded-lg bg-dark-card">
+                        <img src="images/toolbelt-1.jpg" alt="Tool Belts" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-medium">Tool Belts</span>
+                        </div>
+                    </button>
+                    <button onclick="filterByCategory('Pouches')" class="group relative aspect-square overflow-hidden rounded-lg bg-dark-card">
+                        <img src="images/pouch-1.jpg" alt="Pouches" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-medium">Pouches</span>
+                        </div>
+                    </button>
+                    <button onclick="filterByCategory('Aprons')" class="group relative aspect-square overflow-hidden rounded-lg bg-dark-card">
+                        <img src="images/apron-1.jpg" alt="Aprons" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-medium">Aprons</span>
+                        </div>
+                    </button>
+                    <button onclick="filterByCategory('Accessories')" class="group relative aspect-square overflow-hidden rounded-lg bg-dark-card">
+                        <img src="images/wristband-1.jpg" alt="Accessories" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-lg font-medium">Accessories</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="py-20 bg-dark-card">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <p class="text-primary font-medium tracking-widest uppercase mb-2">Featured</p>
+                    <h2 class="text-4xl font-serif">Best Sellers</h2>
+                </div>
+                <div id="featured-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Featured products loaded by JS -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Products Page -->
+    <div id="page-products" class="page hidden">
+        <div class="bg-dark-bg min-h-screen">
+            <!-- Header -->
+            <div class="bg-dark-card border-b border-dark-border">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <h1 class="text-4xl font-serif mb-2">All Products</h1>
+                    <p class="text-dark-muted">Premium workgear crafted for professionals</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Filters -->
+                <div class="flex flex-col lg:flex-row gap-6 mb-8">
+                    <!-- Type Filter -->
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-sm text-dark-muted py-2">Type:</span>
+                        <button onclick="filterByType('All')" class="filter-type px-4 py-2 rounded-full text-sm font-medium bg-primary text-dark-bg" data-type="All">All</button>
+                        <button onclick="filterByType('Leather')" class="filter-type px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-type="Leather">Leather</button>
+                        <button onclick="filterByType('Canvas')" class="filter-type px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-type="Canvas">Canvas</button>
+                        <button onclick="filterByType('Nylon')" class="filter-type px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-type="Nylon">Nylon</button>
+                    </div>
+                    
+                    <!-- Category Filter -->
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-sm text-dark-muted py-2">Category:</span>
+                        <button onclick="filterByCategory('All')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-primary text-dark-bg" data-category="All">All</button>
+                        <button onclick="filterByCategory('Tool Belts')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-category="Tool Belts">Tool Belts</button>
+                        <button onclick="filterByCategory('Pouches')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-category="Pouches">Pouches</button>
+                        <button onclick="filterByCategory('Aprons')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-category="Aprons">Aprons</button>
+                        <button onclick="filterByCategory('Accessories')" class="filter-category px-4 py-2 rounded-full text-sm font-medium bg-dark-card text-dark-text hover:bg-dark-border transition-colors" data-category="Accessories">Accessories</button>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="all-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Products loaded by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Page -->
+    <div id="page-product-detail" class="page hidden">
+        <div class="bg-dark-bg min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <button onclick="showPage('products')" class="flex items-center text-dark-muted hover:text-primary mb-6">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                    Back to Products
+                </button>
+                
+                <div id="product-detail-content" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Product detail loaded by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="page-about" class="page hidden">
+        <div class="bg-dark-bg min-h-screen">
+            <section class="relative py-24">
+                <div class="absolute inset-0 bg-gradient-to-b from-dark-card to-dark-bg"></div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-5xl md:text-6xl font-serif mb-6">Our Story</h1>
+                    <p class="text-xl text-dark-muted max-w-3xl mx-auto">
+                        Crafting premium workgear for the tradespeople who build our world. 
+                        Every stitch, every rivet, every piece of leather is chosen with purpose.
+                    </p>
+                </div>
+            </section>
+
+            <section class="py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-dark-card p-8 rounded-lg text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="award" class="w-8 h-8 text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-medium mb-2">Premium Materials</h3>
+                            <p class="text-dark-muted">Full-grain leather and heavy-duty canvas built to last a lifetime.</p>
+                        </div>
+                        <div class="bg-dark-card p-8 rounded-lg text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="users" class="w-8 h-8 text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-medium mb-2">Tradesperson Designed</h3>
+                            <p class="text-dark-muted">Designed with input from real tradespeople who use our gear daily.</p>
+                        </div>
+                        <div class="bg-dark-card p-8 rounded-lg text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-8 h-8 text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-medium mb-2">Lifetime Warranty</h3>
+                            <p class="text-dark-muted">We stand behind our products with a lifetime craftsmanship guarantee.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="page-contact" class="page hidden">
+        <div class="bg-dark-bg min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-serif mb-4">Get in Touch</h1>
+                    <p class="text-dark-muted">Have questions? We're here to help.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-dark-card p-6 rounded-lg text-center">
+                        <i data-lucide="phone" class="w-8 h-8 text-primary mx-auto mb-4"></i>
+                        <h3 class="font-medium mb-1">Phone</h3>
+                        <p class="text-dark-muted">1-800-TOOLPRO</p>
+                    </div>
+                    <div class="bg-dark-card p-6 rounded-lg text-center">
+                        <i data-lucide="mail" class="w-8 h-8 text-primary mx-auto mb-4"></i>
+                        <h3 class="font-medium mb-1">Email</h3>
+                        <p class="text-dark-muted">support@toolprosupply.com</p>
+                    </div>
+                    <div class="bg-dark-card p-6 rounded-lg text-center">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-primary mx-auto mb-4"></i>
+                        <h3 class="font-medium mb-1">Location</h3>
+                        <p class="text-dark-muted">Portland, Oregon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="page-login" class="page hidden">
+        <div class="bg-dark-bg min-h-screen flex items-center justify-center py-12 px-4">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-serif mb-2">Welcome Back</h1>
+                    <p class="text-dark-muted">Sign in to access your account</p>
+                </div>
+                
+                <div class="bg-dark-card rounded-lg p-8 border border-dark-border">
+                    <!-- OAuth Buttons -->
+                    <div class="space-y-3 mb-6">
+                        <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                            Continue with Google
+                        </button>
+                        <button onclick="loginWithApple()" class="w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.22 7.13-.57 1.5-1.31 2.99-2.27 4.08zm-5.85-15.1c.07-1.74 1.54-3.25 3.28-3.39.29 2.32-2.13 4.5-3.28 3.39z"/></svg>
+                            Continue with Apple
+                        </button>
+                    </div>
+                    
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dark-border"></div></div>
+                        <div class="relative flex justify-center"><span class="bg-dark-card px-4 text-sm text-dark-muted">Or continue with email</span></div>
+                    </div>
+                    
+                    <form onsubmit="handleEmailLogin(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email Address</label>
+                                <input type="email" id="login-email" required class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:border-primary text-dark-text" placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Password</label>
+                                <input type="password" id="login-password" required class="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:border-primary text-dark-text" placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="w-full btn-primary py-3">Sign In</button>
+                        </div>
+                    </form>
+                    
+                    <p class="mt-4 text-center text-sm text-dark-muted">
+                        Don't have an account? <a href="#" class="text-primary hover:underline">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/70" onclick="toggleCart()"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-dark-card shadow-2xl flex flex-col border-l border-dark-border">
+            <div class="flex items-center justify-between p-6 border-b border-dark-border">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="shopping-bag" class="w-6 h-6 text-primary"></i>
+                    <h2 class="text-xl font-serif">Your Cart</h2>
+                </div>
+                <button onclick="toggleCart()" class="p-2 text-dark-muted hover:text-dark-text">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6">
+                <div class="text-center py-8">
+                    <i data-lucide="shopping-bag" class="w-16 h-16 text-dark-border mx-auto mb-4"></i>
+                    <p class="text-dark-muted">Your cart is empty</p>
+                </div>
+            </div>
+            <div id="cart-footer" class="border-t border-dark-border p-6 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-medium">Total</span>
+                    <span id="cart-total" class="text-2xl font-serif text-primary">$0.00</span>
+                </div>
+                <button onclick="checkout()" class="w-full btn-primary py-4">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-primary text-dark-bg px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <span id="toast-message">Item added to cart!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark-card border-t border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <span class="text-2xl font-serif text-primary">ToolPro Supply</span>
+                    <p class="text-dark-muted mt-4 max-w-sm">Premium workgear for the tradespeople who build our world. Crafted with care, built to last.</p>
+                </div>
+                <div>
+                    <h3 class="font-medium mb-4">Shop</h3>
+                    <ul class="space-y-2 text-dark-muted">
+                        <li><a href="#" onclick="filterByCategory('Tool Belts')" class="hover:text-primary transition-colors">Tool Belts</a></li>
+                        <li><a href="#" onclick="filterByCategory('Pouches')" class="hover:text-primary transition-colors">Pouches</a></li>
+                        <li><a href="#" onclick="filterByCategory('Aprons')" class="hover:text-primary transition-colors">Aprons</a></li>
+                        <li><a href="#" onclick="filterByCategory('Accessories')" class="hover:text-primary transition-colors">Accessories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-medium mb-4">Support</h3>
+                    <ul class="space-y-2 text-dark-muted">
+                        <li><a href="#" class="hover:text-primary transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Shipping</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Returns</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Warranty</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-dark-border text-center text-dark-muted text-sm">
+                <p>© 2024 ToolPro Supply. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Products data with sizes, colors, and variants
+        const products = [
+            {
+                id: 1,
+                name: 'Heritage Leather Tool Belt',
+                price: 189.99,
+                wholesalePrice: 149.99,
+                category: 'Tool Belts',
+                type: 'Leather',
+                image: 'images/toolbelt-1.jpg',
+                images: ['images/toolbelt-1.jpg', 'images/toolbelt-3.jpg', 'images/rig-1.jpg'],
+                description: 'Handcrafted from full-grain leather, this tool belt features 7 pockets, hammer loop, and tape measure clip. Built to last a lifetime.',
+                sizes: ['S', 'M', 'L', 'XL', '2XL'],
+                colors: [
+                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/toolbelt-1.jpg' },
+                    { name: 'Tan', hex: '#8b6914', image: 'images/toolbelt-3.jpg' },
+                    { name: 'Black', hex: '#1a1a1a', image: 'images/suspenders-1.jpg' }
+                ],
+                stock: 25
+            },
+            {
+                id: 2,
+                name: 'Pro Canvas Tool Belt',
+                price: 129.99,
+                wholesalePrice: 99.99,
+                category: 'Tool Belts',
+                type: 'Canvas',
+                image: 'images/toolbelt-2.jpg',
+                images: ['images/toolbelt-2.jpg'],
+                description: 'Heavy-duty canvas construction with leather reinforcements. Perfect for electricians and HVAC technicians.',
+                sizes: ['M', 'L', 'XL'],
+                colors: [
+                    { name: 'Black', hex: '#1a1a1a', image: 'images/toolbelt-2.jpg' }
+                ],
+                stock: 40
+            },
+            {
+                id: 3,
+                name: 'Master Craftsman Apron',
+                price: 159.99,
+                wholesalePrice: 124.99,
+                category: 'Aprons',
+                type: 'Leather',
+                image: 'images/apron-1.jpg',
+                images: ['images/apron-1.jpg'],
+                description: 'Full-coverage leather apron with cross-back straps for all-day comfort. 5 pockets plus towel loop.',
+                sizes: ['S/M', 'L/XL'],
+                colors: [
+                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/apron-1.jpg' }
+                ],
+                stock: 18
+            },
+            {
+                id: 4,
+                name: 'Quick-Clip Tool Pouch',
+                price: 49.99,
+                wholesalePrice: 39.99,
+                category: 'Pouches',
+                type: 'Leather',
+                image: 'images/pouch-1.jpg',
+                images: ['images/pouch-1.jpg', 'images/pouch-3.jpg'],
+                description: 'Compact single-pocket pouch with metal clip. Perfect for tape measure, knife, or small tools.',
+                sizes: ['One Size'],
+                colors: [
+                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/pouch-1.jpg' },
+                    { name: 'Tan', hex: '#8b6914', image: 'images/pouch-3.jpg' }
+                ],
+                stock: 60
+            },
+            {
+                id: 5,
+                name: 'Multi-Pocket Pro Pouch',
+                price: 79.99,
+                wholesalePrice: 64.99,
+                category: 'Pouches',
+                type: 'Nylon',
+                image: 'images/pouch-2.jpg',
+                images: ['images/pouch-2.jpg'],
+                description: 'Nylon pouch with 4 compartments and belt loop. Water-resistant and lightweight.',
+                sizes: ['One Size'],
+                colors: [
+                    { name: 'Black', hex: '#1a1a1a', image: 'images/pouch-2.jpg' }
+                ],
+                stock: 45
+            },
+            {
+                id: 6,
+                name: 'Heavy-Duty Suspenders',
+                price: 89.99,
+                wholesalePrice: 69.99,
+                category: 'Accessories',
+                type: 'Leather',
+                image: 'images/suspenders-1.jpg',
+                images: ['images/suspenders-1.jpg'],
+                description: 'Leather suspenders with tool loops to distribute weight evenly. Compatible with all our tool belts.',
+                sizes: ['M', 'L', 'XL'],
+                colors: [
+                    { name: 'Black', hex: '#1a1a1a', image: 'images/suspenders-1.jpg' }
+                ],
+                stock: 30
+            },
+            {
+                id: 7,
+                name: 'Magna-Fix Wristband',
+                price: 24.99,
+                wholesalePrice: 19.99,
+                category: 'Accessories',
+                type: 'Nylon',
+                image: 'images/wristband-1.jpg',
+                images: ['images/wristband-1.jpg'],
+                description: 'Magnetic wristband holds screws, nails, and small metal parts. Adjustable fit.',
+                sizes: ['One Size'],
+                colors: [
+                    { name: 'Black/Orange', hex: '#1a1a1a', image: 'images/wristband-1.jpg' }
+                ],
+                stock: 100
+            },
+            {
+                id: 8,
+                name: 'Gel-Pro Knee Pads',
+                price: 59.99,
+                wholesalePrice: 47.99,
+                category: 'Accessories',
+                type: 'Nylon',
+                image: 'images/kneepads-1.jpg',
+                images: ['images/kneepads-1.jpg'],
+                description: 'Professional knee pads with gel cushioning and hard caps. All-day comfort protection.',
+                sizes: ['S/M', 'L/XL'],
+                colors: [
+                    { name: 'Black', hex: '#1a1a1a', image: 'images/kneepads-1.jpg' }
+                ],
+                stock: 35
+            },
+            {
+                id: 9,
+                name: 'Heritage Tool Roll',
+                price: 69.99,
+                wholesalePrice: 54.99,
+                category: 'Accessories',
+                type: 'Leather',
+                image: 'images/toolroll-1.jpg',
+                images: ['images/toolroll-1.jpg'],
+                description: 'Leather roll-up tool organizer with 8 slots. Perfect for wrenches, screwdrivers, and hand tools.',
+                sizes: ['One Size'],
+                colors: [
+                    { name: 'Tan', hex: '#8b6914', image: 'images/toolroll-1.jpg' }
+                ],
+                stock: 28
+            },
+            {
+                id: 10,
+                name: 'Pro Tool Tote',
+                price: 149.99,
+                wholesalePrice: 119.99,
+                category: 'Accessories',
+                type: 'Leather',
+                image: 'images/toolbag-1.jpg',
+                images: ['images/toolbag-1.jpg'],
+                description: 'Leather tool tote with brass hardware, shoulder strap, and multiple pockets.',
+                sizes: ['One Size'],
+                colors: [
+                    { name: 'Brown', hex: '#5c4033', image: 'images/toolbag-1.jpg' }
+                ],
+                stock: 20
+            },
+            {
+                id: 11,
+                name: 'Iron Hand Work Gloves',
+                price: 34.99,
+                wholesalePrice: 27.99,
+                category: 'Accessories',
+                type: 'Leather',
+                image: 'images/gloves-1.jpg',
+                images: ['images/gloves-1.jpg'],
+                description: 'Heavy-duty leather work gloves with reinforced palms and adjustable wrist strap.',
+                sizes: ['S', 'M', 'L', 'XL'],
+                colors: [
+                    { name: 'Brown/Tan', hex: '#8b7355', image: 'images/gloves-1.jpg' }
+                ],
+                stock: 50
+            },
+            {
+                id: 12,
+                name: 'Complete Tool Rig',
+                price: 299.99,
+                wholesalePrice: 239.99,
+                category: 'Tool Belts',
+                type: 'Leather',
+                image: 'images/rig-1.jpg',
+                images: ['images/rig-1.jpg', 'images/toolbelt-1.jpg'],
+                description: 'Complete tool belt system with suspenders, 10+ pockets, hammer holder, and tape clip.',
+                sizes: ['M', 'L', 'XL', '2XL'],
+                colors: [
+                    { name: 'Dark Brown', hex: '#3d2817', image: 'images/rig-1.jpg' }
+                ],
+                stock: 15
+            }
+        ];
+
+        // State
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let isWholesale = localStorage.getItem('userRole') === 'wholesale';
+        let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+        let selectedProduct = null;
+        let selectedSize = null;
+        let selectedColor = null;
+        let selectedImageIndex = 0;
+
+        // Filter state
+        let currentType = 'All';
+        let currentCategory = 'All';
+
+        // Show page
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+            window.scrollTo(0, 0);
+            lucide.createIcons();
+        }
+
+        // Filter functions
+        function filterByType(type) {
+            currentType = type;
+            document.querySelectorAll('.filter-type').forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.classList.remove('bg-dark-card', 'text-dark-text');
+                    btn.classList.add('bg-primary', 'text-dark-bg');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-dark-bg');
+                    btn.classList.add('bg-dark-card', 'text-dark-text');
+                }
+            });
+            renderProducts();
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-category').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.remove('bg-dark-card', 'text-dark-text');
+                    btn.classList.add('bg-primary', 'text-dark-bg');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-dark-bg');
+                    btn.classList.add('bg-dark-card', 'text-dark-text');
+                }
+            });
+            showPage('products');
+            renderProducts();
+        }
+
+        // Get filtered products
+        function getFilteredProducts() {
+            return products.filter(p => {
+                const typeMatch = currentType === 'All' || p.type === currentType;
+                const categoryMatch = currentCategory === 'All' || p.category === currentCategory;
+                return typeMatch && categoryMatch;
+            });
+        }
+
+        // Render product card
+        function renderProductCard(product) {
+            const price = isWholesale ? product.wholesalePrice : product.price;
+            const originalPrice = isWholesale ? product.price : null;
+            
+            return `
+                <div class="bg-dark-card rounded-lg overflow-hidden border border-dark-border hover:border-primary transition-colors group cursor-pointer" onclick="showProductDetail(${product.id})">
+                    <div class="aspect-square overflow-hidden bg-dark-bg">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs text-primary">${product.type}</span>
+                            <span class="text-xs text-dark-muted">•</span>
+                            <span class="text-xs text-dark-muted">${product.category}</span>
+                        </div>
+                        <h3 class="font-medium text-lg mb-2 group-hover:text-primary transition-colors">${product.name}</h3>
+                        <div class="flex items-center gap-2">
+                            ${originalPrice ? `
+                                <span class="text-xl font-serif text-primary">$${price.toFixed(2)}</span>
+                                <span class="text-sm text-dark-muted line-through">$${originalPrice.toFixed(2)}</span>
+                            ` : `
+                                <span class="text-xl font-serif text-primary">$${price.toFixed(2)}</span>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render products
+        function renderProducts() {
+            const filtered = getFilteredProducts();
+            const grid = document.getElementById('all-products-grid');
+            if (grid) {
+                grid.innerHTML = filtered.map(renderProductCard).join('');
+            }
+        }
+
+        // Render featured products
+        function renderFeaturedProducts() {
+            const featured = products.slice(0, 4);
+            const grid = document.getElementById('featured-products');
+            if (grid) {
+                grid.innerHTML = featured.map(renderProductCard).join('');
+            }
+        }
+
+        // Show product detail
+        function showProductDetail(productId) {
+            selectedProduct = products.find(p => p.id === productId);
+            selectedSize = selectedProduct.sizes[0];
+            selectedColor = selectedProduct.colors[0];
+            selectedImageIndex = 0;
+            
+            const price = isWholesale ? selectedProduct.wholesalePrice : selectedProduct.price;
+            const originalPrice = isWholesale ? selectedProduct.price : null;
+            
+            const content = document.getElementById('product-detail-content');
+            content.innerHTML = `
+                <!-- Image Gallery -->
+                <div>
+                    <div class="aspect-square bg-dark-card rounded-lg overflow-hidden mb-4">
+                        <img id="main-image" src="${selectedProduct.images[selectedImageIndex]}" alt="${selectedProduct.name}" class="w-full h-full object-cover">
+                    </div>
+                    ${selectedProduct.images.length > 1 ? `
+                        <div class="flex gap-2">
+                            ${selectedProduct.images.map((img, i) => `
+                                <button onclick="selectImage(${i})" class="w-20 h-20 rounded-lg overflow-hidden border-2 ${i === 0 ? 'border-primary' : 'border-dark-border'} hover:border-primary transition-colors">
+                                    <img src="${img}" class="w-full h-full object-cover">
+                                </button>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Product Info -->
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm text-primary">${selectedProduct.type}</span>
+                        <span class="text-sm text-dark-muted">•</span>
+                        <span class="text-sm text-dark-muted">${selectedProduct.category}</span>
+                    </div>
+                    <h1 class="text-3xl font-serif mb-4">${selectedProduct.name}</h1>
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl font-serif text-primary">$${price.toFixed(2)}</span>
+                        ${originalPrice ? `<span class="text-lg text-dark-muted line-through">$${originalPrice.toFixed(2)}</span>` : ''}
+                    </div>
+                    <p class="text-dark-muted mb-8">${selectedProduct.description}</p>
+                    
+                    <!-- Color Selection -->
+                    ${selectedProduct.colors.length > 1 ? `
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-3">Color: <span id="selected-color-name" class="text-dark-muted">${selectedColor.name}</span></label>
+                            <div class="flex gap-3">
+                                ${selectedProduct.colors.map((color, i) => `
+                                    <button onclick="selectColor(${i})" class="color-option ${i === 0 ? 'active' : ''}" style="background-color: ${color.hex};" title="${color.name}"></button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Size Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-3">Size: <span id="selected-size-name" class="text-dark-muted">${selectedSize}</span></label>
+                        <div class="flex flex-wrap gap-2">
+                            ${selectedProduct.sizes.map((size, i) => `
+                                <button onclick="selectSize('${size}')" class="size-option ${size === selectedSize ? 'active' : ''}">${size}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Add to Cart -->
+                    <div class="flex gap-4">
+                        <button onclick="addToCartWithOptions()" class="flex-1 btn-primary py-4 text-lg">Add to Cart</button>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="mt-8 pt-8 border-t border-dark-border">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-2 text-dark-muted">
+                                <i data-lucide="truck" class="w-5 h-5 text-primary"></i>
+                                <span class="text-sm">Free shipping over $100</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-dark-muted">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-primary"></i>
+                                <span class="text-sm">Lifetime warranty</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-dark-muted">
+                                <i data-lucide="rotate-ccw" class="w-5 h-5 text-primary"></i>
+                                <span class="text-sm">30-day returns</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-dark-muted">
+                                <i data-lucide="package" class="w-5 h-5 text-primary"></i>
+                                <span class="text-sm">${selectedProduct.stock} in stock</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPage('product-detail');
+            lucide.createIcons();
+        }
+
+        // Select image
+        function selectImage(index) {
+            selectedImageIndex = index;
+            document.getElementById('main-image').src = selectedProduct.images[index];
+            document.querySelectorAll('.color-option').forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+            });
+        }
+
+        // Select color
+        function selectColor(index) {
+            selectedColor = selectedProduct.colors[index];
+            document.getElementById('selected-color-name').textContent = selectedColor.name;
+            document.getElementById('main-image').src = selectedColor.image;
+            document.querySelectorAll('.color-option').forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+            });
+        }
+
+        // Select size
+        function selectSize(size) {
+            selectedSize = size;
+            document.getElementById('selected-size-name').textContent = size;
+            document.querySelectorAll('.size-option').forEach(el => {
+                el.classList.toggle('active', el.textContent === size);
+            });
+        }
+
+        // Add to cart with options
+        function addToCartWithOptions() {
+            if (!selectedProduct) return;
+            
+            const cartItem = {
+                id: selectedProduct.id,
+                name: selectedProduct.name,
+                price: isWholesale ? selectedProduct.wholesalePrice : selectedProduct.price,
+                image: selectedProduct.images[selectedImageIndex],
+                color: selectedColor.name,
+                size: selectedSize,
+                quantity: 1
+            };
+            
+            const existingItem = cart.find(item => 
+                item.id === cartItem.id && 
+                item.color === cartItem.color && 
+                item.size === cartItem.size
+            );
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push(cartItem);
+            }
+            
+            saveCart();
+            updateCartUI();
+            showToast('Added to cart!');
+        }
+
+        // Add to cart (simple)
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const cartItem = {
+                id: product.id,
+                name: product.name,
+                price: isWholesale ? product.wholesalePrice : product.price,
+                image: product.image,
+                color: product.colors[0].name,
+                size: product.sizes[0],
+                quantity: 1
+            };
+            
+            const existingItem = cart.find(item => 
+                item.id === cartItem.id && 
+                item.color === cartItem.color && 
+                item.size === cartItem.size
+            );
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push(cartItem);
+            }
+            
+            saveCart();
+            updateCartUI();
+            showToast('Added to cart!');
+        }
+
+        // Remove from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            updateCartUI();
+        }
+
+        // Update quantity
+        function updateQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                removeFromCart(index);
+            } else {
+                saveCart();
+                updateCartUI();
+            }
+        }
+
+        // Save cart
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Update cart UI
+        function updateCartUI() {
+            const cartCount = document.getElementById('cart-count');
+            const cartItems = document.getElementById('cart-items');
+            const cartFooter = document.getElementById('cart-footer');
+            const cartTotal = document.getElementById('cart-total');
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.classList.remove('hidden');
+                cartFooter.classList.remove('hidden');
+                cartTotal.textContent = '$' + totalPrice.toFixed(2);
+                
+                cartItems.innerHTML = cart.map((item, i) => `
+                    <div class="flex gap-4 mb-4">
+                        <div class="w-20 h-20 bg-dark-bg rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-sm">${item.name}</h3>
+                            <p class="text-xs text-dark-muted">${item.color}, ${item.size}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="flex items-center border border-dark-border rounded">
+                                    <button onclick="updateQuantity(${i}, -1)" class="px-2 py-1 hover:bg-dark-border text-dark-muted">-</button>
+                                    <span class="px-3 text-sm">${item.quantity}</span>
+                                    <button onclick="updateQuantity(${i}, 1)" class="px-2 py-1 hover:bg-dark-border text-dark-muted">+</button>
+                                </div>
+                                <span class="font-medium text-primary">$${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${i})" class="text-dark-muted hover:text-red-500">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                cartCount.classList.add('hidden');
+                cartFooter.classList.add('hidden');
+                cartItems.innerHTML = `
+                    <div class="text-center py-8">
+                        <i data-lucide="shopping-bag" class="w-16 h-16 text-dark-border mx-auto mb-4"></i>
+                        <p class="text-dark-muted">Your cart is empty</p>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        // Toggle cart
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('hidden');
+        }
+
+        // Checkout
+        function checkout() {
+            alert('Checkout would integrate with Stripe here!');
+        }
+
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // OAuth Login functions
+        function loginWithGoogle() {
+            // Simulate Google OAuth
+            const user = {
+                name: 'John Smith',
+                email: 'john@gmail.com',
+                role: 'retail',
+                provider: 'google'
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('userRole', 'retail');
+            currentUser = user;
+            isWholesale = false;
+            updateUserUI();
+            showToast('Signed in with Google!');
+            showPage('home');
+        }
+
+        function loginWithApple() {
+            // Simulate Apple OAuth
+            const user = {
+                name: 'Jane Doe',
+                email: 'jane@icloud.com',
+                role: 'retail',
+                provider: 'apple'
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('userRole', 'retail');
+            currentUser = user;
+            isWholesale = false;
+            updateUserUI();
+            showToast('Signed in with Apple!');
+            showPage('home');
+        }
+
+        function handleEmailLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (email === 'wholesale@toolpro.com' && password === 'password') {
+                const user = { name: 'Wholesale Customer', email: email, role: 'wholesale' };
+                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userRole', 'wholesale');
+                currentUser = user;
+                isWholesale = true;
+                updateUserUI();
+                showToast('Signed in as wholesale!');
+                showPage('home');
+            } else {
+                const user = { name: 'Customer', email: email, role: 'retail' };
+                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userRole', 'retail');
+                currentUser = user;
+                isWholesale = false;
+                updateUserUI();
+                showToast('Signed in!');
+                showPage('home');
+            }
+        }
+
+        function updateUserUI() {
+            const userBtn = document.getElementById('user-btn');
+            if (currentUser) {
+                userBtn.innerHTML = `<span class="text-sm">${currentUser.name}</span>`;
+                userBtn.onclick = logout;
+            } else {
+                userBtn.innerHTML = `<i data-lucide="user" class="w-5 h-5"></i>`;
+                userBtn.onclick = () => showPage('login');
+            }
+            lucide.createIcons();
+            renderProducts();
+            renderFeaturedProducts();
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
+            currentUser = null;
+            isWholesale = false;
+            updateUserUI();
+            showToast('Signed out');
+        }
+
+        // Initialize
+        renderProducts();
+        renderFeaturedProducts();
+        updateCartUI();
+        updateUserUI();
+    </script>
+</body>
+</html>
