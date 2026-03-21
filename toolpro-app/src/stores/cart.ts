@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store'
+import { safeGetItem, safeSetItem } from '../lib/storage'
 
 // Check if we're in a browser environment
 const browser = typeof window !== 'undefined'
@@ -60,18 +61,18 @@ export const cartCount = derived(cart, $cart =>
   $cart.reduce((count, item) => count + item.quantity, 0)
 )
 
-// Persist cart to localStorage
+// Persist cart to localStorage with safe access
 if (browser) {
-  const savedCart = localStorage.getItem('cart')
+  const savedCart = safeGetItem('cart')
   if (savedCart) {
     try {
       cart.init(JSON.parse(savedCart))
     } catch (e) {
-      console.error('Failed to parse cart from localStorage')
+      console.error('Failed to parse cart from storage:', e)
     }
   }
 
   cart.subscribe(value => {
-    localStorage.setItem('cart', JSON.stringify(value))
+    safeSetItem('cart', JSON.stringify(value))
   })
 }

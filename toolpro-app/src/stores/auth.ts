@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store'
+import { safeGetItem, safeSetItem, safeRemoveItem } from '../lib/storage'
 
 // Check if we're in a browser environment
 const browser = typeof window !== 'undefined'
@@ -23,7 +24,7 @@ function createAuthStore() {
     logout: () => {
       set(null)
       if (browser) {
-        localStorage.removeItem('user')
+        safeRemoveItem('user')
       }
     },
     init: (user: User | null) => set(user),
@@ -40,20 +41,20 @@ export const isWholesale = derived(auth, $auth => $auth?.role === 'wholesale')
 export const isAdmin = derived(auth, $auth => $auth?.role === 'admin')
 export const userRole = derived(auth, $auth => $auth?.role || 'retail')
 
-// Persist auth to localStorage
+// Persist auth to localStorage with safe access
 if (browser) {
-  const savedUser = localStorage.getItem('user')
+  const savedUser = safeGetItem('user')
   if (savedUser) {
     try {
       auth.init(JSON.parse(savedUser))
     } catch (e) {
-      console.error('Failed to parse user from localStorage')
+      console.error('Failed to parse user from storage:', e)
     }
   }
 
   auth.subscribe(value => {
     if (value) {
-      localStorage.setItem('user', JSON.stringify(value))
+      safeSetItem('user', JSON.stringify(value))
     }
   })
 }
