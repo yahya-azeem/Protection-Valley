@@ -13,9 +13,13 @@ function isStorageAccessible(): boolean {
   if (!browser) return false
 
   try {
-    const testKey = '__storage_test__'
-    localStorage.setItem(testKey, 'test')
-    localStorage.removeItem(testKey)
+    // Use a simpler check that doesn't trigger tracking prevention warnings
+    // Just check if localStorage exists and is not null
+    if (!window.localStorage) return false
+
+    // Try to access localStorage.length which is less likely to trigger warnings
+    // than setItem in some browsers
+    void window.localStorage.length
     return true
   } catch (e) {
     // Storage is blocked by tracking prevention or quota exceeded
@@ -23,8 +27,16 @@ function isStorageAccessible(): boolean {
   }
 }
 
-// Check storage accessibility once at module load
-const storageAccessible = isStorageAccessible()
+// Don't check storage accessibility at module load to avoid console warnings
+// Instead, check lazily on first access
+let storageAccessible: boolean | null = null
+
+function checkStorageAccess(): boolean {
+  if (storageAccessible === null) {
+    storageAccessible = isStorageAccessible()
+  }
+  return storageAccessible
+}
 
 /**
  * Safely get an item from localStorage
@@ -32,7 +44,7 @@ const storageAccessible = isStorageAccessible()
  * @returns The stored value or null if not accessible/not found
  */
 export function safeGetItem(key: string): string | null {
-  if (!storageAccessible) {
+  if (!checkStorageAccess()) {
     return null
   }
 
@@ -51,7 +63,7 @@ export function safeGetItem(key: string): string | null {
  * @returns true if successful, false otherwise
  */
 export function safeSetItem(key: string, value: string): boolean {
-  if (!storageAccessible) {
+  if (!checkStorageAccess()) {
     return false
   }
 
@@ -70,7 +82,7 @@ export function safeSetItem(key: string, value: string): boolean {
  * @returns true if successful, false otherwise
  */
 export function safeRemoveItem(key: string): boolean {
-  if (!storageAccessible) {
+  if (!checkStorageAccess()) {
     return false
   }
 
@@ -87,5 +99,5 @@ export function safeRemoveItem(key: string): boolean {
  * Check if storage is currently accessible
  */
 export function isStorageAvailable(): boolean {
-  return storageAccessible
+  return checkStorageAccess()
 }
