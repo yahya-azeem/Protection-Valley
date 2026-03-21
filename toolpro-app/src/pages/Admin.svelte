@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { navigate } from '../lib/router'
-  import { isAdmin, isAuthenticated } from '../stores/auth'
+  import { auth, isAdmin, isAuthenticated } from '../stores/auth'
   import { products, type Product } from '../stores/products'
   import { 
     LayoutDashboard, 
