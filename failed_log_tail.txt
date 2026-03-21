@@ -1,0 +1,100 @@
+﻿build-and-deploy	Install and Build	2026-03-21T20:47:03.3382377Z 227:               <form on:submit|preventDefault={handlePaymentSubmit} class="space-y-6">
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3383065Z 228:                 <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3383792Z 229:                   <label class="block text-sm font-medium mb-2">Card Number *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3384405Z                        ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3384867Z 230:                   <div class="relative">
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3385837Z 231:                     <CreditCard class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3387845Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Checkout.svelte:245:18 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3389125Z 243: 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3389429Z 244:                 <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3390302Z 245:                   <label class="block text-sm font-medium mb-2">Cardholder Name *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3390935Z                        ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3391326Z 246:                   <input 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3391811Z 247:                     type="text"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3393490Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Checkout.svelte:256:20 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3394978Z 254:                 <div class="grid grid-cols-2 gap-6">
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3395470Z 255:                   <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3396201Z 256:                     <label class="block text-sm font-medium mb-2">Expiry Date *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3396837Z                          ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3397268Z 257:                     <input 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3397708Z 258:                       type="text"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3399353Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Checkout.svelte:267:20 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3400879Z 265:                   </div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3401256Z 266:                   <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3401907Z 267:                     <label class="block text-sm font-medium mb-2">CVC *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3402482Z                          ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3402881Z 268:                     <input 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3403323Z 269:                       type="text"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3404932Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Contact.svelte:80:18 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3406813Z 78:               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3407354Z 79:                 <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3408046Z 80:                   <label class="block text-sm font-medium mb-2">Your Name *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3408630Z                       ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3409162Z 81:                   <input 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3409786Z 82:                     type="text"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3411436Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Contact.svelte:89:18 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3412732Z 87:                 </div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3413087Z 88:                 <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3413787Z 89:                   <label class="block text-sm font-medium mb-2">Email Address *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3414401Z                       ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3414742Z 90:                   <input 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3415174Z 91:                     type="email"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3416839Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Contact.svelte:100:16 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3418106Z  98: 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3418397Z  99:               <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3419059Z 100:                 <label class="block text-sm font-medium mb-2">Subject *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3419812Z                      ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3420162Z 101:                 <select 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3420657Z 102:                   bind:value={formData.subject}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3422321Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/pages/Contact.svelte:116:16 A11y: A form label must be associated with a control.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3423603Z 114: 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3423889Z 115:               <div>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3424547Z 116:                 <label class="block text-sm font-medium mb-2">Message *</label>
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3425138Z                      ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3425519Z 117:                 <textarea 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.3426033Z 118:                   bind:value={formData.message}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6118709Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/components/CartSidebar.svelte:22:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6122560Z 20: {#if $cartOpen}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6123285Z 21:   <!-- Overlay -->
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6124006Z 22:   <div 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6124497Z       ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6125244Z 23:     class="fixed inset-0 bg-black/50 z-50"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6126071Z 24:     on:click={() => cartOpen.set(false)}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6128017Z 8:47:03 PM [vite-plugin-svelte] /home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/components/CartSidebar.svelte:22:2 A11y: <div> with click handler must have an ARIA role
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6129830Z 20: {#if $cartOpen}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6142548Z 21:   <!-- Overlay -->
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6143952Z 22:   <div 
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6144256Z       ^
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6144694Z 23:     class="fixed inset-0 bg-black/50 z-50"
+build-and-deploy	Install and Build	2026-03-21T20:47:03.6145184Z 24:     on:click={() => cartOpen.set(false)}
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8248536Z [32mΓ£ô[39m 53 modules transformed.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8313003Z [31mx[39m Build failed in 2.06s
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8313852Z [31merror during build:
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8316099Z [31m[vite]: Rollup failed to resolve import "$app/environment" from "/home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/src/stores/cart.ts".
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8318238Z This is most likely unintended because it can break your application at runtime.
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8319973Z If you do want to externalize this module explicitly add it to
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8320683Z `build.rollupOptions.external`[31m
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8321597Z     at viteWarn (file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65855:17)
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8323212Z     at onRollupWarning (file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65887:5)
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8324573Z     at onwarn (file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:65550:7)
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8325746Z     at file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/rollup/dist/es/shared/node-entry.js:20999:13
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8327052Z     at Object.logger [as onLog] (file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/rollup/dist/es/shared/node-entry.js:22972:9)
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8328656Z     at ModuleLoader.handleInvalidResolvedId (file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/rollup/dist/es/shared/node-entry.js:21716:26)
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8330614Z     at file:///home/runner/work/Protection-Valley/Protection-Valley/toolpro-app/node_modules/rollup/dist/es/shared/node-entry.js:21674:26[39m
+build-and-deploy	Install and Build	2026-03-21T20:47:03.8587784Z ##[error]Process completed with exit code 1.
+build-and-deploy	Post Checkout	∩╗┐2026-03-21T20:47:03.8677846Z Post job cleanup.
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9618351Z [command]/usr/bin/git version
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9655907Z git version 2.53.0
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9700475Z Temporarily overriding HOME='/home/runner/work/_temp/9c28b8f3-4311-4dbd-ac3c-6d6cec788643' before making global git config changes
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9701982Z Adding repository directory to the temporary git global config as a safe directory
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9707256Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Protection-Valley/Protection-Valley
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9749870Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build-and-deploy	Post Checkout	2026-03-21T20:47:03.9784800Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0028784Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0050711Z http.https://github.com/.extraheader
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0064350Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0097113Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0333758Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build-and-deploy	Post Checkout	2026-03-21T20:47:04.0369019Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build-and-deploy	Complete job	∩╗┐2026-03-21T20:47:04.0745597Z Cleaning up orphan processes
+build-and-deploy	Complete job	2026-03-21T20:47:04.1078607Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/checkout@v4, actions/setup-node@v4. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
