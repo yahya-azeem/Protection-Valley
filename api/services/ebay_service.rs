@@ -15,7 +15,7 @@ impl EbayService {
 
     /// Fetch products from the eBay Browse API.
     /// Falls back to mock data when credentials are unavailable.
-    pub async fn get_ebay_products(&self) -> Result<Vec<EbayProduct>, String> {
+    pub async fn get_ebay_products(&self) -> Result<Vec<GroupedProduct>, String> {
         // Attempt real eBay API call if credentials are configured
         if let (Some(ref _app_id), Some(ref token)) = (&self.app_id, &self.oauth_token) {
             match self.fetch_from_ebay(token).await {
@@ -26,56 +26,53 @@ impl EbayService {
             }
         }
 
-        // Fallback: mock data matching Protection Valley product line
+        // Fallback: Grouped mock data matching Protection Valley product line
         Ok(vec![
-            EbayProduct {
-                ebay_id: "PV-EBAY-001".to_string(),
-                title: "Heritage Leather Tool Belt – Full Grain".to_string(),
-                price: 189.99,
-                quantity: 25,
-                sku: Some("PV-TB-001".to_string()),
-            },
-            EbayProduct {
-                ebay_id: "PV-EBAY-002".to_string(),
-                title: "Master Craftsman Leather Apron".to_string(),
-                price: 159.99,
-                quantity: 18,
-                sku: Some("PV-APR-001".to_string()),
-            },
-            EbayProduct {
-                ebay_id: "PV-EBAY-003".to_string(),
-                title: "Quick-Clip Leather Tool Pouch".to_string(),
-                price: 49.99,
-                quantity: 60,
-                sku: Some("PV-PCH-001".to_string()),
-            },
-            EbayProduct {
-                ebay_id: "PV-EBAY-004".to_string(),
-                title: "Heavy-Duty Leather Suspenders".to_string(),
-                price: 89.99,
-                quantity: 30,
-                sku: Some("PV-ACC-001".to_string()),
-            },
-            EbayProduct {
-                ebay_id: "PV-EBAY-005".to_string(),
-                title: "Complete Leather Tool Rig System".to_string(),
-                price: 299.99,
-                quantity: 15,
-                sku: Some("PV-TB-003".to_string()),
+            GroupedProduct {
+                model_number: "PV-TB-100".to_string(),
+                name: "Heritage Leather Tool Belt".to_string(),
+                category: "Tool Belts".to_string(),
+                variants: vec![
+                    EbayProduct {
+                        ebay_id: "PV-EB-101".into(),
+                        group_id: Some("PV-TB-100".into()),
+                        title: "Heritage Tool Belt - Black / Medium / Smooth".into(),
+                        price: 189.99,
+                        quantity: 10,
+                        sku: Some("PV-TB-100-B-M".into()),
+                        model_number: Some("PV-TB-100".into()),
+                        color: Some("Black".into()),
+                        size: Some("Medium".into()),
+                        texture: Some("Smooth".into()),
+                        image_url: Some("/images/toolbelt-1.jpg".into()),
+                    },
+                    EbayProduct {
+                        ebay_id: "PV-EB-102".into(),
+                        group_id: Some("PV-TB-100".into()),
+                        title: "Heritage Tool Belt - Brown / Large / Grain".into(),
+                        price: 199.99,
+                        quantity: 5,
+                        sku: Some("PV-TB-100-BR-L".into()),
+                        model_number: Some("PV-TB-100".into()),
+                        color: Some("Brown".into()),
+                        size: Some("Large".into()),
+                        texture: Some("Grain".into()),
+                        image_url: Some("/images/toolbelt-2.jpg".into()),
+                    },
+                ],
             },
         ])
     }
 
-    /// Call the real eBay Browse API to search for seller's items.
-    async fn fetch_from_ebay(&self, token: &str) -> Result<Vec<EbayProduct>, String> {
+    /// Call the real eBay Browse API to search for seller's items and group them.
+    async fn fetch_from_ebay(&self, token: &str) -> Result<Vec<GroupedProduct>, String> {
         let client = reqwest::Client::new();
+        let seller_name = std::env::var("EBAY_SELLER_NAME").unwrap_or_else(|_| "protectionvalley".to_string());
 
-        // eBay Browse API — search for our seller's items
-        let seller_name = std::env::var("EBAY_SELLER_NAME")
-            .unwrap_or_else(|_| "protectionvalley".to_string());
-
+        // Use fieldgroups=ASPECT_REFINEMENTS to get more details if supported, 
+        // but for now we'll parse aspects from item summaries.
         let url = format!(
-            "https://api.ebay.com/buy/browse/v1/item_summary/search?q=tool+belt&filter=sellers:{{{}}}&limit=50",
+            "https://api.ebay.com/buy/browse/v1/item_summary/search?filter=sellers:{{{}}}&limit=100",
             seller_name
         );
 
@@ -83,47 +80,88 @@ impl EbayService {
             .get(&url)
             .header("Authorization", format!("Bearer {}", token))
             .header("X-EBAY-C-MARKETPLACE-ID", "EBAY_US")
-            .header("Content-Type", "application/json")
             .send()
             .await
             .map_err(|e| format!("HTTP error: {}", e))?;
 
         if !response.status().is_success() {
-            let status = response.status();
-            let body = response.text().await.unwrap_or_default();
-            return Err(format!("eBay API returned {}: {}", status, body));
+            return Err(format!("eBay API returned {}", response.status()));
         }
 
-        let body: serde_json::Value = response
-            .json()
-            .await
-            .map_err(|e| format!("JSON parse error: {}", e))?;
+        let body: serde_json::Value = response.json().await.map_err(|e| format!("JSON error: {}", e))?;
+        let items = body["itemSummaries"].as_array().unwrap_or(&vec![]);
 
-        let items = body["itemSummaries"]
-            .as_array()
-            .unwrap_or(&vec![]);
+        let mut ebay_products = Vec::new();
+        for item in items {
+            let title = item["title"].as_str().unwrap_or_default().to_string();
+            let ebay_id = item["itemId"].as_str().unwrap_or_default().to_string();
+            let price = item["price"]["value"].as_str().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.0);
+            let image_url = item["image"]["imageUrl"].as_str().map(|s| s.to_string());
+            
+            // Logic to extract Color, Size, Texture from title or aspects
+            // In a real API, we'd use localizedAspects from the 'item' resource.
+            // For now, we'll implement a helper to parse from title.
+            let (model, color, size, texture) = self.parse_aspects_from_title(&title);
 
-        let products: Vec<EbayProduct> = items
-            .iter()
-            .filter_map(|item| {
-                let ebay_id = item["itemId"].as_str()?.to_string();
-                let title = item["title"].as_str()?.to_string();
-                let price = item["price"]["value"]
-                    .as_str()
-                    .and_then(|v| v.parse::<f64>().ok())
-                    .unwrap_or(0.0);
+            ebay_products.push(EbayProduct {
+                ebay_id,
+                group_id: item["itemGroupId"].as_str().map(|s| s.to_string()),
+                title,
+                price,
+                quantity: 1,
+                sku: item["legacyItemId"].as_str().map(|s| s.to_string()),
+                model_number: Some(model),
+                color,
+                size,
+                texture,
+                image_url,
+            });
+        }
 
-                Some(EbayProduct {
-                    ebay_id,
-                    title,
-                    price,
-                    quantity: 1, // Browse API does not return quantity
-                    sku: item["legacyItemId"].as_str().map(|s| s.to_string()),
-                })
-            })
-            .collect();
+        // Group by Model Number
+        let mut groups: std::collections::HashMap<String, GroupedProduct> = std::collections::HashMap::new();
 
-        Ok(products)
+        for p in ebay_products {
+            let model = p.model_number.clone().unwrap_or_else(|| "UNKNOWN".to_string());
+            let entry = groups.entry(model.clone()).or_insert(GroupedProduct {
+                model_number: model,
+                name: p.title.clone(), // Use first variant title as base name
+                category: "General".to_string(), // Default category
+                variants: Vec::new(),
+            });
+            entry.variants.push(p);
+        }
+
+        Ok(groups.into_values().collect())
+    }
+
+    /// Helper to parse aspects from eBay titles (as a backup to real aspects).
+    fn parse_aspects_from_title(&self, title: &str) -> (String, Option<String>, Option<String>, Option<String>) {
+        let title_lower = title.toLowerCase();
+        
+        // Very basic extraction logic — improved later with regex or real API aspects
+        let color = if title_lower.contains("black") { Some("Black".into()) }
+                    else if title_lower.contains("brown") { Some("Brown".into()) }
+                    else if title_lower.contains("tan") { Some("Tan".into()) }
+                    else { None };
+
+        let size = if title_lower.contains("small") || title_lower.contains(" size s") { Some("Small".into()) }
+                   else if title_lower.contains("medium") || title_lower.contains(" size m") { Some("Medium".into()) }
+                   else if title_lower.contains("large") || title_lower.contains(" size l") { Some("Large".into()) }
+                   else { None };
+
+        let texture = if title_lower.contains("full grain") { Some("Full Grain".into()) }
+                      else if title_lower.contains("top grain") { Some("Top Grain".into()) }
+                      else if title_lower.contains("distressed") { Some("Distressed".into()) }
+                      else { None };
+
+        // Model number extraction (e.g., PV-TB-100)
+        let model = title.split_whitespace()
+            .find(|w| w.starts_with("PV-"))
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| "PV-GENERIC".to_string());
+
+        (model, color, size, texture)
     }
 
     /// Sync eBay inventory into the local product catalog.

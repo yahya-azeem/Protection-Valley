@@ -1,24 +1,16 @@
-/**
- * Protection Valley — Svelte Stores
- * Reactive state management for products, cart, UI, and auth.
- */
-
 import { writable, derived, get } from 'svelte/store';
-import type { Product, CartItem, UserData, ProductColor, SortOption } from './types';
-import { FALLBACK_PRODUCTS } from './data';
+import type { Product, GroupedProduct, CartItem, UserData, SortOption } from './types';
 
 // ─── Products ────────────────────────────────────────────────
-export const products = writable<Product[]>([...FALLBACK_PRODUCTS]);
-export const currentType = writable<string>('All');
+export const products = writable<GroupedProduct[]>([]);
 export const currentCategory = writable<string>('All');
 
 export const filteredProducts = derived(
-  [products, currentType, currentCategory],
-  ([$products, $type, $category]) =>
+  [products, currentCategory],
+  ([$products, $category]) =>
     $products.filter((p) => {
-      const typeMatch = $type === 'All' || p.type === $type;
       const categoryMatch = $category === 'All' || p.category === $category;
-      return typeMatch && categoryMatch;
+      return categoryMatch;
     })
 );
 
@@ -40,7 +32,7 @@ function createCartStore() {
     add(item: CartItem) {
       update((cart) => {
         const existing = cart.find(
-          (c) => c.id === item.id && c.color === item.color && c.size === item.size
+          (c) => c.ebay_id === item.ebay_id
         );
         if (existing) {
           existing.quantity++;
@@ -115,11 +107,12 @@ export function showToast(message: string) {
   toastTimeout = setTimeout(() => toastVisible.set(false), 3000);
 }
 
-// ─── Selected Product ────────────────────────────────────────
-export const selectedProduct = writable<Product | null>(null);
+// ─── Selected Product & Variants ─────────────────────────────
+export const selectedProduct = writable<GroupedProduct | null>(null);
+export const selectedVariant = writable<Product | null>(null);
 export const selectedSize = writable<string>('');
-export const selectedColor = writable<ProductColor | null>(null);
-export const selectedImageIndex = writable<number>(0);
+export const selectedColor = writable<string>('');
+export const selectedTexture = writable<string>('');
 
 // ─── Auth ────────────────────────────────────────────────────
 function createUserStore() {
@@ -155,3 +148,16 @@ export const isWholesale = writable<boolean>(
     ? localStorage.getItem('userRole') === 'wholesale'
     : false
 );
+
+// ─── API Load ────────────────────────────────────────────────
+export async function loadProducts() {
+  try {
+    const res = await fetch('/api/v1/ebay/products');
+    if (res.ok) {
+      const data = await res.json();
+      products.set(data);
+    }
+  } catch (e) {
+    console.warn('Failed to load products from API, staying with fallback');
+  }
+}
