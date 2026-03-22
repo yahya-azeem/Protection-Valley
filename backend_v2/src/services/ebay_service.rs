@@ -138,7 +138,7 @@ impl EbayService {
 
     /// Helper to parse aspects from eBay titles (as a backup to real aspects).
     fn parse_aspects_from_title(&self, title: &str) -> (String, Option<String>, Option<String>, Option<String>) {
-        let title_lower = title.to_lowercase();
+        let title_lower = title.toLowerCase();
         
         // Very basic extraction logic — improved later with regex or real API aspects
         let color = if title_lower.contains("black") { Some("Black".into()) }

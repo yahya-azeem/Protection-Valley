@@ -91,14 +91,3 @@ pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
             .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
     }
 }
-
-pub async fn get_me() -> Result<Response<Body>, Error> {
-    // In a real app, we'd extract the JWT from the Authorization header and validate it.
-    // For now, return a placeholder indicating auth is required.
-    Ok(Response::builder()
-        .status(StatusCode::UNAUTHORIZED)
-        .header("Content-Type", "application/json")
-        .body(Body::from(serde_json::json!({
-            "error": "Authentication required. Please provide a valid token."
-        }).to_string()))?)
-}

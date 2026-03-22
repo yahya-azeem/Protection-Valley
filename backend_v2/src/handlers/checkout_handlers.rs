@@ -1,5 +1,5 @@
 use vercel_runtime::{Body, Response, StatusCode, Error};
-use stripe::{Client, CheckoutSession, CheckoutSessionMode, Currency, CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData};
+use stripe::{Client, checkout, CheckoutSessionMode, Currency, CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData};
 use crate::models::CreateCheckoutSessionRequest;
 use crate::services::product_service::ProductService;
 use std::env;
@@ -15,7 +15,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     for item in req.items {
         if let Ok(Some(product)) = product_service.get_product_by_id(item.product_id).await {
             line_items.push(CreateCheckoutSessionLineItems {
-                quantity: Some(item.quantity as u64),
+                quantity: Some(item.quantity as i64),
                 price_data: Some(CreateCheckoutSessionLineItemsPriceData {
                     currency: Currency::USD,
                     unit_amount: Some((product.price * 100.0) as i64),
@@ -40,7 +40,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
         ..Default::default()
     };
 
-    match CheckoutSession::create(&client, params).await {
+    match checkout::Session::create(&client, &params).await {
         Ok(session) => {
             if let Some(url) = session.url {
                 Ok(Response::builder()
