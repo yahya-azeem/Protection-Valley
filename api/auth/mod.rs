@@ -1,3 +1,5 @@
+pub mod google;
+
 pub fn generate_jwt(user_id: i64, email: &str) -> Result<String, jsonwebtoken::errors::Error> {
     use jsonwebtoken::{encode, EncodingKey, Header};
     use serde::{Deserialize, Serialize};

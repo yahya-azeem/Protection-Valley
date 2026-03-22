@@ -90,6 +90,31 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
                 method_not_allowed()
             }
         }
+        "/api/v1/auth/google/login" => {
+            if method == "GET" {
+                auth_handlers::google_login().await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/google/callback" => {
+            if method == "GET" {
+                let query = req.uri().query().unwrap_or("");
+                let code = query.split('&')
+                    .find(|s| s.starts_with("code="))
+                    .map(|s| s["code=".len()..].to_string())
+                    .unwrap_or_default();
+                
+                if code.is_empty() {
+                    return Ok(Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from("Missing code parameter"))?);
+                }
+                auth_handlers::google_callback(code).await
+            } else {
+                method_not_allowed()
+            }
+        }
         "/api/v1/auth/me" => {
             if method == "GET" {
                 auth_handlers::get_me().await

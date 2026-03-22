@@ -1,84 +1,97 @@
 <script lang="ts">
-  import { PackageX } from 'lucide-svelte';
+  import { PackageX, SlidersHorizontal, ChevronRight, User } from 'lucide-svelte';
   import ProductCard from '$lib/components/ProductCard.svelte';
-  import { filteredProducts, currentCategory } from '$lib/stores';
+  import { filteredProducts, currentCategory, isWholesale, showPage } from '$lib/stores';
   import type { SortOption } from '$lib/types';
 
   let sortBy = $state<SortOption>('featured');
-  const categories = ['All', 'Tool Belts', 'Pouches', 'Aprons', 'Accessories'];
+  const categories = ['All', 'Tool Belts', 'Pouches', 'Aprons', 'Rigs'];
 
-  let sorted = $derived.by(() => {
-    let items = [...$filteredProducts];
-    if (sortBy === 'price-low') items.sort((a, b) => (a.variants[0]?.price || 0) - (b.variants[0]?.price || 0));
-    else if (sortBy === 'price-high') items.sort((a, b) => (b.variants[0]?.price || 0) - (a.variants[0]?.price || 0));
-    else if (sortBy === 'name') items.sort((a, b) => a.name.localeCompare(b.name));
-    return items;
-  });
-
-  function clearFilters() { currentCategory.set('All'); }
+  function setCategory(cat: string) {
+    currentCategory.set(cat);
+  }
 </script>
 
-<div class="bg-[#0a0a0a] min-h-screen">
-  <div class="bg-dark-card border-b border-dark-border">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 class="text-4xl font-serif mb-2">Full Catalog</h1>
-          <p class="text-dark-muted">Browse our complete collection of premium workgear</p>
-        </div>
-        <div class="flex items-center gap-2 text-sm text-dark-muted">
-          <span>{sorted.length}</span> products
-        </div>
-      </div>
+<div class="bg-black min-h-screen">
+  <!-- Secondary Black Category Bar -->
+  <div class="bg-dark-surface border-b border-white/5 sticky top-20 z-40 overflow-x-auto scrollbar-hide py-6">
+    <div class="max-w-7xl mx-auto px-4 flex items-center space-x-12">
+      {#each categories as cat}
+        <button 
+          onclick={() => setCategory(cat)}
+          class="text-[0.6rem] font-bold uppercase tracking-[0.5em] transition-lux whitespace-nowrap
+            {$currentCategory === cat ? 'text-primary' : 'text-zinc-500 hover:text-white'}"
+        >
+          {cat}
+        </button>
+      {/each}
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Filters -->
-    <div class="bg-dark-card rounded-lg p-6 mb-8 border border-dark-border">
-      <div class="flex flex-col lg:flex-row gap-6">
-        <div class="flex-1">
-          <label class="block text-sm font-medium mb-3 text-dark-muted">Category</label>
-          <div class="flex flex-wrap gap-2">
-            {#each categories as cat}
-              <button
-                onclick={() => currentCategory.set(cat)}
-                class="px-4 py-2 rounded-full text-sm font-medium transition-colors {$currentCategory === cat ? 'bg-primary text-[#0a0a0a]' : 'bg-[#0a0a0a] border border-dark-border text-dark-text hover:border-primary'}"
-              >{cat}</button>
-            {/each}
-          </div>
+  <div class="max-w-7xl mx-auto px-4 section-padding">
+    <!-- Clean Header (No "Arsenal") -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-32 gap-12">
+      <div class="max-w-xl">
+        <h1 class="text-7xl font-serif text-white mb-8 tracking-tight">Collection</h1>
+        <p class="text-zinc-500 text-lg font-light leading-relaxed font-serif italic pb-2 border-b border-white/5">
+          { $isWholesale ? 'Wholesale Account Active // All unit rates adjusted for bulk procurement.' : 'Handcrafted workgear for the modern professional.' }
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-8">
+        <div class="flex items-center space-x-4 text-[0.6rem] font-bold uppercase tracking-[0.4em] text-zinc-600">
+          <SlidersHorizontal class="w-4 h-4" />
+          <span>Sort By</span>
         </div>
-        <div>
-          <label for="sort-select" class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label>
-          <select id="sort-select" bind:value={sortBy} class="px-4 py-2 bg-[#0a0a0a] border border-dark-border rounded-lg text-dark-text focus:border-primary focus:outline-none">
-            <option value="featured">Featured</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="name">Name: A-Z</option>
-          </select>
-        </div>
+        <select 
+          bind:value={sortBy}
+          class="bg-transparent border-b border-white/10 text-[0.65rem] font-bold uppercase tracking-[0.3em] text-white py-2 focus:border-primary outline-none cursor-pointer transition-lux"
+        >
+          <option value="featured">Featured First</option>
+          <option value="price-low">Price Low</option>
+          <option value="price-high">Price High</option>
+        </select>
       </div>
     </div>
 
-    {#if $currentCategory !== 'All'}
-      <div class="flex flex-wrap gap-2 mb-6">
-        <span class="text-sm text-dark-muted">Active filters:</span>
-        <button onclick={clearFilters} class="text-sm text-primary hover:underline">Clear all</button>
+    <!-- Wholesale Identity Banner (Elevated Shade) -->
+    {#if $isWholesale}
+      <div class="mb-24 bg-dark-elevated border border-white/5 p-12 flex flex-col md:flex-row items-center justify-between gap-12 rounded-sm shadow-xl">
+        <div class="flex items-center gap-10">
+          <div class="w-16 h-16 bg-primary/10 flex items-center justify-center rounded-sm">
+            <User class="w-8 h-8 text-primary" />
+          </div>
+          <div>
+            <h3 class="text-3xl font-serif text-primary italic mb-2">Wholesale Enabled</h3>
+            <p class="text-[0.65rem] font-bold uppercase tracking-[0.4em] text-zinc-500">Tier-1 bulk discount applied across entire catalog</p>
+          </div>
+        </div>
+        <button 
+          onclick={() => showPage('contact')}
+          class="text-[0.65rem] font-bold uppercase tracking-[0.6em] text-white border border-white/20 px-12 py-5 hover:bg-white hover:text-black transition-lux"
+        >
+          INQUIRY
+        </button>
       </div>
     {/if}
 
-    {#if sorted.length === 0}
-      <div class="text-center py-16">
-        <PackageX class="w-16 h-16 text-dark-border mx-auto mb-4" />
-        <h3 class="text-xl font-medium mb-2">No products found</h3>
-        <p class="text-dark-muted mb-4">Try adjusting your filters</p>
-        <button onclick={clearFilters} class="btn-primary">Clear Filters</button>
-      </div>
-    {:else}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {#each sorted as product (product.model_number)}
+    <!-- Product Grid -->
+    {#if $filteredProducts.length > 0}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
+        {#each $filteredProducts as product (product.model_number || product.name)}
           <ProductCard {product} />
         {/each}
+      </div>
+    {:else}
+      <div class="flex flex-col items-center justify-center py-48 bg-dark-surface border border-white/5 rounded-sm">
+        <PackageX class="w-16 h-16 text-zinc-800 mb-8" />
+        <h3 class="text-2xl font-serif italic text-zinc-600">No matches found</h3>
+        <button 
+          onclick={() => setCategory('All')} 
+          class="mt-10 text-[0.6rem] font-bold uppercase tracking-[0.5em] text-primary hover:text-white transition-lux"
+        >
+          RESET
+        </button>
       </div>
     {/if}
   </div>
