@@ -1,4 +1,4 @@
-use crate::models::{EbayProduct, SyncResponse};
+use crate::models::{EbayProduct, SyncResponse, GroupedProduct};
 
 pub struct EbayService {
     app_id: Option<String>,
@@ -174,7 +174,7 @@ impl EbayService {
 
         for product in &ebay_products {
             // In a real implementation: upsert into database
-            if product.sku.is_some() {
+            if !product.variants.is_empty() {
                 updated += 1;
             } else {
                 created += 1;

@@ -1,6 +1,7 @@
 use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{LoginRequest, RegisterRequest};
 use crate::services::auth_service::AuthService;
+use chrono;
 
 pub async fn login(req: LoginRequest) -> Result<Response<Body>, Error> {
     let service = AuthService::new();

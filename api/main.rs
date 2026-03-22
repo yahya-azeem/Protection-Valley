@@ -1,7 +1,7 @@
 use vercel_runtime::{run, Body, Error, Request, Response, StatusCode};
 use serde_json::json;
 
-use toolpro_api::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers};
+use toolpro_api::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers};
 use toolpro_api::models;
 
 #[tokio::main]
@@ -114,6 +114,14 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
         "/api/v1/auth/me" => {
             if method == "GET" {
                 auth_handlers::get_me().await
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/checkout/create-session" => {
+            if method == "POST" {
+                let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(req.body())?;
+                checkout_handlers::create_checkout_session(body).await
             } else {
                 method_not_allowed()
             }
