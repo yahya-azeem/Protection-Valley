@@ -1,0 +1,10 @@
+target/
+node_modules/
+.git/
+backend_v2/target/
+*.log
+dev_server_log.txt
+full_log.txt
+cargo_err*.txt
+err.log
+tmp_impeccable/
