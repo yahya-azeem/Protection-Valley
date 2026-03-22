@@ -14,6 +14,11 @@ pub struct Product {
     pub stock: i32,
     pub sku: String,
     pub ebay_id: Option<String>,
+    pub model_number: String,
+    pub color: Option<String>,
+    pub size: Option<String>,
+    pub texture: Option<String>,
+    pub images: Vec<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -29,6 +34,10 @@ pub struct CreateProductRequest {
     pub stock: i32,
     pub sku: String,
     pub ebay_id: Option<String>,
+    pub model_number: String,
+    pub color: Option<String>,
+    pub size: Option<String>,
+    pub texture: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -153,10 +162,24 @@ pub struct AuthResponse {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EbayProduct {
     pub ebay_id: String,
+    pub group_id: Option<String>,
     pub title: String,
     pub price: f64,
     pub quantity: i32,
     pub sku: Option<String>,
+    pub model_number: Option<String>,
+    pub color: Option<String>,
+    pub size: Option<String>,
+    pub texture: Option<String>,
+    pub image_url: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GroupedProduct {
+    pub model_number: String,
+    pub name: String,
+    pub category: String,
+    pub variants: Vec<EbayProduct>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

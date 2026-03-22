@@ -1,7 +1,7 @@
-import { s as sanitize_props, a as spread_props, b as slot, c as attr, d as escape_html, h as derived, f as store_get, u as unsubscribe_stores, k as attr_style, e as ensure_array_like, g as stringify, i as attr_class, l as head } from "../../chunks/root.js";
+import { s as sanitize_props, a as spread_props, b as slot, c as attr, d as escape_html, h as derived, k as attr_style, e as ensure_array_like, g as stringify, f as store_get, u as unsubscribe_stores, i as attr_class, l as head } from "../../chunks/root.js";
 import "../../chunks/index.js";
 import "@sveltejs/kit/internal/server";
-import { I as Icon, i as isWholesale, p as products, g as currentType, h as currentCategory, j as filteredProducts, k as selectedColor, l as selectedImageIndex, m as selectedSize, n as selectedProduct, o as currentPage } from "../../chunks/stores.js";
+import { I as Icon, p as products, g as currentCategory, h as filteredProducts, i as selectedColor, j as selectedSize, k as selectedTexture, l as selectedProduct, m as currentPage } from "../../chunks/stores.js";
 import { b as base } from "../../chunks/server.js";
 import "clsx";
 function Arrow_left($$renderer, $$props) {
@@ -673,19 +673,10 @@ function Users($$renderer, $$props) {
 }
 function ProductCard($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
-    var $$store_subs;
     let { product } = $$props;
-    let price = derived(() => store_get($$store_subs ??= {}, "$isWholesale", isWholesale) ? product.wholesalePrice : product.price);
-    let originalPrice = derived(() => store_get($$store_subs ??= {}, "$isWholesale", isWholesale) ? product.price : null);
-    $$renderer2.push(`<button class="bg-dark-card rounded-lg overflow-hidden border border-dark-border hover:border-primary transition-colors group cursor-pointer text-left w-full"><div class="aspect-square overflow-hidden bg-dark-bg"><img${attr("src", product.image)}${attr("alt", product.name)} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/></div> <div class="p-4"><div class="flex items-center gap-2 mb-2"><span class="text-xs text-primary">${escape_html(product.type)}</span> <span class="text-xs text-dark-muted">•</span> <span class="text-xs text-dark-muted">${escape_html(product.category)}</span></div> <h3 class="font-medium text-lg mb-2 group-hover:text-primary transition-colors">${escape_html(product.name)}</h3> <div class="flex items-center gap-2"><span class="text-xl font-serif text-primary">$${escape_html(price().toFixed(2))}</span> `);
-    if (originalPrice()) {
-      $$renderer2.push("<!--[0-->");
-      $$renderer2.push(`<span class="text-sm text-dark-muted line-through">$${escape_html(originalPrice().toFixed(2))}</span>`);
-    } else {
-      $$renderer2.push("<!--[-1-->");
-    }
-    $$renderer2.push(`<!--]--></div></div></button>`);
-    if ($$store_subs) unsubscribe_stores($$store_subs);
+    let displayVariant = derived(() => product.variants[0]);
+    let price = derived(() => displayVariant()?.price || 0);
+    $$renderer2.push(`<button class="bg-dark-card rounded-lg overflow-hidden border border-dark-border hover:border-primary transition-colors group cursor-pointer text-left w-full"><div class="aspect-square overflow-hidden bg-dark-bg"><img${attr("src", displayVariant()?.image_url || "/images/placeholder.jpg")}${attr("alt", product.name)} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/></div> <div class="p-4"><div class="flex items-center gap-2 mb-2"><span class="text-xs text-primary">${escape_html(product.model_number)}</span> <span class="text-xs text-dark-muted">•</span> <span class="text-xs text-dark-muted">${escape_html(product.category)}</span></div> <h3 class="font-medium text-lg mb-2 group-hover:text-primary transition-colors">${escape_html(product.name)}</h3> <div class="flex items-center gap-2"><span class="text-xl font-serif text-primary">$${escape_html(price().toFixed(2))}</span> <span class="text-xs text-dark-muted">${escape_html(product.variants.length)} variations</span></div></div></button>`);
   });
 }
 function Home($$renderer, $$props) {
@@ -721,7 +712,6 @@ function Catalog($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     var $$store_subs;
     let sortBy = "featured";
-    const types = ["All", "Leather", "Canvas", "Nylon"];
     const categories = ["All", "Tool Belts", "Pouches", "Aprons", "Accessories"];
     let sorted = derived(() => {
       let items = [
@@ -729,21 +719,16 @@ function Catalog($$renderer, $$props) {
       ];
       return items;
     });
-    $$renderer2.push(`<div class="bg-[#0a0a0a] min-h-screen"><div class="bg-dark-card border-b border-dark-border"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"><div><h1 class="text-4xl font-serif mb-2">Full Catalog</h1> <p class="text-dark-muted">Browse our complete collection of premium workgear</p></div> <div class="flex items-center gap-2 text-sm text-dark-muted"><span>${escape_html(sorted().length)}</span> products</div></div></div></div> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="bg-dark-card rounded-lg p-6 mb-8 border border-dark-border"><div class="flex flex-col lg:flex-row gap-6"><div class="flex-1"><label class="block text-sm font-medium mb-3 text-dark-muted">Material Type</label> <div class="flex flex-wrap gap-2"><!--[-->`);
-    const each_array = ensure_array_like(types);
+    $$renderer2.push(`<div class="bg-[#0a0a0a] min-h-screen"><div class="bg-dark-card border-b border-dark-border"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"><div><h1 class="text-4xl font-serif mb-2">Full Catalog</h1> <p class="text-dark-muted">Browse our complete collection of premium workgear</p></div> <div class="flex items-center gap-2 text-sm text-dark-muted"><span>${escape_html(sorted().length)}</span> products</div></div></div></div> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="bg-dark-card rounded-lg p-6 mb-8 border border-dark-border"><div class="flex flex-col lg:flex-row gap-6"><div class="flex-1"><label class="block text-sm font-medium mb-3 text-dark-muted">Category</label> <div class="flex flex-wrap gap-2"><!--[-->`);
+    const each_array = ensure_array_like(categories);
     for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
-      let type = each_array[$$index];
-      $$renderer2.push(`<button${attr_class(`px-4 py-2 rounded-full text-sm font-medium transition-colors ${stringify(store_get($$store_subs ??= {}, "$currentType", currentType) === type ? "bg-primary text-[#0a0a0a]" : "bg-[#0a0a0a] border border-dark-border text-dark-text hover:border-primary")}`)}>${escape_html(type)}</button>`);
-    }
-    $$renderer2.push(`<!--]--></div></div> <div class="flex-1"><label class="block text-sm font-medium mb-3 text-dark-muted">Category</label> <div class="flex flex-wrap gap-2"><!--[-->`);
-    const each_array_1 = ensure_array_like(categories);
-    for (let $$index_1 = 0, $$length = each_array_1.length; $$index_1 < $$length; $$index_1++) {
-      let cat = each_array_1[$$index_1];
+      let cat = each_array[$$index];
       $$renderer2.push(`<button${attr_class(`px-4 py-2 rounded-full text-sm font-medium transition-colors ${stringify(store_get($$store_subs ??= {}, "$currentCategory", currentCategory) === cat ? "bg-primary text-[#0a0a0a]" : "bg-[#0a0a0a] border border-dark-border text-dark-text hover:border-primary")}`)}>${escape_html(cat)}</button>`);
     }
-    $$renderer2.push(`<!--]--></div></div> <div><label class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label> `);
+    $$renderer2.push(`<!--]--></div></div> <div><label for="sort-select" class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label> `);
     $$renderer2.select(
       {
+        id: "sort-select",
         value: sortBy,
         class: "px-4 py-2 bg-[#0a0a0a] border border-dark-border rounded-lg text-dark-text focus:border-primary focus:outline-none"
       },
@@ -763,7 +748,7 @@ function Catalog($$renderer, $$props) {
       }
     );
     $$renderer2.push(`</div></div></div> `);
-    if (store_get($$store_subs ??= {}, "$currentType", currentType) !== "All" || store_get($$store_subs ??= {}, "$currentCategory", currentCategory) !== "All") {
+    if (store_get($$store_subs ??= {}, "$currentCategory", currentCategory) !== "All") {
       $$renderer2.push("<!--[0-->");
       $$renderer2.push(`<div class="flex flex-wrap gap-2 mb-6"><span class="text-sm text-dark-muted">Active filters:</span> <button class="text-sm text-primary hover:underline">Clear all</button></div>`);
     } else {
@@ -778,9 +763,9 @@ function Catalog($$renderer, $$props) {
     } else {
       $$renderer2.push("<!--[-1-->");
       $$renderer2.push(`<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"><!--[-->`);
-      const each_array_2 = ensure_array_like(sorted());
-      for (let $$index_2 = 0, $$length = each_array_2.length; $$index_2 < $$length; $$index_2++) {
-        let product = each_array_2[$$index_2];
+      const each_array_1 = ensure_array_like(sorted());
+      for (let $$index_1 = 0, $$length = each_array_1.length; $$index_1 < $$length; $$index_1++) {
+        let product = each_array_1[$$index_1];
         ProductCard($$renderer2, { product });
       }
       $$renderer2.push(`<!--]--></div>`);
@@ -793,60 +778,73 @@ function ProductDetail($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     var $$store_subs;
     let sp = derived(() => store_get($$store_subs ??= {}, "$selectedProduct", selectedProduct));
-    let price = derived(() => sp() ? store_get($$store_subs ??= {}, "$isWholesale", isWholesale) ? sp().wholesalePrice : sp().price : 0);
-    let originalPrice = derived(() => sp() && store_get($$store_subs ??= {}, "$isWholesale", isWholesale) ? sp().price : null);
+    let colors = derived(() => Array.from(new Set(sp()?.variants.map((v) => v.color).filter(Boolean))));
+    let sizes = derived(() => Array.from(new Set(sp()?.variants.map((v) => v.size).filter(Boolean))));
+    let textures = derived(() => Array.from(new Set(sp()?.variants.map((v) => v.texture).filter(Boolean))));
+    let currentVariant = derived(() => {
+      if (!sp()) return null;
+      return sp().variants.find((v) => (!store_get($$store_subs ??= {}, "$selectedColor", selectedColor) || v.color === store_get($$store_subs ??= {}, "$selectedColor", selectedColor)) && (!store_get($$store_subs ??= {}, "$selectedSize", selectedSize) || v.size === store_get($$store_subs ??= {}, "$selectedSize", selectedSize)) && (!store_get($$store_subs ??= {}, "$selectedTexture", selectedTexture) || v.texture === store_get($$store_subs ??= {}, "$selectedTexture", selectedTexture))) || sp().variants[0];
+    });
     if (sp()) {
       $$renderer2.push("<!--[0-->");
       $$renderer2.push(`<div class="bg-[#0a0a0a] min-h-screen"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><button class="flex items-center text-dark-muted hover:text-primary mb-6">`);
       Arrow_left($$renderer2, { class: "w-4 h-4 mr-2" });
-      $$renderer2.push(`<!----> Back</button> <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"><div><div class="aspect-square bg-dark-card rounded-lg overflow-hidden mb-4 border border-dark-border"><img${attr("src", store_get($$store_subs ??= {}, "$selectedColor", selectedColor)?.image || sp().images[store_get($$store_subs ??= {}, "$selectedImageIndex", selectedImageIndex)])}${attr("alt", sp().name)} class="w-full h-full object-cover"/></div> `);
-      if (sp().images.length > 1) {
+      $$renderer2.push(`<!----> Back</button> <div class="grid grid-cols-1 lg:grid-cols-2 gap-12"><div><div class="aspect-square bg-dark-card rounded-lg overflow-hidden mb-4 border border-dark-border"><img${attr("src", currentVariant()?.image_url || "/images/placeholder.jpg")}${attr("alt", sp().name)} class="w-full h-full object-cover"/></div></div> <div><div class="flex items-center gap-2 mb-2"><span class="text-sm text-primary">${escape_html(sp().model_number)}</span> <span class="text-sm text-dark-muted">•</span> <span class="text-sm text-dark-muted">${escape_html(sp().category)}</span></div> <h1 class="text-3xl font-serif mb-4">${escape_html(sp().name)}</h1> <div class="flex items-center gap-3 mb-6"><span class="text-3xl font-serif text-primary">$${escape_html((currentVariant()?.price || 0).toFixed(2))}</span></div> `);
+      if (colors().length > 0) {
         $$renderer2.push("<!--[0-->");
-        $$renderer2.push(`<div class="flex gap-2"><!--[-->`);
-        const each_array = ensure_array_like(sp().images);
-        for (let i = 0, $$length = each_array.length; i < $$length; i++) {
-          let img = each_array[i];
-          $$renderer2.push(`<button${attr_class(`w-20 h-20 rounded-lg overflow-hidden border-2 ${stringify(i === store_get($$store_subs ??= {}, "$selectedImageIndex", selectedImageIndex) ? "border-primary" : "border-dark-border")} hover:border-primary transition-colors`)}><img${attr("src", img)} class="w-full h-full object-cover" alt=""/></button>`);
-        }
-        $$renderer2.push(`<!--]--></div>`);
-      } else {
-        $$renderer2.push("<!--[-1-->");
-      }
-      $$renderer2.push(`<!--]--></div> <div><div class="flex items-center gap-2 mb-2"><span class="text-sm text-primary">${escape_html(sp().type)}</span> <span class="text-sm text-dark-muted">•</span> <span class="text-sm text-dark-muted">${escape_html(sp().category)}</span></div> <h1 class="text-3xl font-serif mb-4">${escape_html(sp().name)}</h1> <div class="flex items-center gap-3 mb-6"><span class="text-3xl font-serif text-primary">$${escape_html(price().toFixed(2))}</span> `);
-      if (originalPrice()) {
-        $$renderer2.push("<!--[0-->");
-        $$renderer2.push(`<span class="text-lg text-dark-muted line-through">$${escape_html(originalPrice().toFixed(2))}</span>`);
-      } else {
-        $$renderer2.push("<!--[-1-->");
-      }
-      $$renderer2.push(`<!--]--></div> <p class="text-dark-muted mb-8">${escape_html(sp().description)}</p> `);
-      if (sp().colors.length > 1) {
-        $$renderer2.push("<!--[0-->");
-        $$renderer2.push(`<div class="mb-6"><label class="block text-sm font-medium mb-3">Color: <span class="text-dark-muted">${escape_html(store_get($$store_subs ??= {}, "$selectedColor", selectedColor)?.name)}</span></label> <div class="flex gap-3"><!--[-->`);
-        const each_array_1 = ensure_array_like(sp().colors);
-        for (let i = 0, $$length = each_array_1.length; i < $$length; i++) {
-          let color = each_array_1[i];
-          $$renderer2.push(`<button${attr_class(`color-option ${stringify(store_get($$store_subs ??= {}, "$selectedColor", selectedColor)?.name === color.name ? "active" : "")}`)}${attr_style(`background-color: ${stringify(color.hex)};`)}${attr("title", color.name)}></button>`);
+        $$renderer2.push(`<div class="mb-6"><label class="block text-sm font-medium mb-3">Color: <span class="text-dark-muted">${escape_html(store_get($$store_subs ??= {}, "$selectedColor", selectedColor))}</span></label> <div class="flex flex-wrap gap-2"><!--[-->`);
+        const each_array = ensure_array_like(colors());
+        for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
+          let color = each_array[$$index];
+          $$renderer2.push(`<button${attr_class(`px-4 py-2 rounded border ${stringify(store_get($$store_subs ??= {}, "$selectedColor", selectedColor) === color ? "bg-primary text-black border-primary" : "bg-[#0a0a0a] border-dark-border text-dark-text hover:border-primary")}`)}>${escape_html(color)}</button>`);
         }
         $$renderer2.push(`<!--]--></div></div>`);
       } else {
         $$renderer2.push("<!--[-1-->");
       }
-      $$renderer2.push(`<!--]--> <div class="mb-6"><label class="block text-sm font-medium mb-3">Size: <span class="text-dark-muted">${escape_html(store_get($$store_subs ??= {}, "$selectedSize", selectedSize))}</span></label> <div class="flex flex-wrap gap-2"><!--[-->`);
-      const each_array_2 = ensure_array_like(sp().sizes);
-      for (let $$index_2 = 0, $$length = each_array_2.length; $$index_2 < $$length; $$index_2++) {
-        let size = each_array_2[$$index_2];
-        $$renderer2.push(`<button${attr_class(`size-option ${stringify(store_get($$store_subs ??= {}, "$selectedSize", selectedSize) === size ? "active" : "")}`)}>${escape_html(size)}</button>`);
+      $$renderer2.push(`<!--]--> `);
+      if (sizes().length > 0) {
+        $$renderer2.push("<!--[0-->");
+        $$renderer2.push(`<div class="mb-6"><label class="block text-sm font-medium mb-3">Size: <span class="text-dark-muted">${escape_html(store_get($$store_subs ??= {}, "$selectedSize", selectedSize))}</span></label> <div class="flex flex-wrap gap-2"><!--[-->`);
+        const each_array_1 = ensure_array_like(sizes());
+        for (let $$index_1 = 0, $$length = each_array_1.length; $$index_1 < $$length; $$index_1++) {
+          let size = each_array_1[$$index_1];
+          $$renderer2.push(`<button${attr_class(`px-3 py-1 rounded border ${stringify(store_get($$store_subs ??= {}, "$selectedSize", selectedSize) === size ? "bg-primary text-black border-primary" : "bg-[#0a0a0a] border-dark-border text-dark-text hover:border-primary")}`)}>${escape_html(size)}</button>`);
+        }
+        $$renderer2.push(`<!--]--></div></div>`);
+      } else {
+        $$renderer2.push("<!--[-1-->");
       }
-      $$renderer2.push(`<!--]--></div></div> <div class="flex gap-4"><button class="flex-1 btn-primary py-4 text-lg">Add to Cart</button></div> <div class="mt-8 pt-8 border-t border-dark-border"><div class="grid grid-cols-2 gap-4"><div class="flex items-center gap-2 text-dark-muted">`);
+      $$renderer2.push(`<!--]--> `);
+      if (textures().length > 0) {
+        $$renderer2.push("<!--[0-->");
+        $$renderer2.push(`<div class="mb-6"><label class="block text-sm font-medium mb-3">Texture: <span class="text-dark-muted">${escape_html(store_get($$store_subs ??= {}, "$selectedTexture", selectedTexture))}</span></label> <div class="flex flex-wrap gap-2"><!--[-->`);
+        const each_array_2 = ensure_array_like(textures());
+        for (let $$index_2 = 0, $$length = each_array_2.length; $$index_2 < $$length; $$index_2++) {
+          let texture = each_array_2[$$index_2];
+          $$renderer2.push(`<button${attr_class(`px-4 py-2 rounded border ${stringify(store_get($$store_subs ??= {}, "$selectedTexture", selectedTexture) === texture ? "bg-primary text-black border-primary" : "bg-[#0a0a0a] border-dark-border text-dark-text hover:border-primary")}`)}>${escape_html(texture)}</button>`);
+        }
+        $$renderer2.push(`<!--]--></div></div>`);
+      } else {
+        $$renderer2.push("<!--[-1-->");
+      }
+      $$renderer2.push(`<!--]--> <div class="flex gap-4"><button${attr("disabled", !currentVariant(), true)} class="flex-1 btn-primary py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed">`);
+      if (currentVariant()) {
+        $$renderer2.push("<!--[0-->");
+        $$renderer2.push(`Add to Cart`);
+      } else {
+        $$renderer2.push("<!--[-1-->");
+        $$renderer2.push(`Select Options`);
+      }
+      $$renderer2.push(`<!--]--></button></div> <div class="mt-8 pt-8 border-t border-dark-border"><div class="grid grid-cols-2 gap-4"><div class="flex items-center gap-2 text-dark-muted">`);
       Truck($$renderer2, { class: "w-5 h-5 text-primary" });
-      $$renderer2.push(`<!----><span class="text-sm">Free shipping over $100</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
+      $$renderer2.push(`<!----><span class="text-sm">Expedited Shipping</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
       Shield_check($$renderer2, { class: "w-5 h-5 text-primary" });
-      $$renderer2.push(`<!----><span class="text-sm">Lifetime warranty</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
+      $$renderer2.push(`<!----><span class="text-sm">Official Warranty</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
       Rotate_ccw($$renderer2, { class: "w-5 h-5 text-primary" });
-      $$renderer2.push(`<!----><span class="text-sm">30-day returns</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
+      $$renderer2.push(`<!----><span class="text-sm">Hassle-free Returns</span></div> <div class="flex items-center gap-2 text-dark-muted">`);
       Package($$renderer2, { class: "w-5 h-5 text-primary" });
-      $$renderer2.push(`<!----><span class="text-sm">${escape_html(sp().stock)} in stock</span></div></div></div></div></div></div></div>`);
+      $$renderer2.push(`<!----><span class="text-sm">${escape_html(currentVariant()?.quantity || 0)} left in stock</span></div></div></div></div></div></div></div>`);
     } else {
       $$renderer2.push("<!--[-1-->");
     }

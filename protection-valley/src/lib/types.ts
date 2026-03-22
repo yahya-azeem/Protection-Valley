@@ -5,29 +5,36 @@ export interface ProductColor {
 }
 
 export interface Product {
-  id: number;
+  id: number | string;
+  ebay_id: string;
+  group_id?: string;
   name: string;
   price: number;
-  wholesalePrice: number;
-  category: string;
-  type: string;
-  image: string;
-  images: string[];
-  description: string;
-  sizes: string[];
-  colors: ProductColor[];
-  stock: number;
+  quantity: number;
   sku?: string;
-  ebayId?: string;
+  model_number?: string;
+  color?: string;
+  size?: string;
+  texture?: string;
+  image_url?: string;
+}
+
+export interface GroupedProduct {
+  model_number: string;
+  name: string;
+  category: string;
+  variants: Product[];
 }
 
 export interface CartItem {
-  id: number;
+  id: number | string;
+  ebay_id: string;
   name: string;
   price: number;
   image: string;
-  color: string;
-  size: string;
+  color?: string;
+  size?: string;
+  texture?: string;
   quantity: number;
 }
 

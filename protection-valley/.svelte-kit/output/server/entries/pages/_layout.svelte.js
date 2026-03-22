@@ -3,7 +3,7 @@ import { s as sanitize_props, a as spread_props, b as slot, c as attr, e as ensu
 import { b as base } from "../../chunks/server.js";
 import "../../chunks/index.js";
 import "@sveltejs/kit/internal/server";
-import { I as Icon, c as cartCount, a as currentUser, b as cartOpen, d as cart, e as cartTotal, s as searchOpen, i as isWholesale, p as products, t as toastVisible, f as toastMessage } from "../../chunks/stores.js";
+import { I as Icon, c as cartCount, a as currentUser, b as cartOpen, d as cart, e as cartTotal, s as searchOpen, p as products, t as toastVisible, f as toastMessage } from "../../chunks/stores.js";
 function html(value) {
   var html2 = String(value ?? "");
   var open = "<!---->";
@@ -462,7 +462,7 @@ function SearchOverlay($$renderer, $$props) {
     let results = derived(() => {
       if (!query.trim()) return [];
       const term = query.toLowerCase();
-      return store_get($$store_subs ??= {}, "$products", products).filter((p) => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || p.type.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+      return store_get($$store_subs ??= {}, "$products", products).filter((p) => p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || p.model_number.toLowerCase().includes(term));
     });
     function highlight(text) {
       if (!query.trim()) return text;
@@ -471,11 +471,11 @@ function SearchOverlay($$renderer, $$props) {
     }
     if (store_get($$store_subs ??= {}, "$searchOpen", searchOpen)) {
       $$renderer2.push("<!--[0-->");
-      $$renderer2.push(`<div class="fixed inset-0 z-50"><div class="absolute inset-0 bg-black/80"></div> <div class="absolute top-0 left-0 right-0 bg-dark-card border-b border-dark-border p-6"><div class="max-w-3xl mx-auto"><div class="relative">`);
+      $$renderer2.push(`<div class="fixed inset-0 z-50"><div class="absolute inset-0 bg-black/80" role="button" tabindex="0" aria-label="Close search"></div> <div class="absolute top-0 left-0 right-0 bg-dark-card border-b border-dark-border p-6 shadow-2xl"><div class="max-w-3xl mx-auto"><div class="relative">`);
       Search($$renderer2, {
         class: "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-muted"
       });
-      $$renderer2.push(`<!----> <input type="text"${attr("value", query)} placeholder="Search products..." class="w-full pl-12 pr-4 py-4 bg-dark-card border border-dark-border rounded-lg text-lg text-dark-text focus:border-primary focus:outline-none"/> <button class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark-text">`);
+      $$renderer2.push(`<!----> <input type="text"${attr("value", query)} placeholder="Search by name or model..." class="w-full pl-12 pr-4 py-4 bg-[#0a0a0a] border border-dark-border rounded-lg text-lg text-dark-text focus:border-primary focus:outline-none" autofocus=""/> <button class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark-text">`);
       X($$renderer2, { class: "w-5 h-5" });
       $$renderer2.push(`<!----></button></div> `);
       if (query.trim()) {
@@ -492,7 +492,7 @@ function SearchOverlay($$renderer, $$props) {
           const each_array = ensure_array_like(results());
           for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
             let product = each_array[$$index];
-            $$renderer2.push(`<button class="flex items-center gap-4 p-3 hover:bg-dark-bg rounded-lg cursor-pointer transition-colors w-full text-left"><img${attr("src", product.image)}${attr("alt", product.name)} class="w-16 h-16 object-cover rounded-lg"/> <div class="flex-1"><h4 class="font-medium">${html(highlight(product.name))}</h4> <p class="text-sm text-dark-muted">${escape_html(product.category)} • ${escape_html(product.type)}</p></div> <span class="text-primary font-medium">$${escape_html((store_get($$store_subs ??= {}, "$isWholesale", isWholesale) ? product.wholesalePrice : product.price).toFixed(2))}</span></button>`);
+            $$renderer2.push(`<button class="flex items-center gap-4 p-3 hover:bg-dark-bg rounded-lg cursor-pointer transition-colors w-full text-left group"><div class="w-16 h-16 bg-dark-card rounded-lg overflow-hidden border border-dark-border"><img${attr("src", product.variants[0]?.image_url || "/images/placeholder.jpg")}${attr("alt", product.name)} class="w-full h-full object-cover"/></div> <div class="flex-1"><h4 class="font-medium group-hover:text-primary">${html(highlight(product.name))}</h4> <p class="text-xs text-dark-muted">${escape_html(product.model_number)} • ${escape_html(product.category)}</p></div> <span class="text-primary font-medium">$${escape_html((product.variants[0]?.price || 0).toFixed(2))}</span></button>`);
           }
           $$renderer2.push(`<!--]-->`);
         }

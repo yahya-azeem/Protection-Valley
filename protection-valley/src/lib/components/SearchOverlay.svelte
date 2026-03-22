@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Search, X, SearchX } from 'lucide-svelte';
-  import { searchOpen, isWholesale, products, selectedProduct, selectedSize, selectedColor, selectedImageIndex } from '$lib/stores';
+  import { searchOpen, products, selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture } from '$lib/stores';
   import { showPage } from '$lib/stores';
-  import type { Product } from '$lib/types';
+  import type { GroupedProduct } from '$lib/types';
 
   let query = $state('');
   let results = $derived.by(() => {
@@ -11,18 +11,21 @@
     return $products.filter(p =>
       p.name.toLowerCase().includes(term) ||
       p.category.toLowerCase().includes(term) ||
-      p.type.toLowerCase().includes(term) ||
-      p.description.toLowerCase().includes(term)
+      p.model_number.toLowerCase().includes(term)
     );
   });
 
   function close() { searchOpen.set(false); query = ''; }
 
-  function selectResult(product: Product) {
+  function selectResult(product: GroupedProduct) {
     selectedProduct.set(product);
-    selectedSize.set(product.sizes[0]);
-    selectedColor.set(product.colors[0]);
-    selectedImageIndex.set(0);
+    const v = product.variants[0];
+    if (v) {
+      selectedVariant.set(v);
+      selectedSize.set(v.size || '');
+      selectedColor.set(v.color || '');
+      selectedTexture.set(v.texture || '');
+    }
     close();
     showPage('product-detail');
   }
@@ -36,12 +39,25 @@
 
 {#if $searchOpen}
   <div class="fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/80" onclick={close}></div>
-    <div class="absolute top-0 left-0 right-0 bg-dark-card border-b border-dark-border p-6">
+    <div 
+      class="absolute inset-0 bg-black/80" 
+      onclick={close} 
+      onkeydown={(e) => e.key === 'Escape' && close()} 
+      role="button" 
+      tabindex="0" 
+      aria-label="Close search"
+    ></div>
+    <div class="absolute top-0 left-0 right-0 bg-dark-card border-b border-dark-border p-6 shadow-2xl">
       <div class="max-w-3xl mx-auto">
         <div class="relative">
           <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-muted" />
-          <input type="text" bind:value={query} placeholder="Search products..." class="w-full pl-12 pr-4 py-4 bg-dark-card border border-dark-border rounded-lg text-lg text-dark-text focus:border-primary focus:outline-none" />
+          <input 
+            type="text" 
+            bind:value={query} 
+            placeholder="Search by name or model..." 
+            class="w-full pl-12 pr-4 py-4 bg-[#0a0a0a] border border-dark-border rounded-lg text-lg text-dark-text focus:border-primary focus:outline-none" 
+            autofocus
+          />
           <button onclick={close} class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark-text">
             <X class="w-5 h-5" />
           </button>
@@ -55,13 +71,15 @@
               </div>
             {:else}
               {#each results as product}
-                <button onclick={() => selectResult(product)} class="flex items-center gap-4 p-3 hover:bg-dark-bg rounded-lg cursor-pointer transition-colors w-full text-left">
-                  <img src={product.image} alt={product.name} class="w-16 h-16 object-cover rounded-lg" />
-                  <div class="flex-1">
-                    <h4 class="font-medium">{@html highlight(product.name)}</h4>
-                    <p class="text-sm text-dark-muted">{product.category} • {product.type}</p>
+                <button onclick={() => selectResult(product)} class="flex items-center gap-4 p-3 hover:bg-dark-bg rounded-lg cursor-pointer transition-colors w-full text-left group">
+                  <div class="w-16 h-16 bg-dark-card rounded-lg overflow-hidden border border-dark-border">
+                    <img src={product.variants[0]?.image_url || '/images/placeholder.jpg'} alt={product.name} class="w-full h-full object-cover" />
                   </div>
-                  <span class="text-primary font-medium">${($isWholesale ? product.wholesalePrice : product.price).toFixed(2)}</span>
+                  <div class="flex-1">
+                    <h4 class="font-medium group-hover:text-primary">{@html highlight(product.name)}</h4>
+                    <p class="text-xs text-dark-muted">{product.model_number} • {product.category}</p>
+                  </div>
+                  <span class="text-primary font-medium">${(product.variants[0]?.price || 0).toFixed(2)}</span>
                 </button>
               {/each}
             {/if}

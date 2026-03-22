@@ -1,23 +1,21 @@
 <script lang="ts">
   import { PackageX } from 'lucide-svelte';
   import ProductCard from '$lib/components/ProductCard.svelte';
-  import { filteredProducts, currentType, currentCategory, isWholesale } from '$lib/stores';
+  import { filteredProducts, currentCategory } from '$lib/stores';
   import type { SortOption } from '$lib/types';
 
   let sortBy = $state<SortOption>('featured');
-
-  const types = ['All', 'Leather', 'Canvas', 'Nylon'];
   const categories = ['All', 'Tool Belts', 'Pouches', 'Aprons', 'Accessories'];
 
   let sorted = $derived.by(() => {
     let items = [...$filteredProducts];
-    if (sortBy === 'price-low') items.sort((a, b) => ($isWholesale ? a.wholesalePrice : a.price) - ($isWholesale ? b.wholesalePrice : b.price));
-    else if (sortBy === 'price-high') items.sort((a, b) => ($isWholesale ? b.wholesalePrice : b.price) - ($isWholesale ? a.wholesalePrice : a.price));
+    if (sortBy === 'price-low') items.sort((a, b) => (a.variants[0]?.price || 0) - (b.variants[0]?.price || 0));
+    else if (sortBy === 'price-high') items.sort((a, b) => (b.variants[0]?.price || 0) - (a.variants[0]?.price || 0));
     else if (sortBy === 'name') items.sort((a, b) => a.name.localeCompare(b.name));
     return items;
   });
 
-  function clearFilters() { currentType.set('All'); currentCategory.set('All'); }
+  function clearFilters() { currentCategory.set('All'); }
 </script>
 
 <div class="bg-[#0a0a0a] min-h-screen">
@@ -40,17 +38,6 @@
     <div class="bg-dark-card rounded-lg p-6 mb-8 border border-dark-border">
       <div class="flex flex-col lg:flex-row gap-6">
         <div class="flex-1">
-          <label class="block text-sm font-medium mb-3 text-dark-muted">Material Type</label>
-          <div class="flex flex-wrap gap-2">
-            {#each types as type}
-              <button
-                onclick={() => currentType.set(type)}
-                class="px-4 py-2 rounded-full text-sm font-medium transition-colors {$currentType === type ? 'bg-primary text-[#0a0a0a]' : 'bg-[#0a0a0a] border border-dark-border text-dark-text hover:border-primary'}"
-              >{type}</button>
-            {/each}
-          </div>
-        </div>
-        <div class="flex-1">
           <label class="block text-sm font-medium mb-3 text-dark-muted">Category</label>
           <div class="flex flex-wrap gap-2">
             {#each categories as cat}
@@ -62,8 +49,8 @@
           </div>
         </div>
         <div>
-          <label class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label>
-          <select bind:value={sortBy} class="px-4 py-2 bg-[#0a0a0a] border border-dark-border rounded-lg text-dark-text focus:border-primary focus:outline-none">
+          <label for="sort-select" class="block text-sm font-medium mb-3 text-dark-muted">Sort By</label>
+          <select id="sort-select" bind:value={sortBy} class="px-4 py-2 bg-[#0a0a0a] border border-dark-border rounded-lg text-dark-text focus:border-primary focus:outline-none">
             <option value="featured">Featured</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
@@ -73,7 +60,7 @@
       </div>
     </div>
 
-    {#if $currentType !== 'All' || $currentCategory !== 'All'}
+    {#if $currentCategory !== 'All'}
       <div class="flex flex-wrap gap-2 mb-6">
         <span class="text-sm text-dark-muted">Active filters:</span>
         <button onclick={clearFilters} class="text-sm text-primary hover:underline">Clear all</button>
@@ -89,7 +76,7 @@
       </div>
     {:else}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {#each sorted as product (product.id)}
+        {#each sorted as product (product.model_number)}
           <ProductCard {product} />
         {/each}
       </div>
