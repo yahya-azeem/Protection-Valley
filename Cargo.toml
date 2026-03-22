@@ -20,6 +20,8 @@ env_logger = "0.11"
 log = "0.4"
 reqwest = { version = "0.11", features = ["json"] }
 vercel_runtime = "1.1"
+oauth2 = "4.4"
+anyhow = "1.0"
 
 [dev-dependencies]
 # No direct Actix dependency needed

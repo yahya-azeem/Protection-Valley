@@ -1,58 +1,53 @@
-# Protection Valley
+# Protection Valley [SvelteKit Edition]
 
-Premium workgear e-commerce site — tool belts, pouches, aprons, and protective accessories for tradespeople.
+Premium workgear e-commerce platform — tool belts, pouches, aprons, and professional accessories.
 
-## Project Structure
+## 🛠 Tech Stack
+- **Frontend**: SvelteKit 5 (Runes), Tailwind CSS 4
+- **Backend**: Rust (Vercel Serverless Functions)
+- **Inventory**: eBay Browse API Sync (with grouping integration)
+- **Design System**: OLED Native (Pure Black) + Klein Tools Industrial Aesthetic
+- **Agent Skill**: Integrated with [Impeccable](https://github.com/pbakaus/impeccable)
 
+## 📁 Project Structure
 ```
-protection-valley/     # Static frontend (HTML + CSS + JS)
-├── index.html         # Main page
-├── css/styles.css     # Custom styles
-├── js/                # Modular JavaScript
-│   ├── app.js         # Entry point
-│   ├── products.js    # Product data + eBay API fetch
-│   ├── cart.js        # Cart state (localStorage)
-│   ├── ui.js          # Rendering, filters, auth
-│   └── search.js      # Search overlay
-└── images/            # Product images
-
-api/                   # Rust serverless backend (Vercel)
-├── main.rs            # Router
-├── handlers/          # Request handlers
-├── models/            # Data models
-├── services/          # Business logic + eBay integration
-└── auth/              # JWT utilities
-
-Cargo.toml             # Rust workspace config
-vercel.json            # Vercel routing config
+protection-valley/      # SvelteKit Application Root
+├── src/
+│   ├── lib/
+│   │   ├── components/ # Atomic UI components (Navbar, ProductCard, etc.)
+│   │   ├── config.ts   # Centralized Design Tokens & API Config
+│   │   ├── stores.ts   # Svelte Stores (Auth, Cart, Products)
+│   │   └── types.ts    # TypeScript definitions
+│   └── routes/         # SvelteKit App Router
+api/                    # Rust serverless backend (Vercel)
+├── main.rs             # Vercel Function Entry & Routing
+├── handlers/           # Endpoint handlers (Auth, eBay, Products)
+└── services/           # Business logic (eBay Sync, Auth Service)
 ```
 
-## Features
+## 🚀 Key Features
+- **OLED Native Design**: Optimized for high-contrast visibility with absolute black surfaces.
+- **eBay Multi-Variant Grouping**: Automatically groups individual eBay listings into coherent product models.
+- **Industrial UX**: Design language inspired by Klein Tools, prioritizing SKU/Model numbers for professionals.
+- **Wholesale Portal**: Dedicated pricing and bulk management for verified contractors.
+- **Vercel native**: Seamless deployment as serverless Rust functions.
 
-- **Static Frontend** — Tailwind CSS dark theme, fast load, no build step
-- **eBay Inventory Sync** — Real eBay Browse API integration with mock data fallback
-- **Wholesale Pricing** — Log in as wholesale for discounted prices
-- **Search** — Full-text product search with highlighting
-- **Cart** — Client-side cart with localStorage persistence
-- **GitHub Pages** — Auto-deployed on push via GitHub Actions
+## 💻 Development
 
-## Development
-
-Open `protection-valley/index.html` in your browser — no build tools needed.
-
-### Environment Variables (for eBay API)
-
+### Backend (Rust)
+Set environment variables in `.env`:
 ```sh
-EBAY_APP_ID=your-app-id
-EBAY_OAUTH_TOKEN=your-oauth-token
-EBAY_SELLER_NAME=your-seller-name   # defaults to "protectionvalley"
+EBAY_APP_ID=...
+EBAY_CERT_ID=...
+EBAY_SELLER_NAME=protectionvalley
 ```
 
-## Deploy
+### Frontend (SvelteKit)
+```bash
+cd protection-valley
+npm install
+npm run dev
+```
 
-- **Frontend**: Automatically deployed to GitHub Pages on push to `main`
-- **Backend**: Deploy to Vercel with `vercel --prod`
-
-## License
-
-All rights reserved © 2025 Protection Valley
+## ⚖️ License
+© 2024-2025 Protection Valley. Professional Grade Workgear.

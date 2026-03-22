@@ -23,6 +23,7 @@ export interface GroupedProduct {
   model_number: string;
   name: string;
   category: string;
+  description?: string;
   variants: Product[];
 }
 
