@@ -119,6 +119,13 @@ pub struct OrderItemRequest {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateCheckoutSessionRequest {
+    pub items: Vec<OrderItemRequest>,
+    pub success_url: String,
+    pub cancel_url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: i64,
     pub email: String,

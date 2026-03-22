@@ -1,8 +1,37 @@
 <script lang="ts">
   import { ShoppingBag, X, Trash2, Shield, ArrowRight } from 'lucide-svelte';
-  import { cart, cartOpen, cartTotal, showPage } from '$lib/stores';
+  import { cart, cartOpen, cartTotal, showPage, showToast } from '$lib/stores';
+  import { API_CONFIG } from '$lib/config';
 
   function close() { cartOpen.set(false); }
+
+  async function handleCheckout() {
+    try {
+      showToast('Preparing Secure Checkout...');
+      const response = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.create_checkout_session, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: $cart.map(item => ({
+            product_id: parseInt(item.ebay_id), // Assuming ebay_id maps to product_id for this demo
+            quantity: item.quantity
+          })),
+          success_url: window.location.origin + '/?checkout=success',
+          cancel_url: window.location.origin + '/?checkout=cancel'
+        })
+      });
+
+      if (response.ok) {
+        const { url } = await response.json();
+        window.location.href = url;
+      } else {
+        const err = await response.json();
+        showToast('Checkout Error: ' + (err.error || 'Failed to start session'));
+      }
+    } catch (e) {
+      showToast('Checkout unavailable. Check connection.');
+    }
+  }
 </script>
 
 {#if $cartOpen}
@@ -87,7 +116,7 @@
             <span class="text-4xl font-serif text-primary">${$cartTotal.toFixed(2)}</span>
           </div>
           <button 
-            onclick={() => alert('Proceeding to Checkout...')} 
+            onclick={handleCheckout} 
             class="btn-primary w-full py-6 flex items-center justify-center tracking-[0.6em] text-[0.7rem]"
           >
             CHECKOUT
