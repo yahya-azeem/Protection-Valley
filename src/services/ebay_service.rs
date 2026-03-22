@@ -89,7 +89,8 @@ impl EbayService {
         }
 
         let body: serde_json::Value = response.json().await.map_err(|e| format!("JSON error: {}", e))?;
-        let items = body["itemSummaries"].as_array().unwrap_or(&vec![]);
+        let empty_vec = vec![];
+        let items = body["itemSummaries"].as_array().unwrap_or(&empty_vec);
 
         let mut ebay_products = Vec::new();
         for item in items {
@@ -137,7 +138,7 @@ impl EbayService {
 
     /// Helper to parse aspects from eBay titles (as a backup to real aspects).
     fn parse_aspects_from_title(&self, title: &str) -> (String, Option<String>, Option<String>, Option<String>) {
-        let title_lower = title.toLowerCase();
+        let title_lower = title.to_lowercase();
         
         // Very basic extraction logic — improved later with regex or real API aspects
         let color = if title_lower.contains("black") { Some("Black".into()) }

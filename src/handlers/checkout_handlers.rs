@@ -1,5 +1,5 @@
 use vercel_runtime::{Body, Response, StatusCode, Error};
-use stripe::{Client, CheckoutSession, CheckoutSessionMode, CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData};
+use stripe::{Client, CheckoutSession, CheckoutSessionMode, Currency, CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData};
 use crate::models::CreateCheckoutSessionRequest;
 use crate::services::product_service::ProductService;
 use std::env;
@@ -13,13 +13,11 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     let mut line_items = Vec::new();
 
     for item in req.items {
-        // Build product details (in a real app, fetch from DB)
-        // For now, we'll use mocked data or fetch from our existing mocked product service
         if let Ok(Some(product)) = product_service.get_product_by_id(item.product_id).await {
             line_items.push(CreateCheckoutSessionLineItems {
-                quantity: Some(item.quantity as i64),
+                quantity: Some(item.quantity as u64),
                 price_data: Some(CreateCheckoutSessionLineItemsPriceData {
-                    currency: stripe::Currency::USD,
+                    currency: Currency::USD,
                     unit_amount: Some((product.price * 100.0) as i64),
                     product_data: Some(CreateCheckoutSessionLineItemsPriceDataProductData {
                         name: product.name,

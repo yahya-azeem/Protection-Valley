@@ -1,8 +1,8 @@
 use vercel_runtime::{run, Body, Error, Request, Response, StatusCode};
 use serde_json::json;
 
-use toolpro_api::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers};
-use toolpro_api::models;
+use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers};
+use backend_v2_lib::models;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
