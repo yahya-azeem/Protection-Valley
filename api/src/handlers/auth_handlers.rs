@@ -38,7 +38,7 @@ pub async fn register(req: RegisterRequest) -> Result<Response<Body>, Error> {
 }
 
 pub async fn google_login() -> Result<Response<Body>, Error> {
-    match crate::auth::google::get_auth_url() {
+    match crate::auth::google_provider::get_auth_url() {
         Ok((url, _csrf_token)) => {
             Ok(Response::builder()
                 .status(StatusCode::TEMPORARY_REDIRECT)
@@ -53,7 +53,7 @@ pub async fn google_login() -> Result<Response<Body>, Error> {
 }
 
 pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
-    match crate::auth::google::handle_callback(code).await {
+    match crate::auth::google_provider::handle_callback(code).await {
         Ok(google_user) => {
             let service = AuthService::new();
             // In a real app, we'd find or create a user in the DB.
