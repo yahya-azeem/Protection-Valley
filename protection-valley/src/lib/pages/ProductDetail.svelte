@@ -117,7 +117,7 @@
           <div class="space-y-16 mb-24">
             {#if colors.length > 0}
               <div class="space-y-8">
-                <label class="block text-[0.65rem] font-bold uppercase tracking-[0.4em] text-zinc-500">Select Finish</label>
+                <span class="block text-[0.65rem] font-bold uppercase tracking-[0.4em] text-zinc-500">Select Finish</span>
                 <div class="flex flex-wrap gap-6">
                   {#each colors as color}
                     <button 
@@ -134,7 +134,7 @@
 
             {#if sizes.length > 0}
               <div class="space-y-8">
-                <label class="block text-[0.65rem] font-bold uppercase tracking-[0.4em] text-zinc-500">Select Size</label>
+                <span class="block text-[0.65rem] font-bold uppercase tracking-[0.4em] text-zinc-500">Select Size</span>
                 <div class="flex flex-wrap gap-6">
                   {#each sizes as size}
                     <button 
