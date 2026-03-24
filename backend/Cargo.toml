@@ -22,5 +22,4 @@ reqwest = { version = "0.11", default-features = false, features = ["json", "rus
 vercel_runtime = "1.1"
 oauth2 = { version = "4.4", default-features = false, features = ["rustls-tls"] }
 anyhow = "1.0"
-async-stripe = { version = "0.41", default-features = false, features = ["runtime-tokio-hyper-rustls"] }
-openssl = { version = "0.10", features = ["vendored"] }
+async-stripe = { version = "0.41", default-features = false, features = ["runtime-tokio-hyper-rustls", "checkout"] }
