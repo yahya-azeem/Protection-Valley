@@ -39,6 +39,14 @@
       "_server.js"
     ]
   },
+  "_phone.js": {
+    "file": "chunks/phone.js",
+    "name": "phone",
+    "imports": [
+      "_index.js",
+      "_root.js"
+    ]
+  },
   "_root.js": {
     "file": "chunks/root.js",
     "name": "root",
@@ -63,14 +71,6 @@
     "imports": [
       "_root.js",
       "_index.js"
-    ]
-  },
-  "_user.js": {
-    "file": "chunks/user.js",
-    "name": "user",
-    "imports": [
-      "_index.js",
-      "_root.js"
     ]
   },
   "_utils.js": {
@@ -128,11 +128,11 @@
       "_root.js",
       "_exports.js",
       "_state.svelte.js",
-      "_user.js",
+      "_phone.js",
       "_server.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Dk9o1QZd.css"
+      "_app/immutable/assets/_layout.CCa21aHz.css"
     ]
   },
   "src/routes/+layout.ts": {
@@ -149,7 +149,7 @@
     "imports": [
       "_root.js",
       "_index.js",
-      "_user.js",
+      "_phone.js",
       "_server.js"
     ]
   }

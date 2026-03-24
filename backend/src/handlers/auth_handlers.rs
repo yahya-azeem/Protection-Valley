@@ -2,7 +2,6 @@ use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{LoginRequest, RegisterRequest};
 use crate::services::auth_service::AuthService;
 
-
 pub async fn login(req: LoginRequest) -> Result<Response<Body>, Error> {
     let service = AuthService::new();
     
@@ -18,7 +17,7 @@ pub async fn login(req: LoginRequest) -> Result<Response<Body>, Error> {
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
+            .body(Body::from(serde_json::json!({ "error": format!("{e}") }).to_string()))?),
     }
 }
 
@@ -33,7 +32,7 @@ pub async fn register(req: RegisterRequest) -> Result<Response<Body>, Error> {
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
+            .body(Body::from(serde_json::json!({ "error": format!("{e}") }).to_string()))?),
     }
 }
 
@@ -45,10 +44,23 @@ pub async fn google_login() -> Result<Response<Body>, Error> {
                 .header("Location", url)
                 .body(Body::Empty)?)
         }
-        Err(e) => Ok(Response::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .header("Content-Type", "application/json")
-            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
+        Err(e) => {
+            // Gracefully handle missing env vars instead of panicking
+            let error_msg = format!("{e}");
+            if error_msg.contains("not set") {
+                Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header("Content-Type", "application/json")
+                    .body(Body::from(serde_json::json!({
+                        "error": "Google OAuth is not configured. Please set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URL environment variables."
+                    }).to_string()))?)
+            } else {
+                Ok(Response::builder()
+                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                    .header("Content-Type", "application/json")
+                    .body(Body::from(serde_json::json!({ "error": format!("{e}") }).to_string()))?)
+            }
+        }
     }
 }
 
@@ -56,20 +68,17 @@ pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
     match crate::auth::google_provider::handle_callback(code).await {
         Ok(google_user) => {
             // In a real app, we'd find or create a user in the DB.
-            // For now, we'll mock a successful login as a wholesale user if it's a "authorized" email, 
-            // or just a retail user otherwise.
             let user = crate::models::User {
-                id: 101, // Mock ID
+                id: 101,
                 email: google_user.email.clone(),
                 name: google_user.name,
-                role: crate::models::UserRole::Wholesale, // Defaulting to wholesale for this demo as requested
+                role: crate::models::UserRole::Wholesale,
                 company: None,
                 created_at: chrono::Utc::now(),
             };
 
             match crate::auth::generate_jwt(user.id, &user.email) {
                 Ok(token) => {
-                    // Redirect back to frontend with token
                     let frontend_url = std::env::var("FRONTEND_URL").unwrap_or_else(|_| "http://localhost:5173".to_string());
                     let redirect_url = format!("{frontend_url}/?token={token}&wholesale=true");
                     
@@ -81,19 +90,17 @@ pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
                 Err(e) => Ok(Response::builder()
                     .status(StatusCode::INTERNAL_SERVER_ERROR)
                     .header("Content-Type", "application/json")
-                    .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
+                    .body(Body::from(serde_json::json!({ "error": format!("{e}") }).to_string()))?),
             }
         }
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(Body::from(serde_json::json!({ "error": format!("{}", e) }).to_string()))?),
+            .body(Body::from(serde_json::json!({ "error": format!("{e}") }).to_string()))?),
     }
 }
 
 pub async fn get_me() -> Result<Response<Body>, Error> {
-    // In a real app, we'd extract the JWT from the Authorization header and validate it.
-    // For now, return a placeholder indicating auth is required.
     Ok(Response::builder()
         .status(StatusCode::UNAUTHORIZED)
         .header("Content-Type", "application/json")
