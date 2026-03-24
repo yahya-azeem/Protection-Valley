@@ -1,7 +1,7 @@
 use oauth2::basic::BasicClient;
 use oauth2::{
     AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl, 
-    AuthorizationCode, CsrfToken, Scope, PkceCodeChallenge,
+    AuthorizationCode, CsrfToken, Scope,
     TokenResponse,
 };
 use oauth2::reqwest::async_http_client;
@@ -30,9 +30,9 @@ pub fn get_google_client() -> Result<BasicClient> {
         .map_err(|_| anyhow!("GOOGLE_REDIRECT_URL not set"))?;
 
     let auth_url = AuthUrl::new("https://accounts.google.com/o/oauth2/v2/auth".to_string())
-        .map_err(|e| anyhow!("Invalid auth URL: {}", e))?;
+        .map_err(|e| anyhow!("Invalid auth URL: {e}"))?;
     let token_url = TokenUrl::new("https://www.googleapis.com/oauth2/v4/token".to_string())
-        .map_err(|e| anyhow!("Invalid token URL: {}", e))?;
+        .map_err(|e| anyhow!("Invalid token URL: {e}"))?;
 
     Ok(BasicClient::new(
         ClientId::new(client_id),
@@ -40,7 +40,7 @@ pub fn get_google_client() -> Result<BasicClient> {
         auth_url,
         Some(token_url),
     )
-    .set_redirect_uri(RedirectUrl::new(redirect_url).map_err(|e| anyhow!("Invalid redirect URL: {}", e))?))
+    .set_redirect_uri(RedirectUrl::new(redirect_url).map_err(|e| anyhow!("Invalid redirect URL: {e}"))?))
 }
 
 pub fn get_auth_url() -> Result<(String, String)> {
@@ -64,7 +64,7 @@ pub async fn handle_callback(code: String) -> Result<GoogleUser> {
         .exchange_code(AuthorizationCode::new(code))
         .request_async(async_http_client)
         .await
-        .map_err(|e| anyhow!("Failed to exchange token: {}", e))?;
+        .map_err(|e| anyhow!("Failed to exchange token: {e}"))?;
 
     let access_token = token_response.access_token().secret();
     

@@ -3,6 +3,12 @@ use chrono::Utc;
 
 pub struct ProductService;
 
+impl Default for ProductService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ProductService {
     pub fn new() -> Self {
         Self
