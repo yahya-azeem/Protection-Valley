@@ -2,11 +2,10 @@
   import type { GroupedProduct } from '$lib/types';
   import { selectedProduct, showPage, isWholesale } from '$lib/stores';
   import { base } from '$app/paths';
-  import { DESIGN_TOKENS } from '$lib/config';
+  import { WHOLESALE_DISCOUNT } from '$lib/constants';
 
   let { product } = $props<{ product: GroupedProduct }>();
   
-  // Use the first variant for display
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
   let image = $derived(displayVariant?.image_url || `${base}/images/placeholder.png`);
@@ -19,42 +18,42 @@
 
 <button 
   onclick={handleSelect}
-  class="group flex flex-col w-full text-left transition-lux rounded-sm overflow-hidden border border-white/5 bg-dark-surface hover:ring-1 hover:ring-primary/20 hover:shadow-gold"
+  class="group flex flex-col w-full text-left transition-lux rounded overflow-hidden border-2 border-white/20 bg-[#0A0A0A] hover:border-primary/60 hover:shadow-gold"
 >
-  <!-- Image Container (OLED Black matched) -->
-  <div class="relative aspect-square overflow-hidden bg-black flex items-center justify-center border-b border-white/5">
+  <!-- Image -->
+  <div class="relative aspect-square overflow-hidden bg-black flex items-center justify-center">
     <img 
       src={image} 
       alt={product.name}
-      class="w-full h-full object-cover transition- lux duration-1000 group-hover:scale-105"
+      class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
     />
-    <!-- Subtle Gradient Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-lux"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
   </div>
   
-  <!-- Content Area (Clean & High-Contrast) -->
-  <div class="p-8 flex flex-col space-y-4">
-    <div class="flex items-center space-x-3">
-      <span class="text-[0.6rem] font-bold uppercase tracking-[0.4em] text-primary">
-        {product.category}
-      </span>
-      <span class="h-[1px] w-6 bg-primary/20"></span>
-    </div>
+  <!-- Content -->
+  <div class="p-5 flex flex-col gap-2 border-t-2 border-white/10">
+    <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
+      {product.category}
+    </span>
     
-    <h3 class="text-xl font-serif text-white group-hover:text-primary transition-lux leading-snug tracking-tight">
+    <h3 class="text-base font-serif text-white group-hover:text-primary transition-lux leading-snug">
       {product.name}
     </h3>
+
+    {#if displayVariant?.texture}
+      <span class="text-[11px] text-zinc-500">{displayVariant.texture}</span>
+    {/if}
     
-    <div class="pt-2 flex items-center justify-between">
-      <div class="flex flex-col">
-        <span class="text-lg font-serif text-white/95">
-          ${$isWholesale ? (price * 0.7).toFixed(2) : price.toFixed(2)}
+    <div class="pt-1 flex items-center justify-between">
+      <div class="flex items-baseline gap-2">
+        <span class="text-lg font-serif text-white">
+          ${$isWholesale ? (price * (1 - WHOLESALE_DISCOUNT)).toFixed(2) : price.toFixed(2)}
         </span>
         {#if $isWholesale}
-          <span class="text-[0.6rem] font-bold text-zinc-600 line-through tracking-widest leading-none">${price.toFixed(2)}</span>
+          <span class="text-xs text-zinc-600 line-through">${price.toFixed(2)}</span>
         {/if}
       </div>
-      <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary transition-lux group-hover:border-primary">
+      <div class="w-7 h-7 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary transition-lux group-hover:border-primary">
         <span class="text-primary group-hover:text-black text-sm">→</span>
       </div>
     </div>

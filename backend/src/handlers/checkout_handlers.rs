@@ -1,25 +1,34 @@
 use vercel_runtime::{Body, Response, StatusCode, Error};
-use stripe::{Client, CheckoutSession, CheckoutSessionMode, Currency, CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData};
 use crate::models::CreateCheckoutSessionRequest;
 use crate::services::product_service::ProductService;
 use std::env;
 
 pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Result<Response<Body>, Error> {
-    let stripe_secret_key = env::var("STRIPE_SECRET_KEY")
-        .unwrap_or_else(|_| "sk_test_mock".to_string());
-    let client = Client::new(stripe_secret_key);
+    let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
+        Ok(key) if !key.is_empty() && !key.starts_with("sk_test_mock") => key,
+        _ => {
+            // Stripe is not configured — return a helpful error instead of crashing
+            return Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "application/json")
+                .body(Body::from(serde_json::json!({
+                    "error": "Stripe checkout is not configured. Please set the STRIPE_SECRET_KEY environment variable."
+                }).to_string()))?);
+        }
+    };
 
+    let client = stripe::Client::new(stripe_secret_key);
     let product_service = ProductService::new();
     let mut line_items = Vec::new();
 
     for item in req.items {
         if let Ok(Some(product)) = product_service.get_product_by_id(item.product_id).await {
-            line_items.push(CreateCheckoutSessionLineItems {
+            line_items.push(stripe::CreateCheckoutSessionLineItems {
                 quantity: Some(item.quantity as u64),
-                price_data: Some(CreateCheckoutSessionLineItemsPriceData {
-                    currency: Currency::USD,
+                price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
+                    currency: stripe::Currency::USD,
                     unit_amount: Some((product.price * 100.0) as i64),
-                    product_data: Some(CreateCheckoutSessionLineItemsPriceDataProductData {
+                    product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
                         name: product.name,
                         description: Some(product.description),
                         images: Some(vec![product.image_url]),
@@ -32,15 +41,24 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
         }
     }
 
-    let params = CreateCheckoutSession {
-        mode: Some(CheckoutSessionMode::Payment),
+    if line_items.is_empty() {
+        return Ok(Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .header("Content-Type", "application/json")
+            .body(Body::from(serde_json::json!({
+                "error": "No valid products found for checkout"
+            }).to_string()))?);
+    }
+
+    let params = stripe::CreateCheckoutSession {
+        mode: Some(stripe::CheckoutSessionMode::Payment),
         line_items: Some(line_items),
         success_url: Some(&req.success_url),
         cancel_url: Some(&req.cancel_url),
         ..Default::default()
     };
 
-    match CheckoutSession::create(&client, params).await {
+    match stripe::CheckoutSession::create(&client, params).await {
         Ok(session) => {
             if let Some(url) = session.url {
                 Ok(Response::builder()
@@ -55,6 +73,6 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
         }
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(Body::from(format!("Stripe error: {e}")))?)
+            .body(Body::from(format!("Stripe error: {e}")))?),
     }
 }

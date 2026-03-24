@@ -1,13 +1,57 @@
 import { e as derived, w as writable } from "./index.js";
 import "@sveltejs/kit/internal/server";
 import { s as sanitize_props, l as rest_props, m as fallback, o as attributes, p as clsx, e as ensure_array_like, q as element, b as slot, t as bind_props, a as spread_props } from "./root.js";
+const BUSINESS = {
+  name: "Protection Valley",
+  established: 2025,
+  address: {
+    street: "11456 Harry Hines Blvd #103",
+    city: "Dallas",
+    state: "TX",
+    zip: "75229",
+    full: "11456 Harry Hines Blvd #103, Dallas, TX 75229"
+  },
+  phone: "(469) 305-1119",
+  email: "HQ@PROTECTIONVALLEY.COM",
+  hours: "Mon – Fri, 08:00 – 18:00 CST"
+};
+const CATEGORIES = ["All", "Tool Belts", "Pouches", "Aprons", "Accessories"];
+const NAV_ITEMS = [
+  { name: "Home", id: "home" },
+  {
+    name: "Catalog",
+    id: "catalog",
+    children: [
+      { name: "All Products", category: "All" },
+      { name: "Tool Belts", category: "Tool Belts" },
+      { name: "Pouches", category: "Pouches" },
+      { name: "Aprons", category: "Aprons" },
+      { name: "Accessories", category: "Accessories" }
+    ]
+  },
+  { name: "About", id: "about" },
+  { name: "Contact", id: "contact" }
+];
+const PRICE_RANGES = [
+  { label: "Under $50", min: 0, max: 50 },
+  { label: "$50 – $100", min: 50, max: 100 },
+  { label: "$100 – $200", min: 100, max: 200 },
+  { label: "$200+", min: 200, max: Infinity }
+];
+const SIZES = ["Small", "Medium", "Large", "XL", "2XL", "One Size", "Adjustable"];
+const WHOLESALE_DISCOUNT = 0.3;
 const products = writable([]);
 const currentCategory = writable("All");
+const priceRange = writable({ min: 0, max: Infinity });
+const sizeFilter = writable("");
 const filteredProducts = derived(
-  [products, currentCategory],
-  ([$products, $category]) => $products.filter((p) => {
+  [products, currentCategory, priceRange, sizeFilter],
+  ([$products, $category, $priceRange, $sizeFilter]) => $products.filter((p) => {
     const categoryMatch = $category === "All" || p.category === $category;
-    return categoryMatch;
+    const price = p.variants[0]?.price || 0;
+    const priceMatch = price >= $priceRange.min && price < $priceRange.max;
+    const sizeMatch = !$sizeFilter || p.variants.some((v) => v.size === $sizeFilter);
+    return categoryMatch && priceMatch && sizeMatch;
   })
 );
 function createCartStore() {
@@ -354,62 +398,15 @@ function Phone($$renderer, $$props) {
     }
   ]));
 }
-function User($$renderer, $$props) {
-  const $$sanitized_props = sanitize_props($$props);
-  /**
-   * @license lucide-svelte v0.475.0 - ISC
-   *
-   * ISC License
-   *
-   * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
-   *
-   * Permission to use, copy, modify, and/or distribute this software for any
-   * purpose with or without fee is hereby granted, provided that the above
-   * copyright notice and this permission notice appear in all copies.
-   *
-   * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-   * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-   * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-   * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-   * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-   *
-   */
-  const iconNode = [
-    ["path", { "d": "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" }],
-    ["circle", { "cx": "12", "cy": "7", "r": "4" }]
-  ];
-  Icon($$renderer, spread_props([
-    { name: "user" },
-    $$sanitized_props,
-    {
-      /**
-       * @component @name User
-       * @description Lucide SVG icon component, renders SVG Element with children.
-       *
-       * @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMTkgMjF2LTJhNCA0IDAgMCAwLTQtNEg5YTQgNCAwIDAgMC00IDR2MiIgLz4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiIC8+Cjwvc3ZnPgo=) - https://lucide.dev/icons/user
-       * @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
-       *
-       * @param {Object} props - Lucide icons props and any valid SVG attribute
-       * @returns {FunctionalComponent} Svelte component
-       *
-       */
-      iconNode,
-      children: ($$renderer2) => {
-        $$renderer2.push(`<!--[-->`);
-        slot($$renderer2, $$props, "default", {});
-        $$renderer2.push(`<!--]-->`);
-      },
-      $$slots: { default: true }
-    }
-  ]));
-}
 export {
+  BUSINESS as B,
+  CATEGORIES as C,
   Icon as I,
   Map_pin as M,
+  NAV_ITEMS as N,
   Phone as P,
-  User as U,
+  SIZES as S,
+  WHOLESALE_DISCOUNT as W,
   cart as a,
   cartOpen as b,
   currentPage as c,
@@ -417,13 +414,16 @@ export {
   toastMessage as e,
   Mail as f,
   currentCategory as g,
-  filteredProducts as h,
+  PRICE_RANGES as h,
   isWholesale as i,
-  selectedColor as j,
-  selectedSize as k,
-  selectedProduct as l,
-  selectedTexture as m,
+  priceRange as j,
+  sizeFilter as k,
+  filteredProducts as l,
+  selectedColor as m,
+  selectedSize as n,
+  selectedProduct as o,
   products as p,
+  selectedTexture as q,
   searchOpen as s,
   toastVisible as t
 };
