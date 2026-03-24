@@ -1,7 +1,7 @@
 use vercel_runtime::{Body, Response, StatusCode, Error};
 use crate::models::{LoginRequest, RegisterRequest};
 use crate::services::auth_service::AuthService;
-use chrono;
+
 
 pub async fn login(req: LoginRequest) -> Result<Response<Body>, Error> {
     let service = AuthService::new();
@@ -55,7 +55,6 @@ pub async fn google_login() -> Result<Response<Body>, Error> {
 pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
     match crate::auth::google_provider::handle_callback(code).await {
         Ok(google_user) => {
-            let service = AuthService::new();
             // In a real app, we'd find or create a user in the DB.
             // For now, we'll mock a successful login as a wholesale user if it's a "authorized" email, 
             // or just a retail user otherwise.
@@ -72,7 +71,7 @@ pub async fn google_callback(code: String) -> Result<Response<Body>, Error> {
                 Ok(token) => {
                     // Redirect back to frontend with token
                     let frontend_url = std::env::var("FRONTEND_URL").unwrap_or_else(|_| "http://localhost:5173".to_string());
-                    let redirect_url = format!("{}/?token={}&wholesale=true", frontend_url, token);
+                    let redirect_url = format!("{frontend_url}/?token={token}&wholesale=true");
                     
                     Ok(Response::builder()
                         .status(StatusCode::TEMPORARY_REDIRECT)

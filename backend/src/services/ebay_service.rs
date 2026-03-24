@@ -5,6 +5,12 @@ pub struct EbayService {
     oauth_token: Option<String>,
 }
 
+impl Default for EbayService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EbayService {
     pub fn new() -> Self {
         Self {
@@ -21,7 +27,7 @@ impl EbayService {
             match self.fetch_from_ebay(token).await {
                 Ok(products) => return Ok(products),
                 Err(e) => {
-                    log::warn!("eBay API call failed, using mock data: {}", e);
+                    log::warn!("eBay API call failed, using mock data: {e}");
                 }
             }
         }
@@ -72,23 +78,22 @@ impl EbayService {
         // Use fieldgroups=ASPECT_REFINEMENTS to get more details if supported, 
         // but for now we'll parse aspects from item summaries.
         let url = format!(
-            "https://api.ebay.com/buy/browse/v1/item_summary/search?filter=sellers:{{{}}}&limit=100",
-            seller_name
+            "https://api.ebay.com/buy/browse/v1/item_summary/search?filter=sellers:{{{seller_name}}}&limit=100"
         );
 
         let response = client
             .get(&url)
-            .header("Authorization", format!("Bearer {}", token))
+            .header("Authorization", format!("Bearer {token}"))
             .header("X-EBAY-C-MARKETPLACE-ID", "EBAY_US")
             .send()
             .await
-            .map_err(|e| format!("HTTP error: {}", e))?;
+            .map_err(|e| format!("HTTP error: {e}"))?;
 
         if !response.status().is_success() {
             return Err(format!("eBay API returned {}", response.status()));
         }
 
-        let body: serde_json::Value = response.json().await.map_err(|e| format!("JSON error: {}", e))?;
+        let body: serde_json::Value = response.json().await.map_err(|e| format!("JSON error: {e}"))?;
         let empty_vec = vec![];
         let items = body["itemSummaries"].as_array().unwrap_or(&empty_vec);
 
@@ -183,9 +188,9 @@ impl EbayService {
         }
 
         Ok(SyncResponse {
-            synced: (created + updated) as i32,
-            created: created as i32,
-            updated: updated as i32,
+            synced: created + updated,
+            created,
+            updated,
             errors,
         })
     }
@@ -193,6 +198,6 @@ impl EbayService {
     /// Push a local product to eBay as a listing.
     pub async fn sync_product_to_ebay(&self, product_id: i64) -> Result<String, String> {
         // In a real implementation: call eBay Inventory API
-        Ok(format!("PV-EBAY-{}", product_id))
+        Ok(format!("PV-EBAY-{product_id}"))
     }
 }

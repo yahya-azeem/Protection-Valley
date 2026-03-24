@@ -4,6 +4,12 @@ use uuid::Uuid;
 
 pub struct OrderService;
 
+impl Default for OrderService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl OrderService {
     pub fn new() -> Self {
         Self

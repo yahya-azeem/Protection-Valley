@@ -55,6 +55,6 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
         }
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(Body::from(format!("Stripe error: {}", e)))?)
+            .body(Body::from(format!("Stripe error: {e}")))?)
     }
 }
