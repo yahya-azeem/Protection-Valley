@@ -69,7 +69,6 @@
               bind:value={query} 
               placeholder="SEARCH BY MODEL, SKU, OR NOMENCLATURE..." 
               class="w-full pl-20 pr-8 py-6 bg-black border border-(--color-dark-border) focus:border-(--color-primary) text-3xl font-black uppercase tracking-tighter text-white outline-none placeholder:text-(--color-dark-muted)" 
-              autofocus
             />
           </div>
 

@@ -7,9 +7,9 @@
   let { product } = $props<{ product: GroupedProduct }>();
   
   // Use the first variant for display
-  const displayVariant = product.variants?.[0];
-  const price = displayVariant?.price || 0;
-  const image = displayVariant?.image_url || `${base}/images/placeholder.png`;
+  let displayVariant = $derived(product.variants?.[0]);
+  let price = $derived(displayVariant?.price || 0);
+  let image = $derived(displayVariant?.image_url || `${base}/images/placeholder.png`);
 
   function handleSelect() {
     selectedProduct.set(product);
