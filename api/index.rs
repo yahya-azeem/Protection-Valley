@@ -8,6 +8,11 @@ use backend_v2_lib::models;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    // Workaround for lambda_runtime 0.14.4 panic on missing AWS_LAMBDA_FUNCTION_NAME
+    // which is not provided by Vercel's runtime but required by recent versions of lambda_runtime.
+    if std::env::var("AWS_LAMBDA_FUNCTION_NAME").is_err() {
+        std::env::set_var("AWS_LAMBDA_FUNCTION_NAME", "vercel-function");
+    }
     run(service_fn(handler)).await
 }
 
