@@ -10,6 +10,19 @@ async fn main() -> Result<(), Error> {
 }
 
 pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
+    match inner_handler(req).await {
+        Ok(response) => Ok(response),
+        Err(e) => {
+            eprintln!("[HANDLER ERROR] {e}");
+            Ok(Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .header("Content-Type", "application/json")
+                .body(Body::from(json!({ "error": format!("Handler error: {e}") }).to_string()))?)
+        }
+    }
+}
+
+async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
     let path = req.uri().path();
     let method = req.method().as_str();
 
