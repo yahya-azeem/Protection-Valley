@@ -1,19 +1,19 @@
-use vercel_runtime::{Body, Response, StatusCode, Error};
+use vercel_runtime::{Response, Error};
+use http::StatusCode;
 use crate::models::CreateCheckoutSessionRequest;
 use crate::services::product_service::ProductService;
 use std::env;
 
-pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Result<Response<Body>, Error> {
+pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
     let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
         Ok(key) if !key.is_empty() && !key.starts_with("sk_test_mock") => key,
         _ => {
-            // Stripe is not configured — return a helpful error instead of crashing
             return Ok(Response::builder()
                 .status(StatusCode::SERVICE_UNAVAILABLE)
                 .header("Content-Type", "application/json")
-                .body(Body::from(serde_json::json!({
+                .body(serde_json::json!({
                     "error": "Stripe checkout is not configured. Please set the STRIPE_SECRET_KEY environment variable."
-                }).to_string()))?);
+                }).to_string())?);
         }
     };
 
@@ -45,9 +45,9 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
         return Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .header("Content-Type", "application/json")
-            .body(Body::from(serde_json::json!({
+            .body(serde_json::json!({
                 "error": "No valid products found for checkout"
-            }).to_string()))?);
+            }).to_string())?);
     }
 
     let params = stripe::CreateCheckoutSession {
@@ -64,15 +64,15 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
                 Ok(Response::builder()
                     .status(StatusCode::OK)
                     .header("Content-Type", "application/json")
-                    .body(Body::from(serde_json::json!({ "url": url }).to_string()))?)
+                    .body(serde_json::json!({ "url": url }).to_string())?)
             } else {
                 Ok(Response::builder()
                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .body(Body::from("Failed to generate checkout URL"))?)
+                    .body("Failed to generate checkout URL".to_string())?)
             }
         }
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(Body::from(format!("Stripe error: {e}")))?),
+            .body(format!("Stripe error: {e}"))?),
     }
 }

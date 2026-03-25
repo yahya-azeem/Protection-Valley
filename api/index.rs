@@ -1,4 +1,6 @@
-use vercel_runtime::{run, Body, Error, Request, Response, StatusCode};
+use vercel_runtime::{run, Response, Error, Request, ResponseBody, service_fn};
+use http::StatusCode;
+use http_body_util::BodyExt;
 use serde_json::json;
 
 use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers};
@@ -6,10 +8,10 @@ use backend_v2_lib::models;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    run(handler).await
+    run(service_fn(handler)).await
 }
 
-pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
+pub async fn handler(req: Request) -> Result<Response<ResponseBody>, Error> {
     match inner_handler(req).await {
         Ok(response) => Ok(response),
         Err(e) => {
@@ -17,23 +19,30 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
             Ok(Response::builder()
                 .status(StatusCode::INTERNAL_SERVER_ERROR)
                 .header("Content-Type", "application/json")
-                .body(Body::from(json!({ "error": format!("Handler error: {e}") }).to_string()))?)
+                .body(ResponseBody::from(json!({ "error": format!("Handler error: {e}") }).to_string()))?)
         }
     }
 }
 
-async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
-    let path = req.uri().path();
-    let method = req.method().as_str();
+async fn read_body(req: &mut Request) -> Result<Vec<u8>, Error> {
+    let body = req.body_mut();
+    let collected = body.collect().await?;
+    Ok(collected.to_bytes().to_vec())
+}
+
+async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error> {
+    let path = req.uri().path().to_string();
+    let method = req.method().as_str().to_string();
 
     // Routing
-    match path {
+    match path.as_str() {
         "/api/v1/products" => {
-            match method {
-                "GET" => product_handlers::get_products().await,
+            match method.as_str() {
+                "GET" => wrap(product_handlers::get_products().await),
                 "POST" => {
-                    let body: models::CreateProductRequest = serde_json::from_slice(req.body())?;
-                    product_handlers::create_product(body).await
+                    let bytes = read_body(&mut req).await?;
+                    let body: models::CreateProductRequest = serde_json::from_slice(&bytes)?;
+                    wrap(product_handlers::create_product(body).await)
                 }
                 _ => method_not_allowed(),
             }
@@ -41,13 +50,14 @@ async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
         p if p.starts_with("/api/v1/products/") => {
             let id_str = &p["/api/v1/products/".len()..];
             if let Ok(id) = id_str.parse::<i64>() {
-                match method {
-                    "GET" => product_handlers::get_product(id).await,
+                match method.as_str() {
+                    "GET" => wrap(product_handlers::get_product(id).await),
                     "PUT" => {
-                        let body: models::UpdateProductRequest = serde_json::from_slice(req.body())?;
-                        product_handlers::update_product(id, body).await
+                        let bytes = read_body(&mut req).await?;
+                        let body: models::UpdateProductRequest = serde_json::from_slice(&bytes)?;
+                        wrap(product_handlers::update_product(id, body).await)
                     }
-                    "DELETE" => product_handlers::delete_product(id).await,
+                    "DELETE" => wrap(product_handlers::delete_product(id).await),
                     _ => method_not_allowed(),
                 }
             } else {
@@ -55,29 +65,30 @@ async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
             }
         }
         "/api/v1/orders" => {
-            match method {
-                "GET" => order_handlers::get_orders().await,
+            match method.as_str() {
+                "GET" => wrap(order_handlers::get_orders().await),
                 "POST" => {
-                    let body: models::CreateOrderRequest = serde_json::from_slice(req.body())?;
-                    order_handlers::create_order(body).await
+                    let bytes = read_body(&mut req).await?;
+                    let body: models::CreateOrderRequest = serde_json::from_slice(&bytes)?;
+                    wrap(order_handlers::create_order(body).await)
                 }
                 _ => method_not_allowed(),
             }
         }
         p if p.starts_with("/api/v1/orders/") => {
-            // Check for status update route first
             if p.ends_with("/status") {
                 let id_str = &p["/api/v1/orders/".len()..p.len() - "/status".len()];
                 if method == "PATCH" {
-                    let body: models::OrderStatus = serde_json::from_slice(req.body())?;
-                    order_handlers::update_order_status(id_str.to_string(), body).await
+                    let bytes = read_body(&mut req).await?;
+                    let body: models::OrderStatus = serde_json::from_slice(&bytes)?;
+                    wrap(order_handlers::update_order_status(id_str.to_string(), body).await)
                 } else {
                     method_not_allowed()
                 }
             } else {
                 let id_str = &p["/api/v1/orders/".len()..];
                 if method == "GET" {
-                    order_handlers::get_order(id_str.to_string()).await
+                    wrap(order_handlers::get_order(id_str.to_string()).await)
                 } else {
                     method_not_allowed()
                 }
@@ -85,30 +96,32 @@ async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
         }
         "/api/v1/auth/login" => {
             if method == "POST" {
-                let body: models::LoginRequest = serde_json::from_slice(req.body())?;
-                auth_handlers::login(body).await
+                let bytes = read_body(&mut req).await?;
+                let body: models::LoginRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::login(body).await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/auth/register" => {
             if method == "POST" {
-                let body: models::RegisterRequest = serde_json::from_slice(req.body())?;
-                auth_handlers::register(body).await
+                let bytes = read_body(&mut req).await?;
+                let body: models::RegisterRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::register(body).await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/auth/google/login" => {
             if method == "GET" {
-                auth_handlers::google_login().await
+                wrap(auth_handlers::google_login().await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/auth/google/callback" => {
             if method == "GET" {
-                let query = req.uri().query().unwrap_or("");
+                let query = req.uri().query().unwrap_or("").to_string();
                 let code = query.split('&')
                     .find(|s| s.starts_with("code="))
                     .map(|s| s["code=".len()..].to_string())
@@ -117,38 +130,39 @@ async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
                 if code.is_empty() {
                     return Ok(Response::builder()
                         .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from("Missing code parameter"))?);
+                        .body(ResponseBody::from("Missing code parameter"))?);
                 }
-                auth_handlers::google_callback(code).await
+                wrap(auth_handlers::google_callback(code).await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/auth/me" => {
             if method == "GET" {
-                auth_handlers::get_me().await
+                wrap(auth_handlers::get_me().await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/checkout/create-session" => {
             if method == "POST" {
-                let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(req.body())?;
-                checkout_handlers::create_checkout_session(body).await
+                let bytes = read_body(&mut req).await?;
+                let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(&bytes)?;
+                wrap(checkout_handlers::create_checkout_session(body).await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/ebay/sync" => {
             if method == "POST" {
-                ebay_handlers::sync_inventory().await
+                wrap(ebay_handlers::sync_inventory().await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/ebay/products" => {
             if method == "GET" {
-                ebay_handlers::get_ebay_products().await
+                wrap(ebay_handlers::get_ebay_products().await)
             } else {
                 method_not_allowed()
             }
@@ -157,16 +171,27 @@ async fn inner_handler(req: Request) -> Result<Response<Body>, Error> {
     }
 }
 
-fn not_found() -> Result<Response<Body>, Error> {
+/// Convert Response<String> from handlers into Response<ResponseBody>
+fn wrap(result: Result<Response<String>, Error>) -> Result<Response<ResponseBody>, Error> {
+    match result {
+        Ok(resp) => {
+            let (parts, body) = resp.into_parts();
+            Ok(Response::from_parts(parts, ResponseBody::from(body)))
+        }
+        Err(e) => Err(e),
+    }
+}
+
+fn not_found() -> Result<Response<ResponseBody>, Error> {
     Ok(Response::builder()
         .status(StatusCode::NOT_FOUND)
         .header("Content-Type", "application/json")
-        .body(Body::from(json!({ "error": "Not Found" }).to_string()))?)
+        .body(ResponseBody::from(json!({ "error": "Not Found" }).to_string()))?)
 }
 
-fn method_not_allowed() -> Result<Response<Body>, Error> {
+fn method_not_allowed() -> Result<Response<ResponseBody>, Error> {
     Ok(Response::builder()
         .status(StatusCode::METHOD_NOT_ALLOWED)
         .header("Content-Type", "application/json")
-        .body(Body::from(json!({ "error": "Method Not Allowed" }).to_string()))?)
+        .body(ResponseBody::from(json!({ "error": "Method Not Allowed" }).to_string()))?)
 }
