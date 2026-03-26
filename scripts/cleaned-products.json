@@ -1,13 +1,15 @@
 [
   {
-    "id": 1,
-    "name": "Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders",
+    "id": 151,
+    "name": "Leather SUPREME,Ten Pocket, Tool Pouch, With, Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600.webp",
     "images": [
       "/images/products/s-l1600.webp",
       "/images/products/s-l1600-115.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": null,
     "variants": [
       {
@@ -19,11 +21,11 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600.webp"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1072,
@@ -34,25 +36,24 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-115.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   },
   {
-    "id": 2,
+    "id": 161,
     "name": "Leather Chaps, Apron, for Work, Sports, Horse/Bike Gear, Saddle",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-1.webp",
     "images": [
       "/images/products/s-l1600-1.webp"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -64,25 +65,24 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Orange",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-1.webp"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 3,
-    "name": "Brown Jersey Industrial And Work Safety Gloves (PPE)",
+    "id": 1055,
+    "name": "Industrial And Work Safety Gloves (PPE)",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-121.jpg",
     "images": [
       "/images/products/s-l1600-121.jpg"
     ],
+    "texture": "Jersey",
     "variant_type": null,
     "variants": [
       {
@@ -94,25 +94,24 @@
         "size": "L",
         "pack_quantity": 12,
         "color": "Brown",
+        "texture": "Jersey",
         "images": [
           "/images/products/s-l1600-121.jpg"
         ],
-        "in_stock": true,
-        "texture": "Jersey"
+        "in_stock": true
       }
-    ],
-    "source_name": "Brown Jersey Industrial And Work Safety Gloves (PPE)",
-    "description": "",
-    "texture": "Jersey"
+    ]
   },
   {
-    "id": 4,
+    "id": 1056,
     "name": "14\" High Voltage Protector Glove With A grade Cow Leather",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-111.jpg",
     "images": [
       "/images/products/s-l1600-111.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -124,11 +123,11 @@
         "size": "10",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-111.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1077,
@@ -139,21 +138,19 @@
         "size": "9",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-111.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "14\" High Voltage Protector Glove With A grade Cow Leather",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 5,
-    "name": "Cow Hide Grain Leather Drivers golve Large",
+    "id": 1057,
+    "name": "Grain Leather Drivers golve Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-725.jpg",
     "images": [
       "/images/products/s-l1600-725.jpg",
@@ -161,7 +158,8 @@
       "/images/products/s-l1600-726.jpg",
       "/images/products/s-l1600-727.jpg"
     ],
-    "variant_type": null,
+    "texture": "Cow Hide",
+    "variant_type": "size",
     "variants": [
       {
         "id": 1057,
@@ -172,24 +170,39 @@
         "size": "L",
         "pack_quantity": 120,
         "color": "Natural",
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-725.jpg",
           "/images/products/s-l1600-746.jpg",
           "/images/products/s-l1600-726.jpg",
           "/images/products/s-l1600-727.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
+      },
+      {
+        "id": 1080,
+        "sku": "112201476227",
+        "original_name": "10 Dozen Pr Pack Cow Hide Grain Leather Drivers  golve Size  Extra Large (XL)",
+        "price": 310,
+        "stock": 7,
+        "size": "XL",
+        "pack_quantity": 120,
+        "color": null,
+        "texture": "Cow Hide",
+        "images": [
+          "/images/products/s-l1600-725.jpg",
+          "/images/products/s-l1600-726.jpg",
+          "/images/products/s-l1600-727.jpg"
+        ],
+        "in_stock": true
       }
-    ],
-    "source_name": "Cow Hide Grain Leather Drivers golve Natural Color Large",
-    "description": "",
-    "texture": "Cow Hide"
+    ]
   },
   {
-    "id": 6,
-    "name": "Goat Skin Grain Leather Thinsulate Lining , safety gloves (PPE), L",
+    "id": 1058,
+    "name": "Grain Leather Thinsulate Lining, safety gloves (PPE), L",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-766.jpg",
     "images": [
       "/images/products/s-l1600-766.jpg",
@@ -197,6 +210,7 @@
       "/images/products/s-l1600-768.jpg",
       "/images/products/s-l1600-769.jpg"
     ],
+    "texture": "Goat Skin",
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -208,14 +222,14 @@
         "size": "L",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-766.jpg",
           "/images/products/s-l1600-767.jpg",
           "/images/products/s-l1600-768.jpg",
           "/images/products/s-l1600-769.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1059,
@@ -226,24 +240,22 @@
         "size": "L",
         "pack_quantity": 6,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-766.jpg",
           "/images/products/s-l1600-767.jpg",
           "/images/products/s-l1600-768.jpg",
           "/images/products/s-l1600-769.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       }
-    ],
-    "source_name": "Goat Skin Grain Leather Thinsulate Lining , safety gloves (PPE), L",
-    "description": "",
-    "texture": "Goat Skin"
+    ]
   },
   {
-    "id": 7,
-    "name": "Cow Hide Grain Leather Driver, work ,safety golves Size",
+    "id": 1060,
+    "name": "Grain Leather Driver, work,safety golves Size",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-725.jpg",
     "images": [
       "/images/products/s-l1600-725.jpg",
@@ -253,6 +265,7 @@
       "/images/products/s-l1600-747.jpg",
       "/images/products/s-l1600-748.jpg"
     ],
+    "texture": "Cow Hide",
     "variant_type": "size",
     "variants": [
       {
@@ -264,6 +277,7 @@
         "size": "L",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-725.jpg",
           "/images/products/s-l1600-746.jpg",
@@ -272,8 +286,7 @@
           "/images/products/s-l1600-747.jpg",
           "/images/products/s-l1600-748.jpg"
         ],
-        "in_stock": false,
-        "texture": "Cow Hide"
+        "in_stock": false
       },
       {
         "id": 1088,
@@ -284,6 +297,7 @@
         "size": "XL",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-725.jpg",
           "/images/products/s-l1600-746.jpg",
@@ -292,18 +306,15 @@
           "/images/products/s-l1600-747.jpg",
           "/images/products/s-l1600-748.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
       }
-    ],
-    "source_name": "Cow Hide Grain Leather Driver, work ,safety golves Size",
-    "description": "",
-    "texture": "Cow Hide"
+    ]
   },
   {
-    "id": 8,
-    "name": "Goat Skin Grain Leather Drivers, work safety gloves (PPE)",
+    "id": 1061,
+    "name": "Grain Leather Drivers, work safety gloves (PPE)",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-573.jpg",
     "images": [
       "/images/products/s-l1600-573.jpg",
@@ -321,6 +332,7 @@
       "/images/products/s-l1600-744.jpg",
       "/images/products/s-l1600-745.jpg"
     ],
+    "texture": "Goat Skin",
     "variant_type": "size",
     "variants": [
       {
@@ -332,6 +344,7 @@
         "size": "M",
         "pack_quantity": 120,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -341,8 +354,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1062,
@@ -353,6 +365,7 @@
         "size": "L",
         "pack_quantity": 120,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -362,8 +375,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1073,
@@ -374,6 +386,7 @@
         "size": "L",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -383,8 +396,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1079,
@@ -395,6 +407,7 @@
         "size": "S",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-740.jpg",
           "/images/products/s-l1600-741.jpg",
@@ -405,8 +418,7 @@
           "/images/products/s-l1600-745.jpg",
           "/images/products/s-l1600-578.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1087,
@@ -417,6 +429,7 @@
         "size": "XXL",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -426,8 +439,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1089,
@@ -438,6 +450,7 @@
         "size": "M",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-740.jpg",
           "/images/products/s-l1600-741.jpg",
@@ -448,8 +461,7 @@
           "/images/products/s-l1600-745.jpg",
           "/images/products/s-l1600-578.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1112,
@@ -460,6 +472,7 @@
         "size": "XL",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -469,8 +482,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1127,
@@ -481,6 +493,7 @@
         "size": "XL",
         "pack_quantity": 120,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -490,8 +503,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1128,
@@ -502,6 +514,7 @@
         "size": "S",
         "pack_quantity": 120,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -511,8 +524,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1148,
@@ -523,6 +535,7 @@
         "size": "3XL",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -532,8 +545,7 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       },
       {
         "id": 1149,
@@ -544,6 +556,7 @@
         "size": "3XL",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-573.jpg",
           "/images/products/s-l1600-574.jpg",
@@ -553,24 +566,22 @@
           "/images/products/s-l1600-578.jpg",
           "/images/products/s-l1600-579.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       }
-    ],
-    "source_name": "Goat Skin Grain Leather Drivers, work safety gloves (PPE)",
-    "description": "",
-    "texture": "Goat Skin"
+    ]
   },
   {
-    "id": 9,
-    "name": "Cow Brushed Leather Drivers Glove Large, Golden Color",
+    "id": 1063,
+    "name": "Cow Drivers Glove Large, Golden Color",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-763.jpg",
     "images": [
       "/images/products/s-l1600-763.jpg",
       "/images/products/s-l1600-764.jpg",
       "/images/products/s-l1600-765.jpg"
     ],
+    "texture": "Suede",
     "variant_type": null,
     "variants": [
       {
@@ -582,29 +593,28 @@
         "size": "L",
         "pack_quantity": 1,
         "color": null,
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-763.jpg",
           "/images/products/s-l1600-764.jpg",
           "/images/products/s-l1600-765.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       }
-    ],
-    "source_name": "Cow Brushed Leather (Suede) Drivers Glove Large, Golden Color",
-    "description": "",
-    "texture": "Suede"
+    ]
   },
   {
-    "id": 10,
-    "name": "Touch Screen, Orange High Vis Synthetic Leather Mechanics Gloves, Large",
+    "id": 1064,
+    "name": "Touch Screen, Mechanics Gloves, Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-691.jpg",
     "images": [
       "/images/products/s-l1600-691.jpg",
       "/images/products/s-l1600-692.jpg",
       "/images/products/s-l1600-693.jpg"
     ],
+    "texture": "Synthetic Leather",
     "variant_type": null,
     "variants": [
       {
@@ -616,27 +626,26 @@
         "size": "L",
         "pack_quantity": 6,
         "color": "Orange",
+        "texture": "Synthetic Leather",
         "images": [
           "/images/products/s-l1600-691.jpg",
           "/images/products/s-l1600-692.jpg",
           "/images/products/s-l1600-693.jpg"
         ],
-        "in_stock": true,
-        "texture": "Synthetic Leather"
+        "in_stock": true
       }
-    ],
-    "source_name": "Touch Screen, Orange High Vis Synthetic Leather Mechanics Gloves, Large",
-    "description": "",
-    "texture": "Synthetic Leather"
+    ]
   },
   {
-    "id": 11,
+    "id": 1065,
     "name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather, M",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-116.jpg",
     "images": [
       "/images/products/s-l1600-116.jpg"
     ],
+    "texture": null,
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -648,11 +657,11 @@
         "size": "M",
         "pack_quantity": 72,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-116.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1068,
@@ -663,25 +672,24 @@
         "size": "M",
         "pack_quantity": 12,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-116.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather, M",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 12,
+    "id": 1066,
     "name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-118.jpg",
     "images": [
       "/images/products/s-l1600-118.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -693,11 +701,11 @@
         "size": "M",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-118.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1067,
@@ -708,21 +716,19 @@
         "size": "L",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-118.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 13,
+    "id": 1069,
     "name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather, L",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-116.jpg",
     "images": [
       "/images/products/s-l1600-116.jpg",
@@ -730,6 +736,7 @@
       "/images/products/s-l1600-761.jpg",
       "/images/products/s-l1600-762.jpg"
     ],
+    "texture": null,
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -741,14 +748,14 @@
         "size": "L",
         "pack_quantity": 72,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-116.jpg",
           "/images/products/s-l1600-118.jpg",
           "/images/products/s-l1600-761.jpg",
           "/images/products/s-l1600-762.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1070,
@@ -759,25 +766,26 @@
         "size": "L",
         "pack_quantity": 12,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-116.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Branded Work Glove Closeout, Heavy Duty, A Grade Goat Leather, L",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 14,
-    "name": "Goat Skin Grain Leather Driver work safety golve",
+    "id": 1071,
+    "name": "Grain Leather Driver work safety golve",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-67.jpg",
     "images": [
-      "/images/products/s-l1600-67.jpg"
+      "/images/products/s-l1600-67.jpg",
+      "/images/products/s-l1600-749.jpg",
+      "/images/products/s-l1600-750.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -789,11 +797,27 @@
         "size": "L",
         "pack_quantity": 1,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-67.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
+      },
+      {
+        "id": 1082,
+        "sku": "112203889964",
+        "original_name": "Cow Hide Grain Leather Driver work safety golve Size Large (L)",
+        "price": 2.99,
+        "stock": 41,
+        "size": "L",
+        "pack_quantity": 1,
+        "color": null,
+        "texture": "Cow Hide",
+        "images": [
+          "/images/products/s-l1600-749.jpg",
+          "/images/products/s-l1600-750.jpg"
+        ],
+        "in_stock": true
       },
       {
         "id": 1146,
@@ -804,25 +828,24 @@
         "size": "M",
         "pack_quantity": 1,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-67.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       }
-    ],
-    "source_name": "Goat Skin Grain Leather Driver work safety golve",
-    "description": "",
-    "texture": "Goat Skin"
+    ]
   },
   {
-    "id": 15,
-    "name": "Ladies Suede lether (brushed) Garden Glove",
+    "id": 1074,
+    "name": "Ladies lether (brushed) Garden Glove",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-114.jpg",
     "images": [
       "/images/products/s-l1600-114.jpg"
     ],
+    "texture": "Suede",
     "variant_type": null,
     "variants": [
       {
@@ -834,26 +857,25 @@
         "size": "M",
         "pack_quantity": 1,
         "color": "Pink",
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-114.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       }
-    ],
-    "source_name": "Ladies Suede lether (brushed) Garden Glove, Color Pink",
-    "description": "",
-    "texture": "Suede"
+    ]
   },
   {
-    "id": 16,
-    "name": "High Visibility Heavy Cow Suede Leather (Brushed) Glove",
+    "id": 1075,
+    "name": "Heavy Cow Leather (Brushed) Glove",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-759.jpg",
     "images": [
       "/images/products/s-l1600-759.jpg",
       "/images/products/s-l1600-760.jpg"
     ],
+    "texture": "Suede",
     "variant_type": null,
     "variants": [
       {
@@ -865,22 +887,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-759.jpg",
           "/images/products/s-l1600-760.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       }
-    ],
-    "source_name": "High Visibility Heavy Cow Suede Leather (Brushed) Glove",
-    "description": "",
-    "texture": "Suede"
+    ]
   },
   {
-    "id": 17,
-    "name": "Leather Gold SUPREME Ten Pocket Oil Tann Tool Pouch Hammer Holders",
+    "id": 1076,
+    "name": "Leather SUPREME Ten Pocket Oil Tann Tool Pouch Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-115.jpg",
     "images": [
       "/images/products/s-l1600-115.jpg",
@@ -890,6 +910,7 @@
       "/images/products/s-l1600-757.jpg",
       "/images/products/s-l1600-758.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -901,6 +922,7 @@
         "size": null,
         "pack_quantity": 5,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-115.jpg",
           "/images/products/s-l1600-754.jpg",
@@ -909,24 +931,22 @@
           "/images/products/s-l1600-757.jpg",
           "/images/products/s-l1600-758.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold SUPREME Ten Pocket Oil Tann Tool Pouch Hammer Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 18,
+    "id": 1078,
     "name": "Heavy Duty A Grade Goat Leather Work Glove Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-751.jpg",
     "images": [
       "/images/products/s-l1600-751.jpg",
       "/images/products/s-l1600-752.jpg",
       "/images/products/s-l1600-753.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -938,61 +958,26 @@
         "size": "L",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-751.jpg",
           "/images/products/s-l1600-752.jpg",
           "/images/products/s-l1600-753.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Heavy Duty A Grade Goat Leather Work Glove Large",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 19,
-    "name": "Cow Hide Grain Leather Drivers golve Large",
-    "category": "Work Gloves",
-    "image_url": "/images/products/s-l1600-725.jpg",
-    "images": [
-      "/images/products/s-l1600-725.jpg",
-      "/images/products/s-l1600-726.jpg",
-      "/images/products/s-l1600-727.jpg"
-    ],
-    "variant_type": null,
-    "variants": [
-      {
-        "id": 1080,
-        "sku": "112201476227",
-        "original_name": "10 Dozen Pr Pack Cow Hide Grain Leather Drivers  golve Size  Extra Large (XL)",
-        "price": 310,
-        "stock": 7,
-        "size": "XL",
-        "pack_quantity": 120,
-        "color": null,
-        "images": [
-          "/images/products/s-l1600-725.jpg",
-          "/images/products/s-l1600-726.jpg",
-          "/images/products/s-l1600-727.jpg"
-        ],
-        "in_stock": true,
-        "texture": "Cow Hide"
-      }
-    ],
-    "source_name": "Cow Hide Grain Leather Drivers golve Large",
-    "description": "",
-    "texture": "Cow Hide"
-  },
-  {
-    "id": 20,
+    "id": 1081,
     "name": "4\" weight lifting belt leather (110cm)",
     "category": "Other",
+    "description": "",
     "image_url": "/images/products/s-l1600-109.jpg",
     "images": [
       "/images/products/s-l1600-109.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1004,58 +989,25 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Black",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-109.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "4\" weight lifting belt leather Black Color (110cm)",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 21,
-    "name": "Cow Hide Grain Leather Driver work safety golve",
+    "id": 1083,
+    "name": "12 Pairs Touch Screen Mechanic's Work Gloves (PPE) Large",
     "category": "Work Gloves",
-    "image_url": "/images/products/s-l1600-749.jpg",
-    "images": [
-      "/images/products/s-l1600-749.jpg",
-      "/images/products/s-l1600-750.jpg"
-    ],
-    "variant_type": null,
-    "variants": [
-      {
-        "id": 1082,
-        "sku": "112203889964",
-        "original_name": "Cow Hide Grain Leather Driver work safety golve Size Large (L)",
-        "price": 2.99,
-        "stock": 41,
-        "size": "L",
-        "pack_quantity": 1,
-        "color": null,
-        "images": [
-          "/images/products/s-l1600-749.jpg",
-          "/images/products/s-l1600-750.jpg"
-        ],
-        "in_stock": true,
-        "texture": "Cow Hide"
-      }
-    ],
-    "source_name": "Cow Hide Grain Leather Driver work safety golve",
     "description": "",
-    "texture": "Cow Hide"
-  },
-  {
-    "id": 22,
-    "name": "12 Pairs Touch Screen High Vis Mechanic's Work Gloves (PPE) Large",
-    "category": "Work Gloves",
     "image_url": "/images/products/s-l1600-738.jpg",
     "images": [
       "/images/products/s-l1600-738.jpg",
       "/images/products/s-l1600-739.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1067,27 +1019,26 @@
         "size": "S",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-738.jpg",
           "/images/products/s-l1600-739.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "12 Pairs Touch Screen High Vis Mechanic's Work Gloves (PPE) Large",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 23,
-    "name": "Touch Screen High Vis Mechanic's Work Gloves (PPE) Large",
+    "id": 1084,
+    "name": "Touch Screen Mechanic's Work Gloves (PPE) Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-738.jpg",
     "images": [
       "/images/products/s-l1600-738.jpg",
       "/images/products/s-l1600-739.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1099,26 +1050,25 @@
         "size": "S",
         "pack_quantity": 72,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-738.jpg",
           "/images/products/s-l1600-739.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Touch Screen High Vis Mechanic's Work Gloves (PPE) Large",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 24,
+    "id": 1085,
     "name": "Double Side PVC Dotted (Polka) Cotton Industrial & Work Gloves L",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-107.jpg",
     "images": [
       "/images/products/s-l1600-107.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1130,21 +1080,19 @@
         "size": "L",
         "pack_quantity": 12,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-107.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Double Side PVC Dotted (Polka) Cotton Industrial & Work Gloves L",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 25,
-    "name": "Cow Hide Grain Leather Driver work safety golve Large",
+    "id": 1086,
+    "name": "Grain Leather Driver work safety golve Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-725.jpg",
     "images": [
       "/images/products/s-l1600-725.jpg",
@@ -1152,6 +1100,7 @@
       "/images/products/s-l1600-726.jpg",
       "/images/products/s-l1600-727.jpg"
     ],
+    "texture": "Cow Hide",
     "variant_type": null,
     "variants": [
       {
@@ -1163,29 +1112,28 @@
         "size": "XL",
         "pack_quantity": 1,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-725.jpg",
           "/images/products/s-l1600-746.jpg",
           "/images/products/s-l1600-726.jpg",
           "/images/products/s-l1600-727.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
       }
-    ],
-    "source_name": "Cow Hide Grain Leather Driver work safety golve Large",
-    "description": "",
-    "texture": "Cow Hide"
+    ]
   },
   {
-    "id": 26,
-    "name": "Touch Screen High Vis Mechanic's Work Gloves (PPE)Large",
+    "id": 1090,
+    "name": "Touch Screen Mechanic's Work Gloves (PPE)Large",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-738.jpg",
     "images": [
       "/images/products/s-l1600-738.jpg",
       "/images/products/s-l1600-739.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1197,22 +1145,20 @@
         "size": "S",
         "pack_quantity": 2,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-738.jpg",
           "/images/products/s-l1600-739.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Touch Screen High Vis Mechanic's Work Gloves (PPE)Large",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 27,
-    "name": "Leather Gold PROFESSIONAL Ten Pocket Grain Leather Tool Pouch With Hammer Holder",
+    "id": 1091,
+    "name": "Leather PROFESSIONAL Ten Pocket Grain Leather Tool Pouch With Hammer Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-733.jpg",
     "images": [
       "/images/products/s-l1600-733.jpg",
@@ -1221,6 +1167,7 @@
       "/images/products/s-l1600-736.jpg",
       "/images/products/s-l1600-737.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1232,6 +1179,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-733.jpg",
           "/images/products/s-l1600-734.jpg",
@@ -1239,18 +1187,15 @@
           "/images/products/s-l1600-736.jpg",
           "/images/products/s-l1600-737.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold PROFESSIONAL Ten Pocket Grain Leather Tool Pouch With Hammer Holder",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 28,
-    "name": "Leather Gold PROFESSIONAL Ten Pocket Grain Leather Tool Pouch,Holders",
+    "id": 1092,
+    "name": "Leather PROFESSIONAL Ten Pocket Grain Leather Tool Pouch,Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-728.jpg",
     "images": [
       "/images/products/s-l1600-728.jpg",
@@ -1259,6 +1204,7 @@
       "/images/products/s-l1600-731.jpg",
       "/images/products/s-l1600-732.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1270,6 +1216,7 @@
         "size": null,
         "pack_quantity": 5,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-728.jpg",
           "/images/products/s-l1600-729.jpg",
@@ -1277,24 +1224,22 @@
           "/images/products/s-l1600-731.jpg",
           "/images/products/s-l1600-732.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold PROFESSIONAL Ten Pocket Grain Leather Tool Pouch,Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 29,
-    "name": "Cow Hide Grain Leather Drivers golve",
+    "id": 1093,
+    "name": "Grain Leather Drivers golve",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-725.jpg",
     "images": [
       "/images/products/s-l1600-725.jpg",
       "/images/products/s-l1600-726.jpg",
       "/images/products/s-l1600-727.jpg"
     ],
+    "texture": "Cow Hide",
     "variant_type": null,
     "variants": [
       {
@@ -1306,23 +1251,21 @@
         "size": "M",
         "pack_quantity": 120,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-725.jpg",
           "/images/products/s-l1600-726.jpg",
           "/images/products/s-l1600-727.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
       }
-    ],
-    "source_name": "Cow Hide Grain Leather Drivers golve",
-    "description": "",
-    "texture": "Cow Hide"
+    ]
   },
   {
-    "id": 30,
+    "id": 1094,
     "name": "16 oz USA FLAG COLOR BOXING GLOVES & PUNCHING BAG TRAINING SET for Youth",
     "category": "Boxing & MMA",
+    "description": "",
     "image_url": "/images/products/s-l1600-721.jpg",
     "images": [
       "/images/products/s-l1600-721.jpg",
@@ -1330,6 +1273,7 @@
       "/images/products/s-l1600-723.jpg",
       "/images/products/s-l1600-724.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1341,28 +1285,27 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-721.jpg",
           "/images/products/s-l1600-722.jpg",
           "/images/products/s-l1600-723.jpg",
           "/images/products/s-l1600-724.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "16 oz USA FLAG COLOR BOXING GLOVES & PUNCHING BAG TRAINING SET for Youth",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 31,
-    "name": "Leather Gold 9006 - Steel Loop, Grain Leather Belt Hammer Holder Brown",
+    "id": 1095,
+    "name": "Leather 9006 - Steel Loop, Grain Leather Belt Hammer Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-98.jpg",
     "images": [
       "/images/products/s-l1600-98.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1374,25 +1317,24 @@
         "size": null,
         "pack_quantity": 5,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-98.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 9006 - Steel Loop, Grain Leather Belt Hammer Holder Brown",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 32,
-    "name": "Leather Gold 9006 - Steel Grain, Leather Belt Hammer Holder Brown",
+    "id": 1096,
+    "name": "Leather 9006 - Steel Grain, Leather Belt Hammer Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-98.jpg",
     "images": [
       "/images/products/s-l1600-98.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1404,27 +1346,26 @@
         "size": null,
         "pack_quantity": 10,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-98.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 9006 - Steel Grain, Leather Belt Hammer Holder Brown",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 33,
-    "name": "Leather Gold CLASSIC ,Ten Pocket Brown Tanned, Tool Pouch, With 2 Hammer Holders",
+    "id": 1097,
+    "name": "Leather CLASSIC,Ten Pocket Tanned, Tool Pouch, With 2 Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-718.jpg",
     "images": [
       "/images/products/s-l1600-718.jpg",
       "/images/products/s-l1600-719.jpg",
       "/images/products/s-l1600-720.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1436,30 +1377,32 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-718.jpg",
           "/images/products/s-l1600-719.jpg",
           "/images/products/s-l1600-720.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold CLASSIC ,Ten Pocket Brown Tanned, Tool Pouch, With 2 Hammer Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 34,
-    "name": "Leather Gold CLASSIC Ten Pocket BRN Tann Tool Pouch 2 Hammer Holders",
+    "id": 1098,
+    "name": "Leather CLASSIC Ten Pocket BRN Tann Tool Pouch 2 Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-715.jpg",
     "images": [
       "/images/products/s-l1600-715.jpg",
       "/images/products/s-l1600-716.jpg",
-      "/images/products/s-l1600-717.jpg"
+      "/images/products/s-l1600-717.jpg",
+      "/images/products/s-l1600-712.jpg",
+      "/images/products/s-l1600-713.jpg",
+      "/images/products/s-l1600-714.jpg"
     ],
-    "variant_type": null,
+    "texture": null,
+    "variant_type": "pack_quantity",
     "variants": [
       {
         "id": 1098,
@@ -1470,31 +1413,14 @@
         "size": null,
         "pack_quantity": 10,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-715.jpg",
           "/images/products/s-l1600-716.jpg",
           "/images/products/s-l1600-717.jpg"
         ],
-        "in_stock": true,
-        "texture": null
-      }
-    ],
-    "source_name": "Leather Gold CLASSIC Ten Pocket BRN Tann Tool Pouch 2 Hammer Holders",
-    "description": "",
-    "texture": null
-  },
-  {
-    "id": 35,
-    "name": "Leather CLASSIC Ten Pocket BRN Tann Tool Pouch 2 Hammer Holders",
-    "category": "Tool Belts & Pouches",
-    "image_url": "/images/products/s-l1600-712.jpg",
-    "images": [
-      "/images/products/s-l1600-712.jpg",
-      "/images/products/s-l1600-713.jpg",
-      "/images/products/s-l1600-714.jpg"
-    ],
-    "variant_type": null,
-    "variants": [
+        "in_stock": true
+      },
       {
         "id": 1099,
         "sku": "112426118127",
@@ -1504,23 +1430,21 @@
         "size": null,
         "pack_quantity": 5,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-712.jpg",
           "/images/products/s-l1600-713.jpg",
           "/images/products/s-l1600-714.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather CLASSIC Ten Pocket BRN Tann Tool Pouch 2 Hammer Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 36,
+    "id": 1100,
     "name": "5\" Foam Padded Work Belts With Cow Leather Outer Belt Fits Up To 48\"",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-706.jpg",
     "images": [
       "/images/products/s-l1600-706.jpg",
@@ -1530,6 +1454,7 @@
       "/images/products/s-l1600-711.jpg",
       "/images/products/s-l1600-710.jpg"
     ],
+    "texture": null,
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -1541,6 +1466,7 @@
         "size": null,
         "pack_quantity": 5,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-706.jpg",
           "/images/products/s-l1600-707.jpg",
@@ -1549,8 +1475,7 @@
           "/images/products/s-l1600-711.jpg",
           "/images/products/s-l1600-710.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1101,
@@ -1561,6 +1486,7 @@
         "size": null,
         "pack_quantity": 10,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-706.jpg",
           "/images/products/s-l1600-707.jpg",
@@ -1568,18 +1494,15 @@
           "/images/products/s-l1600-709.jpg",
           "/images/products/s-l1600-710.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "5\" Foam Padded Work Belts With Cow Leather Outer Belt Fits Up To 48\"",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 37,
+    "id": 1102,
     "name": "5\" Foam Padded Work Belt With Cow Leather Outer Belt Fits Up To 48\"",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-706.jpg",
     "images": [
       "/images/products/s-l1600-706.jpg",
@@ -1588,6 +1511,7 @@
       "/images/products/s-l1600-709.jpg",
       "/images/products/s-l1600-710.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1599,6 +1523,7 @@
         "size": "XL",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-706.jpg",
           "/images/products/s-l1600-707.jpg",
@@ -1606,18 +1531,15 @@
           "/images/products/s-l1600-709.jpg",
           "/images/products/s-l1600-710.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "5\" Foam Padded Work Belt With Cow Leather Outer Belt Fits Up To 48\"",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 38,
+    "id": 1103,
     "name": "5\" Foam Padded Work Belt With Cow Leather Outer Belt Fits Up To 44\"",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-706.jpg",
     "images": [
       "/images/products/s-l1600-706.jpg",
@@ -1626,6 +1548,7 @@
       "/images/products/s-l1600-709.jpg",
       "/images/products/s-l1600-710.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1637,6 +1560,7 @@
         "size": "L",
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-706.jpg",
           "/images/products/s-l1600-707.jpg",
@@ -1644,18 +1568,15 @@
           "/images/products/s-l1600-709.jpg",
           "/images/products/s-l1600-710.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "5\" Foam Padded Work Belt With Cow Leather Outer Belt Fits Up To 44\"",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 39,
-    "name": "120 Pairs Maspur Nitrile Coated Work Gloves () Green, Orange & Red",
+    "id": 1104,
+    "name": "120 Pairs Maspur Nitrile Coated Work Gloves, &",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-700.jpg",
     "images": [
       "/images/products/s-l1600-700.jpg",
@@ -1665,6 +1586,7 @@
       "/images/products/s-l1600-704.jpg",
       "/images/products/s-l1600-705.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -1676,6 +1598,7 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1684,18 +1607,15 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "120 Pairs Maspur Nitrile Coated Work Gloves () Green, Orange & Red",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 40,
-    "name": "12 Pairs Mastpur Nitrile Coated Work Gloves () Green, Orange & Red",
+    "id": 1105,
+    "name": "12 Pairs Mastpur Nitrile Coated Work Gloves, &",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-700.jpg",
     "images": [
       "/images/products/s-l1600-700.jpg",
@@ -1705,6 +1625,7 @@
       "/images/products/s-l1600-704.jpg",
       "/images/products/s-l1600-705.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -1716,6 +1637,7 @@
         "size": "M",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1724,8 +1646,7 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1106,
@@ -1736,6 +1657,7 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1744,8 +1666,7 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1109,
@@ -1756,6 +1677,7 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1764,18 +1686,15 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "12 Pairs Mastpur Nitrile Coated Work Gloves () Green, Orange & Red",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 41,
-    "name": "120 Pairs Mastpur Nitrile Coated Work Gloves () Green, Orange & Red",
+    "id": 1107,
+    "name": "120 Pairs Mastpur Nitrile Coated Work Gloves, &",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-700.jpg",
     "images": [
       "/images/products/s-l1600-700.jpg",
@@ -1785,6 +1704,7 @@
       "/images/products/s-l1600-704.jpg",
       "/images/products/s-l1600-705.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -1796,6 +1716,7 @@
         "size": "M",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1804,8 +1725,7 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1108,
@@ -1816,6 +1736,7 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-700.jpg",
           "/images/products/s-l1600-701.jpg",
@@ -1824,24 +1745,22 @@
           "/images/products/s-l1600-704.jpg",
           "/images/products/s-l1600-705.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "120 Pairs Mastpur Nitrile Coated Work Gloves () Green, Orange & Red",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 42,
-    "name": "12 Pairs Leather Gold Yellow Goat Grain Leather Palm Gloves Thumb Reinforced",
+    "id": 1110,
+    "name": "12 Pairs Leather Goat Grain Leather Palm Gloves Thumb Reinforced",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-697.jpg",
     "images": [
       "/images/products/s-l1600-697.jpg",
       "/images/products/s-l1600-698.jpg",
       "/images/products/s-l1600-699.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -1853,13 +1772,13 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-697.jpg",
           "/images/products/s-l1600-698.jpg",
           "/images/products/s-l1600-699.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1111,
@@ -1870,29 +1789,28 @@
         "size": "M",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-697.jpg",
           "/images/products/s-l1600-698.jpg",
           "/images/products/s-l1600-699.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "12 Pairs Leather Gold Yellow Goat Grain Leather Palm Gloves Thumb Reinforced",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 43,
-    "name": "Leather Gold Yellow Goat Grain Leather Palm Gloves Thumb Reinforced Size",
+    "id": 1113,
+    "name": "Leather Goat Grain Leather Palm Gloves Thumb Reinforced Size",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-697.jpg",
     "images": [
       "/images/products/s-l1600-697.jpg",
       "/images/products/s-l1600-698.jpg",
       "/images/products/s-l1600-699.jpg"
     ],
+    "texture": null,
     "variant_type": "size",
     "variants": [
       {
@@ -1904,13 +1822,13 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-697.jpg",
           "/images/products/s-l1600-698.jpg",
           "/images/products/s-l1600-699.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1114,
@@ -1921,13 +1839,13 @@
         "size": "M",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-697.jpg",
           "/images/products/s-l1600-698.jpg",
           "/images/products/s-l1600-699.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1115,
@@ -1938,23 +1856,21 @@
         "size": "XL",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-697.jpg",
           "/images/products/s-l1600-698.jpg",
           "/images/products/s-l1600-699.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Yellow Goat Grain Leather Palm Gloves Thumb Reinforced Size",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 44,
-    "name": "Leather Gold Oil Tanned Leather Pouch With Extra Big Pockets For Nails And Tools",
+    "id": 1116,
+    "name": "Leather Leather Pouch With Extra Big Pockets For Nails And Tools",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-694.jpg",
     "images": [
       "/images/products/s-l1600-694.jpg",
@@ -1963,6 +1879,7 @@
       "/images/products/s-l1600-76.jpg",
       "/images/products/s-l1600-75.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -1974,13 +1891,13 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-694.jpg",
           "/images/products/s-l1600-695.jpg",
           "/images/products/s-l1600-696.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1135,
@@ -1991,11 +1908,11 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-76.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1136,
@@ -2006,27 +1923,26 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-75.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Oil Tanned Leather Pouch With Extra Big Pockets For Nails And Tools",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   },
   {
-    "id": 45,
-    "name": "Leather Gold Oil Tanned Leather Nails & Tools Pouch, Extra Big Pockets",
+    "id": 1117,
+    "name": "Leather Leather Nails & Tools Pouch, Extra Big Pockets",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-694.jpg",
     "images": [
       "/images/products/s-l1600-694.jpg",
       "/images/products/s-l1600-695.jpg",
       "/images/products/s-l1600-696.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": null,
     "variants": [
       {
@@ -2038,29 +1954,28 @@
         "size": null,
         "pack_quantity": 5,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-694.jpg",
           "/images/products/s-l1600-695.jpg",
           "/images/products/s-l1600-696.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Oil Tanned Leather Nails & Tools Pouch, Extra Big Pockets",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   },
   {
-    "id": 46,
-    "name": "Leather Gold Oil Tanned Leather Nails & Tools Pouch Extra Big Pockets",
+    "id": 1118,
+    "name": "Leather Leather Nails & Tools Pouch Extra Big Pockets",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-694.jpg",
     "images": [
       "/images/products/s-l1600-694.jpg",
       "/images/products/s-l1600-695.jpg",
       "/images/products/s-l1600-696.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -2072,13 +1987,13 @@
         "size": null,
         "pack_quantity": 10,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-694.jpg",
           "/images/products/s-l1600-695.jpg",
           "/images/products/s-l1600-696.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1119,
@@ -2089,29 +2004,28 @@
         "size": null,
         "pack_quantity": 20,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-694.jpg",
           "/images/products/s-l1600-695.jpg",
           "/images/products/s-l1600-696.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Oil Tanned Leather Nails & Tools Pouch Extra Big Pockets",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   },
   {
-    "id": 47,
-    "name": "Touch Screen, High Vis Synthetic Leather Mechanics Gloves",
+    "id": 1120,
+    "name": "Touch Screen, Mechanics Gloves",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-691.jpg",
     "images": [
       "/images/products/s-l1600-691.jpg",
       "/images/products/s-l1600-692.jpg",
       "/images/products/s-l1600-693.jpg"
     ],
+    "texture": "Synthetic Leather",
     "variant_type": null,
     "variants": [
       {
@@ -2123,29 +2037,28 @@
         "size": "L",
         "pack_quantity": 1,
         "color": "Orange",
+        "texture": "Synthetic Leather",
         "images": [
           "/images/products/s-l1600-691.jpg",
           "/images/products/s-l1600-692.jpg",
           "/images/products/s-l1600-693.jpg"
         ],
-        "in_stock": true,
-        "texture": "Synthetic Leather"
+        "in_stock": true
       }
-    ],
-    "source_name": "Touch Screen, High Vis Synthetic Leather Mechanics Gloves, Orange Color",
-    "description": "",
-    "texture": "Synthetic Leather"
+    ]
   },
   {
-    "id": 48,
-    "name": "Leather Gold “PREMIUM” ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders",
+    "id": 1121,
+    "name": "Leather “PREMIUM”,Ten Pocket, Tool Pouch, With, Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-688.jpg",
     "images": [
       "/images/products/s-l1600-688.jpg",
       "/images/products/s-l1600-689.jpg",
       "/images/products/s-l1600-690.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": null,
     "variants": [
       {
@@ -2157,29 +2070,28 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-688.jpg",
           "/images/products/s-l1600-689.jpg",
           "/images/products/s-l1600-690.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold “PREMIUM” ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   },
   {
-    "id": 49,
-    "name": "Leather Gold “PREMIUM”Ten Pocket Oil Tann Tool Pouch Hammer Holders",
+    "id": 1122,
+    "name": "Leather “PREMIUM”Ten Pocket Oil Tann Tool Pouch Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-685.jpg",
     "images": [
       "/images/products/s-l1600-685.jpg",
       "/images/products/s-l1600-686.jpg",
       "/images/products/s-l1600-687.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2191,29 +2103,28 @@
         "size": null,
         "pack_quantity": 10,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-685.jpg",
           "/images/products/s-l1600-686.jpg",
           "/images/products/s-l1600-687.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold “PREMIUM”Ten Pocket Oil Tann Tool Pouch Hammer Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 50,
-    "name": "Leather Gold “PREMIUM” Ten Pocket Oil Tan Tool Pouch Hammer Holders",
+    "id": 1123,
+    "name": "Leather “PREMIUM” Ten Pocket Oil Tool Pouch Hammer Holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-682.jpg",
     "images": [
       "/images/products/s-l1600-682.jpg",
       "/images/products/s-l1600-683.jpg",
       "/images/products/s-l1600-684.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2225,27 +2136,26 @@
         "size": null,
         "pack_quantity": 5,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-682.jpg",
           "/images/products/s-l1600-683.jpg",
           "/images/products/s-l1600-684.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold “PREMIUM” Ten Pocket Oil Tan Tool Pouch Hammer Holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 51,
+    "id": 1124,
     "name": "2\" Scaffolding Leather Belt with 5 holders including meausre tape & span holders",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-85.jpg",
     "images": [
       "/images/products/s-l1600-85.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2257,21 +2167,19 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-85.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "2\" Scaffolding Leather Belt with 5 holders including meausre tape & span holders",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 52,
-    "name": "Leather Gold Economy 10-Pocket Suede Leather Carpenter Tool Bag & Storage Pouch.",
+    "id": 1125,
+    "name": "Leather Economy 10-Pocket Leather Carpenter Tool Bag & Storage Pouch.",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-679.jpg",
     "images": [
       "/images/products/s-l1600-679.jpg",
@@ -2282,6 +2190,7 @@
       "/images/products/s-l1600-677.jpg",
       "/images/products/s-l1600-678.jpg"
     ],
+    "texture": "Suede",
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -2293,13 +2202,13 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-679.jpg",
           "/images/products/s-l1600-680.jpg",
           "/images/products/s-l1600-681.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       },
       {
         "id": 1126,
@@ -2310,24 +2219,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-675.jpg",
           "/images/products/s-l1600-676.jpg",
           "/images/products/s-l1600-677.jpg",
           "/images/products/s-l1600-678.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Economy 10-Pocket Suede Leather Carpenter Tool Bag & Storage Pouch.",
-    "description": "",
-    "texture": "Suede"
+    ]
   },
   {
-    "id": 53,
-    "name": "LEATHER GOLD Genuine Finished Leather Framer’s adjustable Rig, Tool Belt 3450",
+    "id": 1129,
+    "name": "LEATHER Genuine Finished Leather Framer’s adjustable Rig, Tool Belt 3450",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-658.jpg",
     "images": [
       "/images/products/s-l1600-658.jpg",
@@ -2348,6 +2255,7 @@
       "/images/products/s-l1600-673.jpg",
       "/images/products/s-l1600-674.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2359,6 +2267,7 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-658.jpg",
           "/images/products/s-l1600-659.jpg",
@@ -2378,18 +2287,15 @@
           "/images/products/s-l1600-673.jpg",
           "/images/products/s-l1600-674.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD Genuine Finished Leather Framer’s adjustable Rig, Tool Belt 3450",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 54,
-    "name": "Leather Gold 3800 Iron Worker's Leather Bolt Bag",
+    "id": 1130,
+    "name": "Leather 3800 Iron Worker's Leather Bolt Bag",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-642.jpg",
     "images": [
       "/images/products/s-l1600-642.jpg",
@@ -2409,6 +2315,7 @@
       "/images/products/s-l1600-656.jpg",
       "/images/products/s-l1600-657.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2420,6 +2327,7 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-642.jpg",
           "/images/products/s-l1600-643.jpg",
@@ -2438,18 +2346,15 @@
           "/images/products/s-l1600-656.jpg",
           "/images/products/s-l1600-657.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 3800 Iron Worker's Leather Bolt Bag",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 55,
+    "id": 1131,
     "name": "Greenhill Dragon Boxing Gloves Training Sparring Muay Thai Bag Pad Fight MMA UFC",
     "category": "Boxing & MMA",
+    "description": "",
     "image_url": "/images/products/s-l1600-638.jpg",
     "images": [
       "/images/products/s-l1600-638.jpg",
@@ -2457,6 +2362,7 @@
       "/images/products/s-l1600-640.jpg",
       "/images/products/s-l1600-641.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2468,24 +2374,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-638.jpg",
           "/images/products/s-l1600-639.jpg",
           "/images/products/s-l1600-640.jpg",
           "/images/products/s-l1600-641.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Greenhill Dragon Boxing Gloves Training Sparring Muay Thai Bag Pad Fight MMA UFC",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 56,
-    "name": "Green Hill Tiger AIBA Boxing Glove, Boxing Training Gloves for Boxing",
+    "id": 1132,
+    "name": "Hill Tiger AIBA Boxing Glove, Boxing Training Gloves for Boxing",
     "category": "Boxing & MMA",
+    "description": "",
     "image_url": "/images/products/s-l1600-634.jpg",
     "images": [
       "/images/products/s-l1600-634.jpg",
@@ -2493,6 +2397,7 @@
       "/images/products/s-l1600-636.jpg",
       "/images/products/s-l1600-637.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2504,24 +2409,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Green",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-634.jpg",
           "/images/products/s-l1600-635.jpg",
           "/images/products/s-l1600-636.jpg",
           "/images/products/s-l1600-637.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Green Hill Tiger AIBA Boxing Glove, Boxing Training Gloves for Boxing",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 57,
-    "name": "Leather Gold Leather Electrician Tool Pouch ELECTRICIAN PRO, 3400",
+    "id": 1133,
+    "name": "Leather Leather Electrician Tool Pouch ELECTRICIAN PRO, 3400",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-627.jpg",
     "images": [
       "/images/products/s-l1600-627.jpg",
@@ -2532,6 +2435,7 @@
       "/images/products/s-l1600-632.jpg",
       "/images/products/s-l1600-633.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2543,6 +2447,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-627.jpg",
           "/images/products/s-l1600-628.jpg",
@@ -2552,18 +2457,15 @@
           "/images/products/s-l1600-632.jpg",
           "/images/products/s-l1600-633.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Leather Electrician Tool Pouch ELECTRICIAN PRO, 3400",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 58,
-    "name": "Leather Gold 2” Wide 4mm Thick100% Grain Leather Work Tool Belt Rust Free Buckle",
+    "id": 1134,
+    "name": "Leather 2” Wide 4mm Thick100% Grain Leather Work Tool Belt Rust Free Buckle",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-622.jpg",
     "images": [
       "/images/products/s-l1600-622.jpg",
@@ -2572,6 +2474,7 @@
       "/images/products/s-l1600-625.jpg",
       "/images/products/s-l1600-626.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2583,6 +2486,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-622.jpg",
           "/images/products/s-l1600-623.jpg",
@@ -2590,18 +2494,15 @@
           "/images/products/s-l1600-625.jpg",
           "/images/products/s-l1600-626.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 2” Wide 4mm Thick100% Grain Leather Work Tool Belt Rust Free Buckle",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 59,
-    "name": "Supertex Ladies Pink Tool Bag, Multi-Purpose Storage Bag Wide Mouth and Zipper",
+    "id": 1137,
+    "name": "Supertex Ladies Tool Bag, Multi-Purpose Storage Bag Wide Mouth and Zipper",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-618.jpg",
     "images": [
       "/images/products/s-l1600-618.jpg",
@@ -2609,6 +2510,7 @@
       "/images/products/s-l1600-620.jpg",
       "/images/products/s-l1600-621.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2620,24 +2522,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Pink",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-618.jpg",
           "/images/products/s-l1600-619.jpg",
           "/images/products/s-l1600-620.jpg",
           "/images/products/s-l1600-621.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Supertex Ladies Pink Tool Bag, Multi-Purpose Storage Bag Wide Mouth and Zipper",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 60,
+    "id": 1138,
     "name": "Supertex Tool Bag, Multi-Purpose Storage Bag Wide Mouth and Zipper",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-613.jpg",
     "images": [
       "/images/products/s-l1600-613.jpg",
@@ -2646,6 +2546,7 @@
       "/images/products/s-l1600-616.jpg",
       "/images/products/s-l1600-617.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2657,6 +2558,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-613.jpg",
           "/images/products/s-l1600-614.jpg",
@@ -2664,23 +2566,21 @@
           "/images/products/s-l1600-616.jpg",
           "/images/products/s-l1600-617.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Supertex Tool Bag, Multi-Purpose Storage Bag Wide Mouth and Zipper",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 61,
-    "name": "Leather Gold 9001 Iron Worker's Leather spud wrench holder (aka: elephant ears)",
+    "id": 1139,
+    "name": "Leather 9001 Iron Worker's Leather spud wrench holder (aka: elephant ears)",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-611.jpg",
     "images": [
       "/images/products/s-l1600-611.jpg",
       "/images/products/s-l1600-612.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2692,28 +2592,27 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-611.jpg",
           "/images/products/s-l1600-612.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 9001 Iron Worker's Leather spud wrench holder (aka: elephant ears)",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 62,
-    "name": "Leather Rod Holder by Leather Gold - Welding Electrode Storage Can",
+    "id": 1140,
+    "name": "Leather Rod Holder by Leather - Welding Electrode Storage Can",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-608.jpg",
     "images": [
       "/images/products/s-l1600-608.jpg",
       "/images/products/s-l1600-609.jpg",
       "/images/products/s-l1600-610.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2725,23 +2624,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-608.jpg",
           "/images/products/s-l1600-609.jpg",
           "/images/products/s-l1600-610.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Rod Holder by Leather Gold - Welding Electrode Storage Can",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 63,
+    "id": 1141,
     "name": "Welding Gloves HEAT RESISTANT Cow Split Leather BBQ/Camping/Cooking Gloves",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-604.jpg",
     "images": [
       "/images/products/s-l1600-604.jpg",
@@ -2749,6 +2646,7 @@
       "/images/products/s-l1600-606.jpg",
       "/images/products/s-l1600-607.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2760,24 +2658,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-604.jpg",
           "/images/products/s-l1600-605.jpg",
           "/images/products/s-l1600-606.jpg",
           "/images/products/s-l1600-607.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Welding Gloves HEAT RESISTANT Cow Split Leather BBQ/Camping/Cooking Gloves",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 64,
+    "id": 1142,
     "name": "Welding Gloves HEAT RESISTANT Cow Split Leather BBQ/Camping/Cooking",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-604.jpg",
     "images": [
       "/images/products/s-l1600-604.jpg",
@@ -2785,6 +2681,7 @@
       "/images/products/s-l1600-606.jpg",
       "/images/products/s-l1600-607.jpg"
     ],
+    "texture": null,
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -2796,14 +2693,14 @@
         "size": null,
         "pack_quantity": 12,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-604.jpg",
           "/images/products/s-l1600-605.jpg",
           "/images/products/s-l1600-606.jpg",
           "/images/products/s-l1600-607.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1143,
@@ -2814,24 +2711,22 @@
         "size": null,
         "pack_quantity": 60,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-604.jpg",
           "/images/products/s-l1600-605.jpg",
           "/images/products/s-l1600-606.jpg",
           "/images/products/s-l1600-607.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Welding Gloves HEAT RESISTANT Cow Split Leather BBQ/Camping/Cooking",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 65,
+    "id": 1144,
     "name": "Greenhill 70-100 lbs Genuine Leather Heavy Punching Bag for Boxing, MMA and Gym",
     "category": "Boxing & MMA",
+    "description": "",
     "image_url": "/images/products/s-l1600-598.jpg",
     "images": [
       "/images/products/s-l1600-598.jpg",
@@ -2841,6 +2736,7 @@
       "/images/products/s-l1600-602.jpg",
       "/images/products/s-l1600-603.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2852,6 +2748,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-598.jpg",
           "/images/products/s-l1600-599.jpg",
@@ -2860,18 +2757,15 @@
           "/images/products/s-l1600-602.jpg",
           "/images/products/s-l1600-603.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Greenhill 70-100 lbs Genuine Leather Heavy Punching Bag for Boxing, MMA and Gym",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 66,
+    "id": 1145,
     "name": "Western Heritage Cow Grain Leather Heavy Duty 10 Pocket Carpenters' Tool Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-582.jpg",
     "images": [
       "/images/products/s-l1600-582.jpg",
@@ -2891,6 +2785,7 @@
       "/images/products/s-l1600-596.jpg",
       "/images/products/s-l1600-597.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2902,6 +2797,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-582.jpg",
           "/images/products/s-l1600-583.jpg",
@@ -2920,23 +2816,21 @@
           "/images/products/s-l1600-596.jpg",
           "/images/products/s-l1600-597.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Western Heritage Cow Grain Leather Heavy Duty 10 Pocket Carpenters' Tool Pouch",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 67,
+    "id": 1147,
     "name": "12 Pairs Mastpur Nitrile Coated Work Gloves",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-580.jpg",
     "images": [
       "/images/products/s-l1600-580.jpg",
       "/images/products/s-l1600-581.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2948,22 +2842,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-580.jpg",
           "/images/products/s-l1600-581.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "12 Pairs Mastpur Nitrile Coated Work Gloves",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 68,
+    "id": 1150,
     "name": "Leather Chaps, Apron, for Work, Sports, Horse/Bike Gear, Saddle",
     "category": "Outdoor & Equestrian",
+    "description": "",
     "image_url": "/images/products/s-l1600-567.jpg",
     "images": [
       "/images/products/s-l1600-567.jpg",
@@ -2973,6 +2865,7 @@
       "/images/products/s-l1600-571.jpg",
       "/images/products/s-l1600-572.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -2984,6 +2877,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Orange",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-567.jpg",
           "/images/products/s-l1600-568.jpg",
@@ -2992,18 +2886,15 @@
           "/images/products/s-l1600-571.jpg",
           "/images/products/s-l1600-572.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 69,
-    "name": "Leather Gold Genuine Leather Framer’s Rig Tool Belt,15 Pockets Sliding Pouches",
+    "id": 1151,
+    "name": "Leather Genuine Leather Framer’s Rig Tool Belt,15 Pockets Sliding Pouches",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-553.jpg",
     "images": [
       "/images/products/s-l1600-553.jpg",
@@ -3021,6 +2912,7 @@
       "/images/products/s-l1600-565.jpg",
       "/images/products/s-l1600-566.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3032,6 +2924,7 @@
         "size": "S",
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-553.jpg",
           "/images/products/s-l1600-554.jpg",
@@ -3048,23 +2941,21 @@
           "/images/products/s-l1600-565.jpg",
           "/images/products/s-l1600-566.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Genuine Leather Framer’s Rig Tool Belt,15 Pockets Sliding Pouches",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 70,
+    "id": 1152,
     "name": "Mastpur Tie wire Reel, Lightweight Aluminum, Left Handed and Right Handed",
     "category": "Tools & Hardware",
+    "description": "",
     "image_url": "/images/products/s-l1600-551.jpg",
     "images": [
       "/images/products/s-l1600-551.jpg",
       "/images/products/s-l1600-552.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3076,22 +2967,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-551.jpg",
           "/images/products/s-l1600-552.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Mastpur Tie wire Reel, Lightweight Aluminum, Left Handed and Right Handed",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 71,
+    "id": 1153,
     "name": "Mastpur 12-pack GRAPHITE Hard Lead Lumber Wooden Flat Carpenter Pencils 7\"",
     "category": "Tools & Hardware",
+    "description": "",
     "image_url": "/images/products/s-l1600-546.jpg",
     "images": [
       "/images/products/s-l1600-546.jpg",
@@ -3100,6 +2989,7 @@
       "/images/products/s-l1600-549.jpg",
       "/images/products/s-l1600-550.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3111,6 +3001,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-546.jpg",
           "/images/products/s-l1600-547.jpg",
@@ -3118,22 +3009,20 @@
           "/images/products/s-l1600-549.jpg",
           "/images/products/s-l1600-550.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Mastpur 12-pack GRAPHITE Hard Lead Lumber Wooden Flat Carpenter Pencils 7\"",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 72,
-    "name": "Leather Gold 3-pocket Pliers Rule And Screwdriver Holster | Tool Kit",
+    "id": 1154,
+    "name": "Leather 3-pocket Pliers Rule And Screwdriver Holster | Tool Kit",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-60.jpg",
     "images": [
       "/images/products/s-l1600-60.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3145,26 +3034,25 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-60.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 3-pocket Pliers Rule And Screwdriver Holster | Tool Kit",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 73,
+    "id": 1155,
     "name": "MASTPUR . 10-Pocket Carpenter Tool Pouch Polyester",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-544.jpg",
     "images": [
       "/images/products/s-l1600-544.jpg",
       "/images/products/s-l1600-545.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3176,22 +3064,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-544.jpg",
           "/images/products/s-l1600-545.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "MASTPUR . 10-Pocket Carpenter Tool Pouch Polyester",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 74,
-    "name": "Leather Gold Top Grain Goatskin Leather TIG Welding Gloves 6\" cuff",
+    "id": 1156,
+    "name": "Leather Leather TIG Welding Gloves 6\" cuff",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-538.jpg",
     "images": [
       "/images/products/s-l1600-538.jpg",
@@ -3201,6 +3087,7 @@
       "/images/products/s-l1600-542.jpg",
       "/images/products/s-l1600-543.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -3212,6 +3099,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-538.jpg",
           "/images/products/s-l1600-539.jpg",
@@ -3220,23 +3108,21 @@
           "/images/products/s-l1600-542.jpg",
           "/images/products/s-l1600-543.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Top Grain Goatskin Leather TIG Welding Gloves 6\" cuff",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 75,
-    "name": "Mastpur Chalk Line Reel Blue",
+    "id": 1157,
+    "name": "Mastpur Chalk Line Reel",
     "category": "Tools & Hardware",
+    "description": "",
     "image_url": "/images/products/s-l1600-536.jpg",
     "images": [
       "/images/products/s-l1600-536.jpg",
       "/images/products/s-l1600-537.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3248,22 +3134,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Blue",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-536.jpg",
           "/images/products/s-l1600-537.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Mastpur Chalk Line Reel Blue",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 76,
-    "name": "LEATHER GOLD Spud Wrench Holder with Steel Rings",
+    "id": 1158,
+    "name": "LEATHER Spud Wrench Holder with Steel Rings",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-531.jpg",
     "images": [
       "/images/products/s-l1600-531.jpg",
@@ -3272,6 +3156,7 @@
       "/images/products/s-l1600-534.jpg",
       "/images/products/s-l1600-535.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3283,6 +3168,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-531.jpg",
           "/images/products/s-l1600-532.jpg",
@@ -3290,24 +3176,22 @@
           "/images/products/s-l1600-534.jpg",
           "/images/products/s-l1600-535.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD Spud Wrench Holder with Steel Rings",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 77,
-    "name": "Leather Gold Apron Welding Apron Heat Flame Resistant Work Apron 6Pocket",
+    "id": 1159,
+    "name": "Leather Apron Welding Apron Heat Flame Resistant Work Apron 6Pocket",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-528.jpg",
     "images": [
       "/images/products/s-l1600-528.jpg",
       "/images/products/s-l1600-529.jpg",
       "/images/products/s-l1600-530.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3319,29 +3203,28 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-528.jpg",
           "/images/products/s-l1600-529.jpg",
           "/images/products/s-l1600-530.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Apron Welding Apron Heat Flame Resistant Work Apron 6Pocket",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 78,
-    "name": "Leather Gold Welding Sleeves Heat Flame Resistant Arm Protection for Welder",
+    "id": 1160,
+    "name": "Leather Welding Sleeves Heat Flame Resistant Arm Protection for Welder",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-525.jpg",
     "images": [
       "/images/products/s-l1600-525.jpg",
       "/images/products/s-l1600-526.jpg",
       "/images/products/s-l1600-527.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3353,23 +3236,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-525.jpg",
           "/images/products/s-l1600-526.jpg",
           "/images/products/s-l1600-527.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Welding Sleeves Heat Flame Resistant Arm Protection for Welder",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 79,
-    "name": "Leather Gold Dark Brown Leather Welding Jacket",
+    "id": 1161,
+    "name": "Leather Leather Welding Jacket",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-521.jpg",
     "images": [
       "/images/products/s-l1600-521.jpg",
@@ -3377,6 +3258,7 @@
       "/images/products/s-l1600-523.jpg",
       "/images/products/s-l1600-524.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3388,24 +3270,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-521.jpg",
           "/images/products/s-l1600-522.jpg",
           "/images/products/s-l1600-523.jpg",
           "/images/products/s-l1600-524.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold Dark Brown Leather Welding Jacket",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 80,
+    "id": 1162,
     "name": "Village Leather Tool Pouch for Carpenters, Electricians, Framers, Handyman",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-515.jpg",
     "images": [
       "/images/products/s-l1600-515.jpg",
@@ -3415,6 +3295,7 @@
       "/images/products/s-l1600-519.jpg",
       "/images/products/s-l1600-520.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3426,6 +3307,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-515.jpg",
           "/images/products/s-l1600-516.jpg",
@@ -3434,18 +3316,15 @@
           "/images/products/s-l1600-519.jpg",
           "/images/products/s-l1600-520.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Village Leather Tool Pouch for Carpenters, Electricians, Framers, Handyman",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 81,
-    "name": "MULTIPOCKETS Tool Pouch with Fit The Waist 29\"-46\", Black/RED",
+    "id": 1163,
+    "name": "MULTIPOCKETS Tool Pouch with Fit The Waist 29\"-46\", /",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-510.jpg",
     "images": [
       "/images/products/s-l1600-510.jpg",
@@ -3454,6 +3333,7 @@
       "/images/products/s-l1600-513.jpg",
       "/images/products/s-l1600-514.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3465,6 +3345,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Black",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-510.jpg",
           "/images/products/s-l1600-511.jpg",
@@ -3472,18 +3353,15 @@
           "/images/products/s-l1600-513.jpg",
           "/images/products/s-l1600-514.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "MULTIPOCKETS Tool Pouch with Fit The Waist 29\"-46\", Black/RED",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 82,
+    "id": 1164,
     "name": "Mastpur Foam Padding Suspenders For worker Fits all",
     "category": "Suspenders",
+    "description": "",
     "image_url": "/images/products/s-l1600-504.jpg",
     "images": [
       "/images/products/s-l1600-504.jpg",
@@ -3493,6 +3371,7 @@
       "/images/products/s-l1600-508.jpg",
       "/images/products/s-l1600-509.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3504,6 +3383,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-504.jpg",
           "/images/products/s-l1600-505.jpg",
@@ -3512,24 +3392,22 @@
           "/images/products/s-l1600-508.jpg",
           "/images/products/s-l1600-509.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Mastpur Foam Padding Suspenders For worker Fits all",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 83,
+    "id": 1165,
     "name": "Village Leather Plier Holder Pouch With Hammer Holder Hook",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-501.jpg",
     "images": [
       "/images/products/s-l1600-501.jpg",
       "/images/products/s-l1600-502.jpg",
       "/images/products/s-l1600-503.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3541,29 +3419,28 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-501.jpg",
           "/images/products/s-l1600-502.jpg",
           "/images/products/s-l1600-503.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Village Leather Plier Holder Pouch With Hammer Holder Hook",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 84,
-    "name": "LEATHER GOLD Scissors and Knife Holder",
+    "id": 1166,
+    "name": "LEATHER Scissors and Knife Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-498.jpg",
     "images": [
       "/images/products/s-l1600-498.jpg",
       "/images/products/s-l1600-499.jpg",
       "/images/products/s-l1600-500.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3575,23 +3452,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-498.jpg",
           "/images/products/s-l1600-499.jpg",
           "/images/products/s-l1600-500.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD Scissors and Knife Holder",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 85,
+    "id": 1167,
     "name": "Non-Slip Kneepads with Adjustable Straps, Safety Leather Knee Pads",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-493.jpg",
     "images": [
       "/images/products/s-l1600-493.jpg",
@@ -3600,6 +3475,7 @@
       "/images/products/s-l1600-496.jpg",
       "/images/products/s-l1600-497.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3611,6 +3487,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-493.jpg",
           "/images/products/s-l1600-494.jpg",
@@ -3618,18 +3495,15 @@
           "/images/products/s-l1600-496.jpg",
           "/images/products/s-l1600-497.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Non-Slip Kneepads with Adjustable Straps, Safety Leather Knee Pads",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 86,
+    "id": 1168,
     "name": "Heavy Duty Leather Kneepads, Double Thick Lining",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-488.jpg",
     "images": [
       "/images/products/s-l1600-488.jpg",
@@ -3638,6 +3512,7 @@
       "/images/products/s-l1600-491.jpg",
       "/images/products/s-l1600-492.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3649,6 +3524,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-488.jpg",
           "/images/products/s-l1600-489.jpg",
@@ -3656,18 +3532,15 @@
           "/images/products/s-l1600-491.jpg",
           "/images/products/s-l1600-492.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Heavy Duty Leather Kneepads, Double Thick Lining",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 87,
-    "name": "Hard Hat Sun Shade Visor for Full Brim Mesh Neck HI VIS REFLECTIVE STRIPE",
+    "id": 1169,
+    "name": "Hard Hat Sun Shade Visor for Full Brim Mesh Neck REFLECTIVE STRIPE",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-483.jpg",
     "images": [
       "/images/products/s-l1600-483.jpg",
@@ -3676,6 +3549,7 @@
       "/images/products/s-l1600-486.jpg",
       "/images/products/s-l1600-487.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3687,6 +3561,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-483.jpg",
           "/images/products/s-l1600-484.jpg",
@@ -3694,18 +3569,15 @@
           "/images/products/s-l1600-486.jpg",
           "/images/products/s-l1600-487.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Hard Hat Sun Shade Visor for Full Brim Mesh Neck HI VIS REFLECTIVE STRIPE",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 88,
-    "name": "Bricks ,Welding and Steel Worker Protective Leather padded Chap For Leg",
+    "id": 1170,
+    "name": "Bricks,Welding and Steel Worker Protective Leather padded Chap For Leg",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-476.jpg",
     "images": [
       "/images/products/s-l1600-476.jpg",
@@ -3716,6 +3588,7 @@
       "/images/products/s-l1600-481.jpg",
       "/images/products/s-l1600-482.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3727,6 +3600,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-476.jpg",
           "/images/products/s-l1600-477.jpg",
@@ -3736,18 +3610,15 @@
           "/images/products/s-l1600-481.jpg",
           "/images/products/s-l1600-482.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Bricks ,Welding and Steel Worker Protective Leather padded Chap For Leg",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 89,
+    "id": 1171,
     "name": "5/8\" x 100' Double Braid Rope, Arborist Bull Rope, Rigging Line, Hoist Line, NEW",
     "category": "Tools & Hardware",
+    "description": "",
     "image_url": "/images/products/s-l1600-450.jpg",
     "images": [
       "/images/products/s-l1600-450.jpg",
@@ -3761,6 +3632,7 @@
       "/images/products/s-l1600-448.jpg",
       "/images/products/s-l1600-449.jpg"
     ],
+    "texture": null,
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -3772,6 +3644,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-450.jpg",
           "/images/products/s-l1600-451.jpg",
@@ -3779,8 +3652,7 @@
           "/images/products/s-l1600-453.jpg",
           "/images/products/s-l1600-454.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1172,
@@ -3791,6 +3663,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-445.jpg",
           "/images/products/s-l1600-446.jpg",
@@ -3798,18 +3671,15 @@
           "/images/products/s-l1600-448.jpg",
           "/images/products/s-l1600-449.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "5/8\" x 100' Double Braid Rope, Arborist Bull Rope, Rigging Line, Hoist Line, NEW",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 90,
+    "id": 1173,
     "name": "16-30' Leather Measuring Tape Measure Belt Holder Pouch Tool Carrier",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-469.jpg",
     "images": [
       "/images/products/s-l1600-469.jpg",
@@ -3820,6 +3690,7 @@
       "/images/products/s-l1600-474.jpg",
       "/images/products/s-l1600-475.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3831,6 +3702,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-469.jpg",
           "/images/products/s-l1600-470.jpg",
@@ -3840,24 +3712,22 @@
           "/images/products/s-l1600-474.jpg",
           "/images/products/s-l1600-475.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "16-30' Leather Measuring Tape Measure Belt Holder Pouch Tool Carrier",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 91,
-    "name": "Mesh High Visibility Safety Vest, with zipper",
+    "id": 1174,
+    "name": "Mesh Safety Vest, with zipper",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-466.jpg",
     "images": [
       "/images/products/s-l1600-466.jpg",
       "/images/products/s-l1600-467.jpg",
       "/images/products/s-l1600-468.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3869,23 +3739,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-466.jpg",
           "/images/products/s-l1600-467.jpg",
           "/images/products/s-l1600-468.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Mesh High Visibility Safety Vest, with zipper",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 92,
-    "name": "LEATHER - Canvas Nut Bolt Nail Bag Belt Pouch Carrier Holder",
+    "id": 1175,
+    "name": "LEATHER - Nut Bolt Nail Bag Belt Pouch Carrier Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-460.jpg",
     "images": [
       "/images/products/s-l1600-460.jpg",
@@ -3895,6 +3763,7 @@
       "/images/products/s-l1600-464.jpg",
       "/images/products/s-l1600-465.jpg"
     ],
+    "texture": "Canvas",
     "variant_type": null,
     "variants": [
       {
@@ -3906,6 +3775,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Canvas",
         "images": [
           "/images/products/s-l1600-460.jpg",
           "/images/products/s-l1600-461.jpg",
@@ -3914,18 +3784,15 @@
           "/images/products/s-l1600-464.jpg",
           "/images/products/s-l1600-465.jpg"
         ],
-        "in_stock": true,
-        "texture": "Canvas"
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER - Canvas Nut Bolt Nail Bag Belt Pouch Carrier Holder",
-    "description": "",
-    "texture": "Canvas"
+    ]
   },
   {
-    "id": 93,
+    "id": 1176,
     "name": "HEAVY DUTY WORK SUSPENDER",
     "category": "Suspenders",
+    "description": "",
     "image_url": "/images/products/s-l1600-455.jpg",
     "images": [
       "/images/products/s-l1600-455.jpg",
@@ -3934,6 +3801,7 @@
       "/images/products/s-l1600-458.jpg",
       "/images/products/s-l1600-459.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3945,6 +3813,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-455.jpg",
           "/images/products/s-l1600-456.jpg",
@@ -3952,18 +3821,15 @@
           "/images/products/s-l1600-458.jpg",
           "/images/products/s-l1600-459.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "HEAVY DUTY WORK SUSPENDER",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 94,
+    "id": 1177,
     "name": "Heavy Duty utility Clips 2” Wide Elastic Work Suspender",
     "category": "Suspenders",
+    "description": "",
     "image_url": "/images/products/s-l1600-439.jpg",
     "images": [
       "/images/products/s-l1600-439.jpg",
@@ -3973,6 +3839,7 @@
       "/images/products/s-l1600-443.jpg",
       "/images/products/s-l1600-444.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -3984,6 +3851,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-439.jpg",
           "/images/products/s-l1600-440.jpg",
@@ -3992,18 +3860,15 @@
           "/images/products/s-l1600-443.jpg",
           "/images/products/s-l1600-444.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Heavy Duty utility Clips 2” Wide Elastic Work Suspender",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 95,
-    "name": "Work Suspenders , Industrial Strength Suspenders for Men",
+    "id": 1178,
+    "name": "Work Suspenders, Industrial Strength Suspenders for Men",
     "category": "Suspenders",
+    "description": "",
     "image_url": "/images/products/s-l1600-435.jpg",
     "images": [
       "/images/products/s-l1600-435.jpg",
@@ -4011,6 +3876,7 @@
       "/images/products/s-l1600-437.jpg",
       "/images/products/s-l1600-438.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4022,29 +3888,28 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-435.jpg",
           "/images/products/s-l1600-436.jpg",
           "/images/products/s-l1600-437.jpg",
           "/images/products/s-l1600-438.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Work Suspenders , Industrial Strength Suspenders for Men",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 96,
-    "name": "MASTPUR Work Suspenders Red 2 inch Wide Adjustable Heavy Duty",
+    "id": 1179,
+    "name": "MASTPUR Work Suspenders 2 inch Wide Adjustable Heavy Duty",
     "category": "Suspenders",
+    "description": "",
     "image_url": "/images/products/s-l1600-433.jpg",
     "images": [
       "/images/products/s-l1600-433.jpg",
       "/images/products/s-l1600-434.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4056,22 +3921,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Red",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-433.jpg",
           "/images/products/s-l1600-434.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "MASTPUR Work Suspenders Red 2 inch Wide Adjustable Heavy Duty",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 97,
+    "id": 1180,
     "name": "3850-CHOC Bolt Bag with Spud Wrench Holder and Snap Holder | Ironworker Bolt Bag",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-427.jpg",
     "images": [
       "/images/products/s-l1600-427.jpg",
@@ -4081,6 +3944,7 @@
       "/images/products/s-l1600-431.jpg",
       "/images/products/s-l1600-432.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4092,6 +3956,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-427.jpg",
           "/images/products/s-l1600-428.jpg",
@@ -4100,18 +3965,15 @@
           "/images/products/s-l1600-431.jpg",
           "/images/products/s-l1600-432.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "3850-CHOC Bolt Bag with Spud Wrench Holder and Snap Holder | Ironworker Bolt Bag",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 98,
-    "name": "Leather Gold work Suspenders | Tool Belt Suspenders | Grain Leather Suspender",
+    "id": 1181,
+    "name": "Leather work Suspenders | Tool Belt Suspenders | Grain Leather Suspender",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-421.jpg",
     "images": [
       "/images/products/s-l1600-421.jpg",
@@ -4121,6 +3983,7 @@
       "/images/products/s-l1600-425.jpg",
       "/images/products/s-l1600-426.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4132,6 +3995,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-421.jpg",
           "/images/products/s-l1600-422.jpg",
@@ -4140,18 +4004,15 @@
           "/images/products/s-l1600-425.jpg",
           "/images/products/s-l1600-426.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold work Suspenders | Tool Belt Suspenders | Grain Leather Suspender",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 99,
+    "id": 1182,
     "name": "Men Leather Cell Phone Bag Belt Loop Waist Pack Wallet Holder Case",
     "category": "Accessories",
+    "description": "",
     "image_url": "/images/products/s-l1600-417.jpg",
     "images": [
       "/images/products/s-l1600-417.jpg",
@@ -4159,6 +4020,7 @@
       "/images/products/s-l1600-419.jpg",
       "/images/products/s-l1600-420.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4170,24 +4032,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-417.jpg",
           "/images/products/s-l1600-418.jpg",
           "/images/products/s-l1600-419.jpg",
           "/images/products/s-l1600-420.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Men Leather Cell Phone Bag Belt Loop Waist Pack Wallet Holder Case",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 100,
+    "id": 1183,
     "name": "Leather Craft* Cordless Drill Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-413.jpg",
     "images": [
       "/images/products/s-l1600-413.jpg",
@@ -4195,6 +4055,7 @@
       "/images/products/s-l1600-415.jpg",
       "/images/products/s-l1600-416.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4206,30 +4067,29 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-413.jpg",
           "/images/products/s-l1600-414.jpg",
           "/images/products/s-l1600-415.jpg",
           "/images/products/s-l1600-416.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Craft* Cordless Drill Holder",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 101,
-    "name": "High Visibility polyester Long Sleeve Safety Work Shirt",
+    "id": 1184,
+    "name": "polyester Long Sleeve Safety Work Shirt",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-410.jpg",
     "images": [
       "/images/products/s-l1600-410.jpg",
       "/images/products/s-l1600-411.jpg",
       "/images/products/s-l1600-412.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4241,23 +4101,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-410.jpg",
           "/images/products/s-l1600-411.jpg",
           "/images/products/s-l1600-412.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "High Visibility polyester Long Sleeve Safety Work Shirt",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 102,
-    "name": "High Visibile Long Sleeve Orange Work Safety Hoodie",
+    "id": 1185,
+    "name": "High Visibile Long Sleeve Work Safety Hoodie",
     "category": "Safety & Workwear",
+    "description": "",
     "image_url": "/images/products/s-l1600-406.jpg",
     "images": [
       "/images/products/s-l1600-406.jpg",
@@ -4265,6 +4123,7 @@
       "/images/products/s-l1600-408.jpg",
       "/images/products/s-l1600-409.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4276,24 +4135,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Orange",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-406.jpg",
           "/images/products/s-l1600-407.jpg",
           "/images/products/s-l1600-408.jpg",
           "/images/products/s-l1600-409.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "High Visibile Long Sleeve Orange Work Safety Hoodie",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 103,
-    "name": "Welding Hood Welding Shawl Hat With Neck And Shoulders Draped Cowhide",
+    "id": 1186,
+    "name": "Welding Hood Welding Shawl Hat With Neck And Shoulders Draped",
     "category": "Welding Gear",
+    "description": "",
     "image_url": "/images/products/s-l1600-402.jpg",
     "images": [
       "/images/products/s-l1600-402.jpg",
@@ -4305,6 +4162,7 @@
       "/images/products/s-l1600-400.jpg",
       "/images/products/s-l1600-401.jpg"
     ],
+    "texture": "Cow Hide",
     "variant_type": null,
     "variants": [
       {
@@ -4316,14 +4174,14 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-402.jpg",
           "/images/products/s-l1600-403.jpg",
           "/images/products/s-l1600-404.jpg",
           "/images/products/s-l1600-405.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
       },
       {
         "id": 1187,
@@ -4334,24 +4192,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Cow Hide",
         "images": [
           "/images/products/s-l1600-398.jpg",
           "/images/products/s-l1600-399.jpg",
           "/images/products/s-l1600-400.jpg",
           "/images/products/s-l1600-401.jpg"
         ],
-        "in_stock": true,
-        "texture": "Cow Hide"
+        "in_stock": true
       }
-    ],
-    "source_name": "Welding Hood Welding Shawl Hat With Neck And Shoulders Draped Cowhide",
-    "description": "",
-    "texture": "Cow Hide"
+    ]
   },
   {
-    "id": 104,
-    "name": "Heavy Duty GOAT SKIN MECHANIC WORK GLOVES -",
+    "id": 1188,
+    "name": "Heavy Duty MECHANIC WORK GLOVES -",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-388.jpg",
     "images": [
       "/images/products/s-l1600-388.jpg",
@@ -4365,6 +4221,7 @@
       "/images/products/s-l1600-396.jpg",
       "/images/products/s-l1600-397.jpg"
     ],
+    "texture": "Goat Skin",
     "variant_type": null,
     "variants": [
       {
@@ -4376,6 +4233,7 @@
         "size": null,
         "pack_quantity": 6,
         "color": null,
+        "texture": "Goat Skin",
         "images": [
           "/images/products/s-l1600-388.jpg",
           "/images/products/s-l1600-389.jpg",
@@ -4388,18 +4246,15 @@
           "/images/products/s-l1600-396.jpg",
           "/images/products/s-l1600-397.jpg"
         ],
-        "in_stock": true,
-        "texture": "Goat Skin"
+        "in_stock": true
       }
-    ],
-    "source_name": "Heavy Duty GOAT SKIN MECHANIC WORK GLOVES -",
-    "description": "",
-    "texture": "Goat Skin"
+    ]
   },
   {
-    "id": 105,
-    "name": "VILLAGE LEATHER 10 Pocket Top Grain Leather Carpenter Tool Pouch Bag with Belt",
+    "id": 1189,
+    "name": "VILLAGE LEATHER 10 Pocket Leather Carpenter Tool Pouch Bag with Belt",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-380.jpg",
     "images": [
       "/images/products/s-l1600-380.jpg",
@@ -4411,6 +4266,7 @@
       "/images/products/s-l1600-386.jpg",
       "/images/products/s-l1600-387.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -4422,6 +4278,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-380.jpg",
           "/images/products/s-l1600-381.jpg",
@@ -4432,18 +4289,15 @@
           "/images/products/s-l1600-386.jpg",
           "/images/products/s-l1600-387.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "VILLAGE LEATHER 10 Pocket Top Grain Leather Carpenter Tool Pouch Bag with Belt",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 106,
-    "name": "Leather Gold -ORN Bolt Bag with 2 Spud Wrench Holders, Wide Mouth | Ironworker",
+    "id": 1190,
+    "name": "Leather -ORN Bolt Bag with 2 Spud Wrench Holders, Wide Mouth | Ironworker",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-374.jpg",
     "images": [
       "/images/products/s-l1600-374.jpg",
@@ -4453,6 +4307,7 @@
       "/images/products/s-l1600-378.jpg",
       "/images/products/s-l1600-379.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4464,6 +4319,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-374.jpg",
           "/images/products/s-l1600-375.jpg",
@@ -4472,24 +4328,22 @@
           "/images/products/s-l1600-378.jpg",
           "/images/products/s-l1600-379.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold -ORN Bolt Bag with 2 Spud Wrench Holders, Wide Mouth | Ironworker",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 107,
-    "name": "Leather Gold - Steel hook Top Grain Leather Belt Hammer Holder",
+    "id": 1191,
+    "name": "Leather - Steel hook Leather Belt Hammer Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-371.jpg",
     "images": [
       "/images/products/s-l1600-371.jpg",
       "/images/products/s-l1600-372.jpg",
       "/images/products/s-l1600-373.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -4501,23 +4355,21 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-371.jpg",
           "/images/products/s-l1600-372.jpg",
           "/images/products/s-l1600-373.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold - Steel hook Top Grain Leather Belt Hammer Holder",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 108,
-    "name": "LEATHER GOLD Hammer holder Steel hook 4mm Leather",
+    "id": 1192,
+    "name": "LEATHER Hammer holder Steel hook 4mm Leather",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-364.jpg",
     "images": [
       "/images/products/s-l1600-364.jpg",
@@ -4528,6 +4380,7 @@
       "/images/products/s-l1600-369.jpg",
       "/images/products/s-l1600-370.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4539,6 +4392,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-364.jpg",
           "/images/products/s-l1600-365.jpg",
@@ -4548,18 +4402,15 @@
           "/images/products/s-l1600-369.jpg",
           "/images/products/s-l1600-370.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD Hammer holder Steel hook 4mm Leather",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 109,
+    "id": 1193,
     "name": "Leather Hammer Holder with Steel Hook",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-360.jpg",
     "images": [
       "/images/products/s-l1600-360.jpg",
@@ -4567,6 +4418,7 @@
       "/images/products/s-l1600-362.jpg",
       "/images/products/s-l1600-363.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4578,24 +4430,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-360.jpg",
           "/images/products/s-l1600-361.jpg",
           "/images/products/s-l1600-362.jpg",
           "/images/products/s-l1600-363.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Hammer Holder with Steel Hook",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 110,
-    "name": "MASTPUR Leather and Canvas Nut Bolt Nail Bag Belt Pouch Carrier Holder",
+    "id": 1194,
+    "name": "MASTPUR Leather and Nut Bolt Nail Bag Belt Pouch Carrier Holder",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-355.jpg",
     "images": [
       "/images/products/s-l1600-355.jpg",
@@ -4604,6 +4454,7 @@
       "/images/products/s-l1600-358.jpg",
       "/images/products/s-l1600-359.jpg"
     ],
+    "texture": "Canvas",
     "variant_type": null,
     "variants": [
       {
@@ -4615,6 +4466,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Canvas",
         "images": [
           "/images/products/s-l1600-355.jpg",
           "/images/products/s-l1600-356.jpg",
@@ -4622,18 +4474,15 @@
           "/images/products/s-l1600-358.jpg",
           "/images/products/s-l1600-359.jpg"
         ],
-        "in_stock": true,
-        "texture": "Canvas"
+        "in_stock": true
       }
-    ],
-    "source_name": "MASTPUR Leather and Canvas Nut Bolt Nail Bag Belt Pouch Carrier Holder",
-    "description": "",
-    "texture": "Canvas"
+    ]
   },
   {
-    "id": 111,
-    "name": "Leather Gold 8 Pocket Flat-Right side Drywall Tool Pouch",
+    "id": 1195,
+    "name": "Leather 8 Pocket Flat-Right side Drywall Tool Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-351.jpg",
     "images": [
       "/images/products/s-l1600-351.jpg",
@@ -4641,6 +4490,7 @@
       "/images/products/s-l1600-353.jpg",
       "/images/products/s-l1600-354.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4652,32 +4502,35 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Gold",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-351.jpg",
           "/images/products/s-l1600-352.jpg",
           "/images/products/s-l1600-353.jpg",
           "/images/products/s-l1600-354.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Gold 8 Pocket Flat-Right side Drywall Tool Pouch",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 112,
-    "name": "Leather Belt Loop Keychain or Traditional Keychain with D-Ring (Brown)",
+    "id": 1196,
+    "name": "Leather Belt Loop Keychain or Traditional Keychain with D-Ring",
     "category": "Accessories",
+    "description": "",
     "image_url": "/images/products/s-l1600-347.jpg",
     "images": [
       "/images/products/s-l1600-347.jpg",
       "/images/products/s-l1600-348.jpg",
       "/images/products/s-l1600-349.jpg",
-      "/images/products/s-l1600-350.jpg"
+      "/images/products/s-l1600-350.jpg",
+      "/images/products/s-l1600-343.jpg",
+      "/images/products/s-l1600-344.jpg",
+      "/images/products/s-l1600-345.jpg",
+      "/images/products/s-l1600-346.jpg"
     ],
-    "variant_type": null,
+    "texture": null,
+    "variant_type": "color",
     "variants": [
       {
         "id": 1196,
@@ -4688,33 +4541,15 @@
         "size": null,
         "pack_quantity": 4,
         "color": "Brown",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-347.jpg",
           "/images/products/s-l1600-348.jpg",
           "/images/products/s-l1600-349.jpg",
           "/images/products/s-l1600-350.jpg"
         ],
-        "in_stock": true,
-        "texture": null
-      }
-    ],
-    "source_name": "Leather Belt Loop Keychain or Traditional Keychain with D-Ring (Brown)",
-    "description": "",
-    "texture": null
-  },
-  {
-    "id": 113,
-    "name": "Leather Belt Loop Keychain or Traditional Keychain with D-Ring (Black)",
-    "category": "Accessories",
-    "image_url": "/images/products/s-l1600-343.jpg",
-    "images": [
-      "/images/products/s-l1600-343.jpg",
-      "/images/products/s-l1600-344.jpg",
-      "/images/products/s-l1600-345.jpg",
-      "/images/products/s-l1600-346.jpg"
-    ],
-    "variant_type": null,
-    "variants": [
+        "in_stock": true
+      },
       {
         "id": 1197,
         "sku": "116089866355",
@@ -4724,24 +4559,22 @@
         "size": null,
         "pack_quantity": 4,
         "color": "Black",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-343.jpg",
           "/images/products/s-l1600-344.jpg",
           "/images/products/s-l1600-345.jpg",
           "/images/products/s-l1600-346.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Belt Loop Keychain or Traditional Keychain with D-Ring (Black)",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 114,
+    "id": 1198,
     "name": "Leather Weight Lifting Belt 4\" Back Support Fitness Gym Training Bodybuilding",
     "category": "Fitness & Lifting",
+    "description": "",
     "image_url": "/images/products/s-l1600-337.jpg",
     "images": [
       "/images/products/s-l1600-337.jpg",
@@ -4751,6 +4584,7 @@
       "/images/products/s-l1600-341.jpg",
       "/images/products/s-l1600-342.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4762,6 +4596,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-337.jpg",
           "/images/products/s-l1600-338.jpg",
@@ -4770,18 +4605,15 @@
           "/images/products/s-l1600-341.jpg",
           "/images/products/s-l1600-342.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Weight Lifting Belt 4\" Back Support Fitness Gym Training Bodybuilding",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 115,
-    "name": "Top Grain Cow Leather Men's work Leather and Fabric Gloves",
+    "id": 1199,
+    "name": "Cow Leather Men's work Leather and Fabric Gloves",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-327.jpg",
     "images": [
       "/images/products/s-l1600-327.jpg",
@@ -4795,6 +4627,7 @@
       "/images/products/s-l1600-335.jpg",
       "/images/products/s-l1600-336.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -4806,6 +4639,7 @@
         "size": "S",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-327.jpg",
           "/images/products/s-l1600-328.jpg",
@@ -4818,18 +4652,15 @@
           "/images/products/s-l1600-335.jpg",
           "/images/products/s-l1600-336.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "Top Grain Cow Leather Men's work Leather and Fabric Gloves",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 116,
-    "name": "Men's Premium Cow Suede Leather Driver Gloves, Work Gloves",
+    "id": 1200,
+    "name": "Men's Premium Cow Leather Driver Gloves, Work Gloves",
     "category": "Work Gloves",
+    "description": "",
     "image_url": "/images/products/s-l1600-320.jpg",
     "images": [
       "/images/products/s-l1600-320.jpg",
@@ -4840,6 +4671,7 @@
       "/images/products/s-l1600-325.jpg",
       "/images/products/s-l1600-326.jpg"
     ],
+    "texture": "Suede",
     "variant_type": null,
     "variants": [
       {
@@ -4851,6 +4683,7 @@
         "size": "S",
         "pack_quantity": 12,
         "color": null,
+        "texture": "Suede",
         "images": [
           "/images/products/s-l1600-320.jpg",
           "/images/products/s-l1600-321.jpg",
@@ -4860,23 +4693,21 @@
           "/images/products/s-l1600-325.jpg",
           "/images/products/s-l1600-326.jpg"
         ],
-        "in_stock": true,
-        "texture": "Suede"
+        "in_stock": true
       }
-    ],
-    "source_name": "Men's Premium Cow Suede Leather Driver Gloves, Work Gloves",
-    "description": "",
-    "texture": "Suede"
+    ]
   },
   {
-    "id": 117,
-    "name": "LEATHER GOLD 8 Pocket Flat- Left hand side SHEET ROCK ,Drywall Tool Pouch",
+    "id": 1201,
+    "name": "LEATHER 8 Pocket Flat- Left hand side SHEET ROCK,Drywall Tool Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-318.jpg",
     "images": [
       "/images/products/s-l1600-318.jpg",
       "/images/products/s-l1600-319.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4888,22 +4719,20 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-318.jpg",
           "/images/products/s-l1600-319.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD 8 Pocket Flat- Left hand side SHEET ROCK ,Drywall Tool Pouch",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 118,
-    "name": "VILLAGE LEATHER 10 Pocket Pink Top Grain Leather Carpenter Tool Pouch Bag",
+    "id": 1202,
+    "name": "VILLAGE LEATHER 10 Pocket Leather Carpenter Tool Pouch Bag",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-314.jpg",
     "images": [
       "/images/products/s-l1600-314.jpg",
@@ -4911,6 +4740,7 @@
       "/images/products/s-l1600-316.jpg",
       "/images/products/s-l1600-317.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -4922,24 +4752,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "Pink",
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-314.jpg",
           "/images/products/s-l1600-315.jpg",
           "/images/products/s-l1600-316.jpg",
           "/images/products/s-l1600-317.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "VILLAGE LEATHER 10 Pocket Pink Top Grain Leather Carpenter Tool Pouch Bag",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 119,
-    "name": "Leather Tool Roll Up Tool Kit Organiser , LeatherWrench Roll Chisel Pouch",
+    "id": 1203,
+    "name": "Leather Tool Roll Up Tool Kit Organiser, LeatherWrench Roll Chisel Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-306.jpg",
     "images": [
       "/images/products/s-l1600-306.jpg",
@@ -4951,6 +4779,7 @@
       "/images/products/s-l1600-312.jpg",
       "/images/products/s-l1600-313.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -4962,6 +4791,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-306.jpg",
           "/images/products/s-l1600-307.jpg",
@@ -4972,18 +4802,15 @@
           "/images/products/s-l1600-312.jpg",
           "/images/products/s-l1600-313.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Tool Roll Up Tool Kit Organiser , LeatherWrench Roll Chisel Pouch",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 120,
-    "name": "LEATHER GOLD Electrician Leather Multi Tool Holder Belt (4Pocket) Pouch",
+    "id": 1204,
+    "name": "LEATHER Electrician Leather Multi Tool Holder Belt (4Pocket) Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-299.jpg",
     "images": [
       "/images/products/s-l1600-299.jpg",
@@ -4998,6 +4825,7 @@
       "/images/products/s-l1600-297.jpg",
       "/images/products/s-l1600-298.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -5009,6 +4837,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-299.jpg",
           "/images/products/s-l1600-300.jpg",
@@ -5018,8 +4847,7 @@
           "/images/products/s-l1600-304.jpg",
           "/images/products/s-l1600-305.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       },
       {
         "id": 1205,
@@ -5030,24 +4858,22 @@
         "size": null,
         "pack_quantity": 1,
         "color": "GOLD",
+        "texture": null,
         "images": [
           "/images/products/s-l1600-295.jpg",
           "/images/products/s-l1600-296.jpg",
           "/images/products/s-l1600-297.jpg",
           "/images/products/s-l1600-298.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "LEATHER GOLD Electrician Leather Multi Tool Holder Belt (4Pocket) Pouch",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 121,
+    "id": 1206,
     "name": "Rolls Shipping Packaging Box Packing Sealing Tape MM / 100M",
     "category": "Tools & Hardware",
+    "description": "",
     "image_url": "/images/products/s-l1600-288.jpg",
     "images": [
       "/images/products/s-l1600-288.jpg",
@@ -5058,6 +4884,7 @@
       "/images/products/s-l1600-293.jpg",
       "/images/products/s-l1600-294.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -5069,6 +4896,7 @@
         "size": "50",
         "pack_quantity": 6,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-288.jpg",
           "/images/products/s-l1600-289.jpg",
@@ -5078,18 +4906,15 @@
           "/images/products/s-l1600-293.jpg",
           "/images/products/s-l1600-294.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Rolls Shipping Packaging Box Packing Sealing Tape MM / 100M",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 122,
-    "name": "MASTPUR MultiPurpose HeavyDuty Canvas Nail/Hand Carpenter 10 pocket Tool Pouch",
+    "id": 1207,
+    "name": "MASTPUR MultiPurpose HeavyDuty Nail/Hand Carpenter 10 pocket Tool Pouch",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-283.jpg",
     "images": [
       "/images/products/s-l1600-283.jpg",
@@ -5098,6 +4923,7 @@
       "/images/products/s-l1600-286.jpg",
       "/images/products/s-l1600-287.jpg"
     ],
+    "texture": "Canvas",
     "variant_type": null,
     "variants": [
       {
@@ -5109,6 +4935,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Canvas",
         "images": [
           "/images/products/s-l1600-283.jpg",
           "/images/products/s-l1600-284.jpg",
@@ -5116,18 +4943,15 @@
           "/images/products/s-l1600-286.jpg",
           "/images/products/s-l1600-287.jpg"
         ],
-        "in_stock": true,
-        "texture": "Canvas"
+        "in_stock": true
       }
-    ],
-    "source_name": "MASTPUR MultiPurpose HeavyDuty Canvas Nail/Hand Carpenter 10 pocket Tool Pouch",
-    "description": "",
-    "texture": "Canvas"
+    ]
   },
   {
-    "id": 125,
+    "id": 1210,
     "name": "village Leather Professional Apron with adjustable belt knee straps 2 hook",
     "category": "Outdoor & Equestrian",
+    "description": "",
     "image_url": "/images/products/s-l1600-274.jpg",
     "images": [
       "/images/products/s-l1600-274.jpg",
@@ -5140,6 +4964,7 @@
       "/images/products/s-l1600-281.jpg",
       "/images/products/s-l1600-282.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -5151,6 +4976,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-274.jpg",
           "/images/products/s-l1600-275.jpg",
@@ -5162,18 +4988,15 @@
           "/images/products/s-l1600-281.jpg",
           "/images/products/s-l1600-282.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "village Leather Professional Apron with adjustable belt knee straps 2 hook",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 126,
-    "name": "Village Leather - bricks Worker/ Chaps With foam padded , Adjustable Belt!",
+    "id": 1211,
+    "name": "Village Leather - bricks Worker/ Chaps With foam padded, Adjustable Belt!",
     "category": "Outdoor & Equestrian",
+    "description": "",
     "image_url": "/images/products/s-l1600-266.jpg",
     "images": [
       "/images/products/s-l1600-266.jpg",
@@ -5185,6 +5008,7 @@
       "/images/products/s-l1600-272.jpg",
       "/images/products/s-l1600-273.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -5196,6 +5020,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-266.jpg",
           "/images/products/s-l1600-267.jpg",
@@ -5206,18 +5031,15 @@
           "/images/products/s-l1600-272.jpg",
           "/images/products/s-l1600-273.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Village Leather - bricks Worker/ Chaps With foam padded , Adjustable Belt!",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 127,
-    "name": "Top Grain Tool Pouch With Extra Big Pockets For Nails with Foam Padded belt",
+    "id": 1212,
+    "name": "Tool Pouch With Extra Big Pockets For Nails with Foam Padded belt",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-259.jpg",
     "images": [
       "/images/products/s-l1600-259.jpg",
@@ -5228,6 +5050,7 @@
       "/images/products/s-l1600-264.jpg",
       "/images/products/s-l1600-265.jpg"
     ],
+    "texture": "Top Grain",
     "variant_type": null,
     "variants": [
       {
@@ -5239,6 +5062,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Top Grain",
         "images": [
           "/images/products/s-l1600-259.jpg",
           "/images/products/s-l1600-260.jpg",
@@ -5248,18 +5072,15 @@
           "/images/products/s-l1600-264.jpg",
           "/images/products/s-l1600-265.jpg"
         ],
-        "in_stock": true,
-        "texture": "Top Grain"
+        "in_stock": true
       }
-    ],
-    "source_name": "Top Grain Tool Pouch With Extra Big Pockets For Nails with Foam Padded belt",
-    "description": "",
-    "texture": "Top Grain"
+    ]
   },
   {
-    "id": 128,
+    "id": 1213,
     "name": "Leather Tool Work belt for men 2.5\" Foam Padded for support Tool Pouch Belts",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-250.jpg",
     "images": [
       "/images/products/s-l1600-250.jpg",
@@ -5272,6 +5093,7 @@
       "/images/products/s-l1600-257.jpg",
       "/images/products/s-l1600-258.jpg"
     ],
+    "texture": null,
     "variant_type": null,
     "variants": [
       {
@@ -5283,6 +5105,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": null,
         "images": [
           "/images/products/s-l1600-250.jpg",
           "/images/products/s-l1600-251.jpg",
@@ -5294,18 +5117,15 @@
           "/images/products/s-l1600-257.jpg",
           "/images/products/s-l1600-258.jpg"
         ],
-        "in_stock": true,
-        "texture": null
+        "in_stock": true
       }
-    ],
-    "source_name": "Leather Tool Work belt for men 2.5\" Foam Padded for support Tool Pouch Belts",
-    "description": "",
-    "texture": null
+    ]
   },
   {
-    "id": 129,
-    "name": "Oil Tanned Leather Pouch With Extra Big Pockets For Nails And Tools",
+    "id": 1214,
+    "name": "Leather Pouch With Extra Big Pockets For Nails And Tools",
     "category": "Tool Belts & Pouches",
+    "description": "",
     "image_url": "/images/products/s-l1600-243.jpg",
     "images": [
       "/images/products/s-l1600-243.jpg",
@@ -5329,6 +5149,7 @@
       "/images/products/s-l1600-235.jpg",
       "/images/products/s-l1600-236.jpg"
     ],
+    "texture": "Oil Tanned",
     "variant_type": "pack_quantity",
     "variants": [
       {
@@ -5340,6 +5161,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-243.jpg",
           "/images/products/s-l1600-244.jpg",
@@ -5349,8 +5171,7 @@
           "/images/products/s-l1600-248.jpg",
           "/images/products/s-l1600-249.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1215,
@@ -5361,6 +5182,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-237.jpg",
           "/images/products/s-l1600-238.jpg",
@@ -5369,8 +5191,7 @@
           "/images/products/s-l1600-241.jpg",
           "/images/products/s-l1600-242.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       },
       {
         "id": 1216,
@@ -5381,6 +5202,7 @@
         "size": null,
         "pack_quantity": 1,
         "color": null,
+        "texture": "Oil Tanned",
         "images": [
           "/images/products/s-l1600-230.jpg",
           "/images/products/s-l1600-231.jpg",
@@ -5390,12 +5212,8 @@
           "/images/products/s-l1600-235.jpg",
           "/images/products/s-l1600-236.jpg"
         ],
-        "in_stock": true,
-        "texture": "Oil Tanned"
+        "in_stock": true
       }
-    ],
-    "source_name": "Oil Tanned Leather Pouch With Extra Big Pockets For Nails And Tools",
-    "description": "",
-    "texture": "Oil Tanned"
+    ]
   }
 ]
