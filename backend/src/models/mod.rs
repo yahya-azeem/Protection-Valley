@@ -6,18 +6,32 @@ pub struct Product {
     pub id: i64,
     pub name: String,
     pub description: String,
-    pub price: f64,
-    pub wholesale_price: f64,
     pub category: String,
     pub image_url: String,
-    pub stock: i32,
-    pub sku: String,
-    pub ebay_id: Option<String>,
-    pub model_number: String,
-    pub color: Option<String>,
-    pub size: Option<String>,
-    pub texture: Option<String>,
     pub images: Vec<String>,
+    pub model_number: String,
+    pub variants: Option<Vec<ProductVariant>>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProductVariant {
+    pub id: i64,
+    pub product_id: i64,
+    pub sku: String,
+    pub ebay_item_id: Option<String>,
+    pub original_name: String,
+    pub price: f64,
+    pub wholesale_price: f64,
+    pub stock: i32,
+    pub size: Option<String>,
+    pub color: Option<String>,
+    pub pack_quantity: i32,
+    pub texture: Option<String>,
+    pub image_url: Option<String>,
+    pub images: Vec<String>,
+    pub in_stock: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -53,7 +67,7 @@ pub struct UpdateProductRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderItem {
-    pub product_id: i64,
+    pub product_id: String,
     pub product_name: String,
     pub quantity: i32,
     pub unit_price: f64,
@@ -113,7 +127,7 @@ pub struct CreateOrderRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderItemRequest {
-    pub product_id: i64,
+    pub product_id: String,
     pub quantity: i32,
 }
 
@@ -165,29 +179,7 @@ pub struct AuthResponse {
     pub user: User,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EbayProduct {
-    pub ebay_id: String,
-    pub group_id: Option<String>,
-    pub title: String,
-    pub price: f64,
-    pub quantity: i32,
-    pub sku: Option<String>,
-    pub model_number: Option<String>,
-    pub color: Option<String>,
-    pub size: Option<String>,
-    pub texture: Option<String>,
-    pub image_url: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GroupedProduct {
-    pub model_number: String,
-    pub name: String,
-    pub category: String,
-    pub variants: Vec<EbayProduct>,
-}
-
+// SyncResponse remains for inventory sync status
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SyncResponse {
     pub synced: i32,
