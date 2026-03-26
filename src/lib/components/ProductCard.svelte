@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Product } from '$lib/types';
-  import { selectedProduct, showPage, isWholesale } from '$lib/stores';
+  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, showPage, isWholesale } from '$lib/stores';
   import { base } from '$app/paths';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
 
@@ -12,6 +12,13 @@
 
   function handleSelect() {
     selectedProduct.set(product);
+    const variant = product.variants?.[0];
+    if (variant) {
+      selectedVariant.set(variant);
+      selectedSize.set(variant.size || '');
+      selectedColor.set(variant.color || '');
+      selectedTexture.set(variant.texture || '');
+    }
     showPage('product-detail');
   }
 </script>

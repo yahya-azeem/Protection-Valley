@@ -2,6 +2,7 @@ use vercel_runtime::{Response, Error};
 use http::StatusCode;
 use crate::models::{LoginRequest, RegisterRequest};
 use crate::services::auth_service::AuthService;
+use uuid::Uuid;
 
 pub async fn login(req: LoginRequest) -> Result<Response<String>, Error> {
     let service = AuthService::new();
@@ -15,10 +16,13 @@ pub async fn login(req: LoginRequest) -> Result<Response<String>, Error> {
             .status(StatusCode::UNAUTHORIZED)
             .header("Content-Type", "application/json")
             .body(serde_json::json!({ "error": "Invalid email or password" }).to_string())?),
-        Err(e) => Ok(Response::builder()
+        Err(e) => {
+            eprintln!("[login] auth error: {e}");
+            Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(serde_json::json!({ "error": format!("{e}") }).to_string())?),
+            .body(serde_json::json!({ "error": "Authentication failed" }).to_string())?)
+        }
     }
 }
 
@@ -30,10 +34,13 @@ pub async fn register(req: RegisterRequest) -> Result<Response<String>, Error> {
             .status(StatusCode::CREATED)
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&response)?)?),
-        Err(e) => Ok(Response::builder()
+        Err(e) => {
+            eprintln!("[register] auth error: {e}");
+            Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(serde_json::json!({ "error": format!("{e}") }).to_string())?),
+            .body(serde_json::json!({ "error": "Registration failed" }).to_string())?)
+        }
     }
 }
 
@@ -48,23 +55,12 @@ pub async fn google_login() -> Result<Response<String>, Error> {
         Err(e) => {
             let error_msg = format!("{e}");
             eprintln!("[google_login] OAuth error: {error_msg}");
-            if error_msg.contains("not set") {
-                Ok(Response::builder()
-                    .status(StatusCode::SERVICE_UNAVAILABLE)
-                    .header("Content-Type", "application/json")
-                    .body(serde_json::json!({
-                        "error": "Google OAuth is not configured. Please set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URL environment variables.",
-                        "detail": error_msg
-                    }).to_string())?)
-            } else {
-                Ok(Response::builder()
-                    .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .header("Content-Type", "application/json")
-                    .body(serde_json::json!({ 
-                        "error": "OAuth configuration error",
-                        "detail": error_msg 
-                    }).to_string())?)
-            }
+            Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({
+                    "error": "Google OAuth is unavailable"
+                }).to_string())?)
         }
     }
 }
@@ -72,8 +68,20 @@ pub async fn google_login() -> Result<Response<String>, Error> {
 pub async fn google_callback(code: String) -> Result<Response<String>, Error> {
     match crate::auth::google_provider::handle_callback(code).await {
         Ok(google_user) => {
+            let frontend_url = match std::env::var("FRONTEND_URL") {
+                Ok(url) => url,
+                Err(_) => {
+                    return Ok(Response::builder()
+                        .status(StatusCode::SERVICE_UNAVAILABLE)
+                        .header("Content-Type", "application/json")
+                        .body(serde_json::json!({
+                            "error": "Frontend redirect is not configured"
+                        }).to_string())?);
+                }
+            };
+
             let user = crate::models::User {
-                id: 101,
+                id: generate_user_id(),
                 email: google_user.email.clone(),
                 name: google_user.name,
                 role: crate::models::UserRole::Wholesale,
@@ -83,24 +91,29 @@ pub async fn google_callback(code: String) -> Result<Response<String>, Error> {
 
             match crate::auth::generate_jwt(user.id, &user.email) {
                 Ok(token) => {
-                    let frontend_url = std::env::var("FRONTEND_URL").unwrap_or_else(|_| "https://protection-valley.vercel.app".to_string());
                     let redirect_url = format!("{frontend_url}/?token={token}&wholesale=true");
-                    
+
                     Ok(Response::builder()
                         .status(StatusCode::TEMPORARY_REDIRECT)
                         .header("Location", redirect_url)
                         .body(String::new())?)
                 }
-                Err(e) => Ok(Response::builder()
-                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                Err(e) => {
+                    eprintln!("[google_callback] JWT error: {e}");
+                    Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
                     .header("Content-Type", "application/json")
-                    .body(serde_json::json!({ "error": format!("{e}") }).to_string())?),
+                    .body(serde_json::json!({ "error": "Authentication is temporarily unavailable" }).to_string())?)
+                }
             }
         }
-        Err(e) => Ok(Response::builder()
+        Err(e) => {
+            eprintln!("[google_callback] OAuth callback error: {e}");
+            Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(serde_json::json!({ "error": format!("{e}") }).to_string())?),
+            .body(serde_json::json!({ "error": "OAuth callback failed" }).to_string())?)
+        }
     }
 }
 
@@ -111,4 +124,8 @@ pub async fn get_me() -> Result<Response<String>, Error> {
         .body(serde_json::json!({
             "error": "Authentication required. Please provide a valid token."
         }).to_string())?)
+}
+
+fn generate_user_id() -> i64 {
+    (Uuid::new_v4().as_u128() & i64::MAX as u128) as i64
 }
