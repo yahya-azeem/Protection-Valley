@@ -25,7 +25,7 @@ impl OrderService {
                 customer_email: "john@example.com".to_string(),
                 items: vec![
                     OrderItem {
-                        product_id: 1,
+                        product_id: "1".to_string(),
                         product_name: "Professional Cordless Drill".to_string(),
                         quantity: 1,
                         unit_price: 149.99,
@@ -64,7 +64,7 @@ impl OrderService {
         let items: Vec<OrderItem> = req.items.iter().map(|item| {
             // In a real implementation, fetch product details from database
             OrderItem {
-                product_id: item.product_id,
+                product_id: item.product_id.clone(),
                 product_name: "Product Name".to_string(),
                 quantity: item.quantity,
                 unit_price: 100.00,

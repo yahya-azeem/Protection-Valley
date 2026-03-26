@@ -13,7 +13,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: $cart.map(item => ({
-            product_id: item.ebay_id,
+            product_id: item.id.toString(),
+            variant_id: item.variant_id?.toString(),
             quantity: item.quantity
           })),
           success_url: window.location.origin + '/?checkout=success',

@@ -128,6 +128,7 @@ pub struct CreateOrderRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderItemRequest {
     pub product_id: String,
+    pub variant_id: Option<String>,
     pub quantity: i32,
 }
 

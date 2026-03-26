@@ -24,7 +24,8 @@
   function addToCart(qty = 1) {
     if (!currentVariant || !sp) return;
     const item: CartItem = {
-      id: currentVariant.id,
+      id: sp.id,
+      variant_id: currentVariant.id,
       ebay_id: currentVariant.ebay_item_id || '',
       name: `${sp.name} - ${currentVariant.color || ''} ${currentVariant.size || ''}`.trim(),
       price: $isWholesale ? currentVariant.price * (1 - WHOLESALE_DISCOUNT) : currentVariant.price,
