@@ -110,13 +110,14 @@
           
           <!-- Selections -->
           <div class="space-y-6 mb-8">
-            {#if colors.length > 1}
+            {#if colors.length > 0}
               <div>
                 <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Color</span>
                 <div class="flex flex-wrap gap-2">
                   {#each colors as color}
                     <button 
                       onclick={() => selectedColor.set(color)} 
+                      disabled={colors.length === 1}
                       class="px-5 py-2.5 text-sm font-medium border rounded transition-lux
                         {$selectedColor === color 
                           ? 'bg-primary text-black border-primary' 
@@ -127,13 +128,14 @@
               </div>
             {/if}
 
-            {#if sizes.length > 1}
+            {#if sizes.length > 0}
               <div>
                 <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Size</span>
                 <div class="flex flex-wrap gap-2">
                   {#each sizes as size}
                     <button 
                       onclick={() => selectedSize.set(size)} 
+                      disabled={sizes.length === 1}
                       class="px-5 py-2.5 text-sm font-medium border rounded transition-lux
                         {$selectedSize === size 
                           ? 'bg-primary text-black border-primary' 
@@ -144,13 +146,14 @@
               </div>
             {/if}
 
-            {#if textures.length > 1}
+            {#if textures.length > 0}
               <div>
                 <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Texture</span>
                 <div class="flex flex-wrap gap-2">
                   {#each textures as texture}
                     <button 
                       onclick={() => selectedTexture.set(texture)} 
+                      disabled={textures.length === 1}
                       class="px-5 py-2.5 text-sm font-medium border rounded transition-lux
                         {$selectedTexture === texture
                           ? 'bg-primary text-black border-primary' 

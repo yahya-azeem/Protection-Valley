@@ -171,9 +171,9 @@ const PACK_PATTERNS = [
 ];
 
 const COLOR_PATTERNS = [
-  /\b(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\b/i,
+  /\b(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown|Navy|Purple|Beige)\b/i,
   /\bColor\s+(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Tan)\b/i,
-  /\b(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White)\s*\/\s*(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White)\b/i,
+  /\b(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural)\s*\/\s*(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural)\b/i,
 ];
 
 const TEXTURE_PATTERNS = [
@@ -259,8 +259,15 @@ function normalizeBaseName(name) {
   base = base.replace(/\s*\d+\s*pack\b/gi, '');
   base = base.replace(/\b(?:Color|Colour)\s+(?:Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\b/gi, '');
   base = base.replace(/\b(?:Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\s+Color\b/gi, '');
+  // Strip standalone variant attributes from the generic product name.
+  base = base.replace(/\b(?:Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown|Navy|Purple|Beige)\b/gi, '');
+  base = base.replace(/\b(?:Hi[\s-]?Vis|High[\s-]?Vis(?:ibility)?)\b/gi, '');
+  base = base.replace(/\b(?:Full\s*Grain|Top\s*Grain|Oil\s*Tanned|Brushed\s*Leather|Suede|Goat\s*Skin|Cow\s*Hide|Cowhide|Synthetic\s+Leather|Canvas|Nylon|Jersey)\b/gi, '');
   base = base.replace(/\(\s*(?:Full\s*Grain|Top\s*Grain|Oil\s*Tanned|Brushed\s*Leather|Suede|Goat\s*Skin|Cow\s*Hide|Cowhide|Synthetic\s+Leather|Canvas|Nylon|Jersey)\s*\)/gi, '');
+  base = base.replace(/\(\s*\)/g, '');
   base = base.replace(/,\s*,/g, ',');
+  base = base.replace(/\s+,/g, ',');
+  base = base.replace(/,\s+/g, ', ');
   base = base.replace(/\s{2,}/g, ' ');
   base = base.replace(/^[\s,]+|[\s,]+$/g, '');
   return base;
