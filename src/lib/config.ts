@@ -24,7 +24,7 @@ export const DESIGN_TOKENS = {
 export const API_CONFIG = {
   baseUrl: '/api/v1',
   endpoints: {
-    products: '/ebay/products',
+    products: '/products',
     login: '/auth/login',
     google_login: '/auth/google/login',
     register: '/auth/register',

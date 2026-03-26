@@ -6,12 +6,12 @@
 
   let sp = $derived($selectedProduct);
   
-  let colors = $derived(Array.from(new Set(sp?.variants.map(v => v.color).filter(Boolean) as string[])));
-  let sizes = $derived(Array.from(new Set(sp?.variants.map(v => v.size).filter(Boolean) as string[])));
-  let textures = $derived(Array.from(new Set(sp?.variants.map(v => v.texture).filter(Boolean) as string[])));
+  let colors = $derived(Array.from(new Set(sp?.variants?.map(v => v.color).filter(Boolean) as string[])));
+  let sizes = $derived(Array.from(new Set(sp?.variants?.map(v => v.size).filter(Boolean) as string[])));
+  let textures = $derived(Array.from(new Set(sp?.variants?.map(v => v.texture).filter(Boolean) as string[])));
 
   let currentVariant = $derived.by(() => {
-    if (!sp) return null;
+    if (!sp || !sp.variants) return null;
     return sp.variants.find(v => 
       (!$selectedColor || v.color === $selectedColor) &&
       (!$selectedSize || v.size === $selectedSize) &&
@@ -24,11 +24,11 @@
   function addToCart(qty = 1) {
     if (!currentVariant || !sp) return;
     const item: CartItem = {
-      id: currentVariant.id || currentVariant.ebay_id,
-      ebay_id: currentVariant.ebay_id,
+      id: currentVariant.id,
+      ebay_id: currentVariant.ebay_item_id || '',
       name: `${sp.name} - ${currentVariant.color || ''} ${currentVariant.size || ''}`.trim(),
       price: $isWholesale ? currentVariant.price * (1 - WHOLESALE_DISCOUNT) : currentVariant.price,
-      image: currentVariant.image_url || '/images/placeholder.png',
+      image: currentVariant.image_url || sp.image_url || '/images/placeholder.png',
       color: currentVariant.color,
       size: currentVariant.size,
       texture: currentVariant.texture,
@@ -58,21 +58,22 @@
         <div class="space-y-4 lg:sticky lg:top-24">
           <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden group">
             <img 
-              src={currentVariant?.image_url || '/images/placeholder.png'} 
+              src={currentVariant?.image_url || sp.image_url || '/images/placeholder.png'} 
               alt={sp.name} 
               class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105" 
             />
           </div>
           <div class="grid grid-cols-4 gap-3">
-            {#each sp.variants.slice(0, 4) as variant}
+            {#each (sp.variants?.slice(0, 4) || []) as variant}
               <button 
                 onclick={() => {
-                  selectedColor.set(variant.color || '');
-                  selectedSize.set(variant.size || '');
+                  if (variant.color) selectedColor.set(variant.color);
+                  if (variant.size) selectedSize.set(variant.size);
+                  if (variant.texture) selectedTexture.set(variant.texture);
                 }}
                 class="aspect-square bg-[#0A0A0A] border-2 transition-lux rounded {currentVariant?.id === variant.id ? 'border-primary' : 'border-white/10 opacity-50 hover:opacity-100'}"
               >
-                <img src={variant.image_url} alt="Variant" class="w-full h-full object-cover rounded" />
+                <img src={variant.image_url || sp.image_url} alt="Variant" class="w-full h-full object-cover rounded" />
               </button>
             {/each}
           </div>
@@ -108,7 +109,7 @@
           
           <!-- Selections -->
           <div class="space-y-6 mb-8">
-            {#if colors.length > 0}
+            {#if colors.length > 1}
               <div>
                 <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Color</span>
                 <div class="flex flex-wrap gap-2">
@@ -125,7 +126,7 @@
               </div>
             {/if}
 
-            {#if sizes.length > 0}
+            {#if sizes.length > 1}
               <div>
                 <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Size</span>
                 <div class="flex flex-wrap gap-2">
@@ -141,20 +142,37 @@
                 </div>
               </div>
             {/if}
+
+            {#if textures.length > 1}
+              <div>
+                <span class="block text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400 mb-3">Texture</span>
+                <div class="flex flex-wrap gap-2">
+                  {#each textures as texture}
+                    <button 
+                      onclick={() => selectedTexture.set(texture)} 
+                      class="px-5 py-2.5 text-sm font-medium border rounded transition-lux
+                        {$selectedTexture === texture
+                          ? 'bg-primary text-black border-primary' 
+                          : 'bg-[#0A0A0A] border-white/10 text-zinc-400 hover:border-white/30 hover:text-white'}"
+                    >{texture}</button>
+                  {/each}
+                </div>
+              </div>
+            {/if}
           </div>
 
           <!-- Actions -->
           <div class="flex flex-col sm:flex-row gap-3 mb-10">
             <button 
               onclick={() => addToCart(1)} 
-              disabled={!currentVariant}
+              disabled={!currentVariant || !currentVariant.in_stock}
               class="btn-primary py-4 px-8 flex items-center justify-center gap-3 text-sm font-bold tracking-[0.1em]"
             >
               <ShoppingCart class="w-4 h-4" />
-              ADD TO CART
+              {currentVariant?.in_stock ? 'ADD TO CART' : 'OUT OF STOCK'}
             </button>
             
-            {#if $isWholesale}
+            {#if $isWholesale && currentVariant?.in_stock}
               <button 
                 onclick={() => addToCart(10)} 
                 class="bg-white text-black py-4 px-8 flex items-center justify-center gap-3 text-sm font-bold tracking-[0.1em] hover:bg-zinc-200 transition-lux rounded-sm"
@@ -198,8 +216,8 @@
                 <Package class="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-lux" />
               </div>
               <div>
-                <h4 class="text-xs font-semibold text-white mb-0.5">In Stock</h4>
-                <p class="text-xs text-zinc-500">{currentVariant?.quantity || 0} units</p>
+                <h4 class="text-xs font-semibold text-white mb-0.5">Availability</h4>
+                <p class="text-xs text-zinc-500">{currentVariant?.in_stock ? `${currentVariant.stock} units` : 'Out of Stock'}</p>
               </div>
             </div>
           </div>

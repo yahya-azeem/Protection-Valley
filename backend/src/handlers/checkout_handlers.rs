@@ -22,7 +22,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     let mut line_items = Vec::new();
 
     for item in req.items {
-        if let Ok(Some(product)) = product_service.get_product_by_id(item.product_id).await {
+        if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
             line_items.push(stripe::CreateCheckoutSessionLineItems {
                 quantity: Some(item.quantity as u64),
                 price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {

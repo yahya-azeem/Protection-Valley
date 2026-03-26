@@ -1,0 +1,46 @@
+[
+  {
+    "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuaXJxY2NtdGp6aWJqaGd6eWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MDc5OTQsImV4cCI6MjA4ODQ4Mzk5NH0.RoDnb_pqThPIMTlPZDBwYpqHmRLL79EzhssFqWN-GUM",
+    "description": "Legacy anon API key",
+    "hash": "9jfBhZz0YvMjnUpI9jREPMhto3DpW8ym3KeheL1HuSc",
+    "id": "anon",
+    "name": "anon",
+    "prefix": "RoDnb",
+    "type": "legacy"
+  },
+  {
+    "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuaXJxY2NtdGp6aWJqaGd6eWF5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjkwNzk5NCwiZXhwIjoyMDg4NDgzOTk0fQ.mn-ntcqgUxheKkhYiS_tCvVXsYgeax9wf2j_aDLwYbM",
+    "description": "Legacy service_role API key",
+    "hash": "SyyTS2HCpNbV7FeeKVmT214SjZ9SWx5Ub_MesseMvNA",
+    "id": "service_role",
+    "name": "service_role",
+    "prefix": "mn-nt",
+    "type": "legacy"
+  },
+  {
+    "api_key": "sb_publishable_sDX3fsU4wh_x747EyL5WUA_YAGKBmy6",
+    "description": null,
+    "hash": "N7zuusjp73g5gMWHYp16ohy3zqrgKw_yCOL9ZZMpnM4",
+    "id": "17dca89b-1877-4a98-8e4a-0a1c35efa1f2",
+    "inserted_at": "2026-03-07T18:26:34.196422Z",
+    "name": "default",
+    "prefix": "sb_publishable_sDX3f",
+    "secret_jwt_template": null,
+    "type": "publishable",
+    "updated_at": "2026-03-07T18:26:34.196422Z"
+  },
+  {
+    "api_key": "sb_secret__OnYA··························",
+    "description": null,
+    "hash": "s6ht99qkEQP1ax0ExaID2hfqw4n7D8B3O2acZQrP0-c",
+    "id": "113d765e-961e-40e5-8dc3-6e297f2403b1",
+    "inserted_at": "2026-03-07T18:26:34.196422Z",
+    "name": "default",
+    "prefix": "sb_secret__OnYA",
+    "secret_jwt_template": {
+      "role": "service_role"
+    },
+    "type": "secret",
+    "updated_at": "2026-03-07T18:26:34.196422Z"
+  }
+]

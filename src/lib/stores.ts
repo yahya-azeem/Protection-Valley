@@ -1,6 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { base } from '$app/paths';
-import type { Product, GroupedProduct, CartItem, UserData } from './types';
+import type { Product, ProductVariant, CartItem, UserData } from './types';
 import { API_CONFIG } from './config';
 import { WHOLESALE_DISCOUNT } from './constants';
 
@@ -8,7 +8,7 @@ import { WHOLESALE_DISCOUNT } from './constants';
 let productsLoaded = false;
 
 // ─── Products ────────────────────────────────────────────────
-export const products = writable<GroupedProduct[]>([]);
+export const products = writable<Product[]>([]);
 export const currentCategory = writable<string>('All');
 export const priceRange = writable<{ min: number; max: number }>({ min: 0, max: Infinity });
 export const sizeFilter = writable<string>('');
@@ -18,9 +18,10 @@ export const filteredProducts = derived(
   ([$products, $category, $priceRange, $sizeFilter]) =>
     $products.filter((p) => {
       const categoryMatch = $category === 'All' || p.category === $category;
-      const price = p.variants[0]?.price || 0;
-      const priceMatch = price >= $priceRange.min && price < $priceRange.max;
-      const sizeMatch = !$sizeFilter || p.variants.some(v => v.size === $sizeFilter);
+      // Use the lowest variant price for filtering
+      const minPrice = Math.min(...(p.variants?.map(v => v.price) || [0]));
+      const priceMatch = minPrice >= $priceRange.min && minPrice < $priceRange.max;
+      const sizeMatch = !$sizeFilter || p.variants?.some(v => v.size === $sizeFilter);
       return categoryMatch && priceMatch && sizeMatch;
     })
 );
@@ -42,9 +43,9 @@ function createCartStore() {
     subscribe,
     add(item: CartItem) {
       update((cart) => {
-        const existing = cart.find(c => c.ebay_id === item.ebay_id);
+        const existing = cart.find(c => c.id === item.id);
         if (existing) {
-          existing.quantity++;
+          existing.quantity += item.quantity;
           save([...cart]);
           return [...cart];
         }
@@ -111,8 +112,8 @@ export function showToast(message: string) {
 }
 
 // ─── Selected State ──────────────────────────────────────────
-export const selectedProduct = writable<GroupedProduct | null>(null);
-export const selectedVariant = writable<Product | null>(null);
+export const selectedProduct = writable<Product | null>(null);
+export const selectedVariant = writable<ProductVariant | null>(null);
 export const selectedSize = writable<string>('');
 export const selectedColor = writable<string>('');
 export const selectedTexture = writable<string>('');
@@ -146,33 +147,6 @@ export const isWholesale = writable<boolean>(
 );
 
 // ─── API Initialization ──────────────────────────────────────
-const MOCK_PRODUCTS: GroupedProduct[] = [
-  {
-    model_number: "PV-TB-100",
-    name: "Heritage Leather Tool Belt",
-    category: "Tool Belts",
-    description: "Full-grain cowhide tool belt with 7 pockets, hammer loop, and tape measure clip. Built to last a lifetime.",
-    variants: [
-      { id: "v1", ebay_id: "1234567890", name: "Heritage Belt - Black / Large", price: 289.00, quantity: 5, image_url: `${base}/images/toolbelt-1.jpg`, color: "Black", size: "Large", texture: "Full Grain Cowhide", model_number: "PV-TB-100" },
-      { id: "v2", ebay_id: "1234567891", name: "Heritage Belt - Brown / Medium", price: 289.00, quantity: 12, image_url: `${base}/images/toolbelt-2.jpg`, color: "Saddle Brown", size: "Medium", texture: "Full Grain Cowhide", model_number: "PV-TB-100" }
-    ]
-  },
-  {
-    model_number: "PV-APR-200",
-    name: "Master Craftsman Apron",
-    category: "Aprons",
-    description: "Premium split-leg goatskin apron with cross-back straps for all-day comfort.",
-    variants: [{ id: "v3", ebay_id: "1234567892", name: "Master Apron - Tobacco", price: 145.00, quantity: 8, image_url: `${base}/images/apron-1.jpg`, color: "Tobacco", size: "One Size", texture: "Goatskin", model_number: "PV-APR-200" }]
-  },
-  {
-    model_number: "PV-PCH-300",
-    name: "Quick-Clip Tool Pouch",
-    category: "Pouches",
-    description: "Compact cowhide pouch with quick-release clip for rapid tool access.",
-    variants: [{ id: "v4", ebay_id: "1234567893", name: "Quick-Clip Pouch - Midnight", price: 65.00, quantity: 15, image_url: `${base}/images/pouch-1.jpg`, color: "Midnight", size: "Small", texture: "Top Grain Cowhide", model_number: "PV-PCH-300" }]
-  }
-];
-
 export async function loadProducts() {
   if (productsLoaded) return;
   productsLoaded = true;
@@ -182,9 +156,11 @@ export async function loadProducts() {
       const data = await res.json();
       products.set(data);
     } else {
-      products.set(MOCK_PRODUCTS);
+      console.error('Failed to load products from API');
+      products.set([]);
     }
-  } catch {
-    products.set(MOCK_PRODUCTS);
+  } catch (err) {
+    console.error('Error loading products:', err);
+    products.set([]);
   }
 }

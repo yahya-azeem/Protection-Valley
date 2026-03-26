@@ -30,9 +30,17 @@
     const list = [...$filteredProducts];
     switch (sortBy) {
       case 'price-low':
-        return list.sort((a, b) => (a.variants[0]?.price || 0) - (b.variants[0]?.price || 0));
+        return list.sort((a, b) => {
+          const aPrice = Math.min(...(a.variants?.map(v => v.price) || [0]));
+          const bPrice = Math.min(...(b.variants?.map(v => v.price) || [0]));
+          return aPrice - bPrice;
+        });
       case 'price-high':
-        return list.sort((a, b) => (b.variants[0]?.price || 0) - (a.variants[0]?.price || 0));
+        return list.sort((a, b) => {
+          const aPrice = Math.min(...(a.variants?.map(v => v.price) || [0]));
+          const bPrice = Math.min(...(b.variants?.map(v => v.price) || [0]));
+          return bPrice - aPrice;
+        });
       case 'name':
         return list.sort((a, b) => a.name.localeCompare(b.name));
       default:

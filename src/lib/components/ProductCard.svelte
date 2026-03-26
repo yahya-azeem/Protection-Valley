@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { GroupedProduct } from '$lib/types';
+  import type { Product } from '$lib/types';
   import { selectedProduct, showPage, isWholesale } from '$lib/stores';
   import { base } from '$app/paths';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
 
-  let { product } = $props<{ product: GroupedProduct }>();
+  let { product } = $props<{ product: Product }>();
   
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
-  let image = $derived(displayVariant?.image_url || `${base}/images/placeholder.png`);
+  let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/placeholder.png`);
 
   function handleSelect() {
     selectedProduct.set(product);
