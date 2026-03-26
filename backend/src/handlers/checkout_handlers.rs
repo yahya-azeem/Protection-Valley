@@ -23,21 +23,36 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
 
     for item in req.items {
         if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
-            line_items.push(stripe::CreateCheckoutSessionLineItems {
-                quantity: Some(item.quantity as u64),
-                price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
-                    currency: stripe::Currency::USD,
-                    unit_amount: Some((product.price * 100.0) as i64),
-                    product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
-                        name: product.name,
-                        description: Some(product.description),
-                        images: Some(vec![product.image_url]),
+            // Find specific variant or default to first
+            let variant = if let Some(ref vid_str) = item.variant_id {
+                if let Ok(vid) = vid_str.parse::<i64>() {
+                    product.variants.as_ref()
+                        .and_then(|vs| vs.iter().find(|v| v.id == vid))
+                        .or_else(|| product.variants.as_ref().and_then(|vs| vs.first()))
+                } else {
+                    product.variants.as_ref().and_then(|vs| vs.first())
+                }
+            } else {
+                product.variants.as_ref().and_then(|vs| vs.first())
+            };
+
+            if let Some(v) = variant {
+                line_items.push(stripe::CreateCheckoutSessionLineItems {
+                    quantity: Some(item.quantity as u64),
+                    price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
+                        currency: stripe::Currency::USD,
+                        unit_amount: Some((v.price * 100.0) as i64),
+                        product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
+                            name: format!("{} - {}", product.name, v.original_name),
+                            description: Some(product.description.clone()),
+                            images: Some(vec![v.image_url.clone().unwrap_or(product.image_url.clone())]),
+                            ..Default::default()
+                        }),
                         ..Default::default()
                     }),
                     ..Default::default()
-                }),
-                ..Default::default()
-            });
+                });
+            }
         }
     }
 

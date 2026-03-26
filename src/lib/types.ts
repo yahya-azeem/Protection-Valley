@@ -39,6 +39,7 @@ export interface Product {
 
 export interface CartItem {
   id: number | string;
+  variant_id?: number | string;
   ebay_id: string;
   name: string;
   price: number;
