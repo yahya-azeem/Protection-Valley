@@ -2,6 +2,19 @@ name: Deploy to Vercel
 on:
   push:
     branches: [main]
+    paths:
+      - "api/**"
+      - "backend/**"
+      - "src/**"
+      - "static/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "package.json"
+      - "package-lock.json"
+      - "svelte.config.js"
+      - "vite.config.ts"
+      - "vercel.json"
+      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 jobs:
@@ -9,11 +22,63 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed components
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "frontend=true" >> "$GITHUB_OUTPUT"
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          before="${GITHUB_EVENT_BEFORE:-}"
+          if [[ -z "$before" || "$before" == "0000000000000000000000000000000000000000" ]]; then
+            before="$(git rev-parse HEAD^)"
+          fi
+
+          changed_files="$(git diff --name-only "$before" "$GITHUB_SHA")"
+          frontend=false
+          backend=false
+
+          while IFS= read -r file; do
+            case "$file" in
+              src/*|static/*|package.json|package-lock.json|svelte.config.js|vite.config.ts|vercel.json)
+                frontend=true
+                ;;
+            esac
+            case "$file" in
+              backend/*|api/*|Cargo.toml|Cargo.lock|.github/workflows/deploy.yml)
+                backend=true
+                ;;
+            esac
+          done <<< "$changed_files"
+
+          if [[ "$frontend" == "true" || "$backend" == "true" ]]; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if unrelated change
+        if: steps.changes.outputs.relevant != 'true'
+        run: echo "No frontend or backend changes detected."
 
       - name: Install Rust
+        if: steps.changes.outputs.relevant == 'true'
         uses: dtolnay/rust-toolchain@stable
 
       - name: Cache Rust dependencies
+        if: steps.changes.outputs.relevant == 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -23,19 +88,45 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      - uses: goto-bus-stop/setup-zig@v2
+      - name: Set up Zig
+        if: steps.changes.outputs.relevant == 'true'
+        uses: goto-bus-stop/setup-zig@v2
 
       - name: Install cargo-zigbuild
+        if: steps.changes.outputs.relevant == 'true'
         run: cargo install cargo-zigbuild --locked
 
+      - name: Set up Node
+        if: steps.changes.outputs.frontend == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install frontend dependencies
+        if: steps.changes.outputs.frontend == 'true'
+        run: npm ci
+
+      - name: Frontend checks
+        if: steps.changes.outputs.frontend == 'true'
+        run: npx svelte-check && npm run build
+
+      - name: Backend checks
+        if: steps.changes.outputs.backend == 'true'
+        run: cargo check --workspace --locked
+
       - name: Install Vercel CLI
+        if: steps.changes.outputs.relevant == 'true'
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment
+        if: steps.changes.outputs.relevant == 'true'
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build
+        if: steps.changes.outputs.relevant == 'true'
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy
+        if: steps.changes.outputs.relevant == 'true'
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

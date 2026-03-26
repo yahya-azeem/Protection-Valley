@@ -64,6 +64,7 @@
                 onmouseenter={() => startHover(item.id)}
                 onmouseleave={endHover}
                 role="menu"
+                tabindex="-1"
               >
                 <div class="bg-[#0A0A0A] border border-white/10 rounded shadow-2xl min-w-[200px] py-2">
                   {#each item.children as child}

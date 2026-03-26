@@ -5,6 +5,24 @@ use crate::services::product_service::ProductService;
 use std::env;
 
 pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
+    let CreateCheckoutSessionRequest {
+        items,
+        success_url,
+        cancel_url,
+    } = req;
+
+    let frontend_url = match env::var("FRONTEND_URL") {
+        Ok(url) => url,
+        Err(_) => {
+            return Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({
+                    "error": "Checkout is not configured"
+                }).to_string())?);
+        }
+    };
+
     let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
         Ok(key) if !key.is_empty() && !key.starts_with("sk_test_mock") => key,
         _ => {
@@ -12,7 +30,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
                 .status(StatusCode::SERVICE_UNAVAILABLE)
                 .header("Content-Type", "application/json")
                 .body(serde_json::json!({
-                    "error": "Stripe checkout is not configured. Please set the STRIPE_SECRET_KEY environment variable."
+                    "error": "Checkout is not configured"
                 }).to_string())?);
         }
     };
@@ -21,7 +39,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     let product_service = ProductService::new();
     let mut line_items = Vec::new();
 
-    for item in req.items {
+    for item in items {
         if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
             // Find specific variant or default to first
             let variant = if let Some(ref vid_str) = item.variant_id {
@@ -65,11 +83,23 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
             }).to_string())?);
     }
 
+    let allowed_origin = frontend_url.trim_end_matches('/').to_string();
+    let success_url = success_url.trim();
+    let cancel_url = cancel_url.trim();
+    if !is_allowed_redirect(success_url, &allowed_origin) || !is_allowed_redirect(cancel_url, &allowed_origin) {
+        return Ok(Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({
+                "error": "Checkout redirect URLs must stay on the configured frontend"
+            }).to_string())?);
+    }
+
     let params = stripe::CreateCheckoutSession {
         mode: Some(stripe::CheckoutSessionMode::Payment),
         line_items: Some(line_items),
-        success_url: Some(&req.success_url),
-        cancel_url: Some(&req.cancel_url),
+        success_url: Some(success_url),
+        cancel_url: Some(cancel_url),
         ..Default::default()
     };
 
@@ -83,11 +113,24 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
             } else {
                 Ok(Response::builder()
                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .body("Failed to generate checkout URL".to_string())?)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({
+                        "error": "Failed to generate checkout URL"
+                    }).to_string())?)
             }
         }
-        Err(e) => Ok(Response::builder()
+        Err(e) => {
+            eprintln!("[checkout] stripe error: {e}");
+            Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .body(format!("Stripe error: {e}"))?),
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({
+                "error": "Stripe checkout failed"
+            }).to_string())?)
+        }
     }
+}
+
+fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
+    candidate == allowed_origin || candidate.starts_with(&format!("{allowed_origin}/"))
 }

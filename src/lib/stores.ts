@@ -1,32 +1,35 @@
 import { writable, derived, get } from 'svelte/store';
-import { base } from '$app/paths';
 import type { Product, ProductVariant, CartItem, UserData } from './types';
 import { API_CONFIG } from './config';
-import { WHOLESALE_DISCOUNT } from './constants';
 
-// ─── Guard for API spam ─────────────────────────────────────
+// Guard for duplicate product fetches.
 let productsLoaded = false;
 
-// ─── Products ────────────────────────────────────────────────
+// Products and filters.
 export const products = writable<Product[]>([]);
 export const currentCategory = writable<string>('All');
 export const priceRange = writable<{ min: number; max: number }>({ min: 0, max: Infinity });
 export const sizeFilter = writable<string>('');
+export const colorFilter = writable<string>('');
+export const textureFilter = writable<string>('');
+export const genericProductFilter = writable<string>('');
 
 export const filteredProducts = derived(
-  [products, currentCategory, priceRange, sizeFilter],
-  ([$products, $category, $priceRange, $sizeFilter]) =>
+  [products, currentCategory, priceRange, sizeFilter, colorFilter, textureFilter, genericProductFilter],
+  ([$products, $category, $priceRange, $sizeFilter, $colorFilter, $textureFilter, $genericProductFilter]) =>
     $products.filter((p) => {
       const categoryMatch = $category === 'All' || p.category === $category;
-      // Use the lowest variant price for filtering
-      const minPrice = Math.min(...(p.variants?.map(v => v.price) || [0]));
+      const minPrice = Math.min(...(p.variants?.map((v) => v.price) || [0]));
       const priceMatch = minPrice >= $priceRange.min && minPrice < $priceRange.max;
-      const sizeMatch = !$sizeFilter || p.variants?.some(v => v.size === $sizeFilter);
-      return categoryMatch && priceMatch && sizeMatch;
+      const sizeMatch = !$sizeFilter || p.variants?.some((v) => v.size === $sizeFilter);
+      const colorMatch = !$colorFilter || p.variants?.some((v) => v.color === $colorFilter);
+      const textureMatch = !$textureFilter || p.variants?.some((v) => v.texture === $textureFilter);
+      const genericMatch = !$genericProductFilter || p.name === $genericProductFilter;
+      return categoryMatch && priceMatch && sizeMatch && colorMatch && textureMatch && genericMatch;
     })
 );
 
-// ─── Cart Store Logic ────────────────────────────────────────
+// Cart store logic.
 function createCartStore() {
   const stored: CartItem[] = typeof localStorage !== 'undefined'
     ? JSON.parse(localStorage.getItem('cart') || '[]')
@@ -42,37 +45,41 @@ function createCartStore() {
   return {
     subscribe,
     add(item: CartItem) {
-      update((cart) => {
-        const existing = cart.find(c => c.id === item.id);
+      update((cartItems) => {
+        const existing = cartItems.find((c) => c.id === item.id && c.variant_id === item.variant_id);
         if (existing) {
           existing.quantity += item.quantity;
-          save([...cart]);
-          return [...cart];
+          save([...cartItems]);
+          return [...cartItems];
         }
-        const updated = [...cart, item];
+
+        const updated = [...cartItems, item];
         save(updated);
         return updated;
       });
     },
     remove(index: number) {
-      update((cart) => {
-        cart.splice(index, 1);
-        const updated = [...cart];
+      update((cartItems) => {
+        cartItems.splice(index, 1);
+        const updated = [...cartItems];
         save(updated);
         return updated;
       });
     },
     updateQuantity(index: number, delta: number) {
-      update((cart) => {
-        if (!cart[index]) return cart;
-        cart[index].quantity += delta;
-        if (cart[index].quantity <= 0) cart.splice(index, 1);
-        const updated = [...cart];
+      update((cartItems) => {
+        if (!cartItems[index]) return cartItems;
+        cartItems[index].quantity += delta;
+        if (cartItems[index].quantity <= 0) cartItems.splice(index, 1);
+        const updated = [...cartItems];
         save(updated);
         return updated;
       });
     },
-    clear() { set([]); save([]); },
+    clear() {
+      set([]);
+      save([]);
+    }
   };
 }
 
@@ -84,7 +91,7 @@ export const cartCount = derived(cart, ($cart) =>
   $cart.reduce((sum, item) => sum + item.quantity, 0)
 );
 
-// ─── UI State ────────────────────────────────────────────────
+// UI state.
 export const currentPage = writable<string>('home');
 export const previousPage = writable<string>('home');
 export const cartOpen = writable<boolean>(false);
@@ -111,19 +118,20 @@ export function showToast(message: string) {
   toastTimeout = setTimeout(() => toastVisible.set(false), 3000);
 }
 
-// ─── Selected State ──────────────────────────────────────────
+// Selected state.
 export const selectedProduct = writable<Product | null>(null);
 export const selectedVariant = writable<ProductVariant | null>(null);
 export const selectedSize = writable<string>('');
 export const selectedColor = writable<string>('');
 export const selectedTexture = writable<string>('');
 
-// ─── Authentication ──────────────────────────────────────────
+// Authentication.
 function createUserStore() {
   const stored: UserData | null = typeof localStorage !== 'undefined'
     ? JSON.parse(localStorage.getItem('user') || 'null')
     : null;
   const { subscribe, set } = writable<UserData | null>(stored);
+
   return {
     subscribe,
     logout() {
@@ -134,8 +142,8 @@ function createUserStore() {
         localStorage.removeItem('authToken');
       }
       isWholesale.set(false);
-      showToast('Session Terminated');
-    },
+      showToast('Session terminated');
+    }
   };
 }
 
@@ -146,19 +154,21 @@ export const isWholesale = writable<boolean>(
     : false
 );
 
-// ─── API Initialization ──────────────────────────────────────
+// API initialization.
 export async function loadProducts() {
   if (productsLoaded) return;
   productsLoaded = true;
+
   try {
     const res = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.products).catch(() => null);
     if (res && res.ok) {
       const data = await res.json();
       products.set(data);
-    } else {
-      console.error('Failed to load products from API');
-      products.set([]);
+      return;
     }
+
+    console.error('Failed to load products from API');
+    products.set([]);
   } catch (err) {
     console.error('Error loading products:', err);
     products.set([]);

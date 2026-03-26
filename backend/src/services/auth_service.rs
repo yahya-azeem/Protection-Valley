@@ -1,5 +1,7 @@
-use crate::models::{User, UserRole, RegisterRequest, AuthResponse};
+use crate::auth::generate_jwt;
+use crate::models::{AuthResponse, RegisterRequest, User, UserRole};
 use chrono::Utc;
+use uuid::Uuid;
 
 pub struct AuthService;
 
@@ -15,41 +17,13 @@ impl AuthService {
     }
 
     pub async fn login(&self, email: &str, password: &str) -> Result<Option<AuthResponse>, String> {
-        // In a real implementation, verify password hash against database
-        if email == "admin@protectionvalley.com" && password == "password" {
-            let user = User {
-                id: 1,
-                email: email.to_string(),
-                name: "Admin".to_string(),
-                role: UserRole::Admin,
-                company: None,
-                created_at: Utc::now(),
-            };
-
-            let token = self.generate_token(&user);
-            return Ok(Some(AuthResponse { token, user }));
-        }
-
-        if email == "wholesale@protectionvalley.com" && password == "password" {
-            let user = User {
-                id: 2,
-                email: email.to_string(),
-                name: "Wholesale Customer".to_string(),
-                role: UserRole::Wholesale,
-                company: Some("ABC Construction".to_string()),
-                created_at: Utc::now(),
-            };
-
-            let token = self.generate_token(&user);
-            return Ok(Some(AuthResponse { token, user }));
-        }
-
+        let _ = (email, password);
         Ok(None)
     }
 
     pub async fn register(&self, req: RegisterRequest) -> Result<AuthResponse, String> {
         let user = User {
-            id: 100, // Would be auto-generated
+            id: generate_user_id(),
             email: req.email,
             name: req.name,
             role: req.role.unwrap_or(UserRole::Retail),
@@ -57,12 +31,11 @@ impl AuthService {
             created_at: Utc::now(),
         };
 
-        let token = self.generate_token(&user);
+        let token = generate_jwt(user.id, &user.email).map_err(|e| e.to_string())?;
         Ok(AuthResponse { token, user })
     }
+}
 
-    fn generate_token(&self, user: &User) -> String {
-        // In a real implementation, use JWT via crate::auth::generate_jwt
-        format!("pv-token-{}", user.id)
-    }
+fn generate_user_id() -> i64 {
+    (Uuid::new_v4().as_u128() & i64::MAX as u128) as i64
 }

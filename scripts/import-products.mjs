@@ -1,8 +1,7 @@
 /**
  * import-products.mjs
- * Parses the WooCommerce/eBay CSV export, groups products by base name,
- * extracts variant parameters (size, pack quantity, color), downloads images
- * locally, and outputs a clean JSON file.
+ * Parse a WooCommerce/eBay CSV export, normalize product titles,
+ * group variants, and write a clean grouped JSON dataset.
  */
 import fs from 'fs';
 import path from 'path';
@@ -12,15 +11,19 @@ import http from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const CSV_PATH = 'C:\\Users\\shama\\Downloads\\Protection-Valley-products.csv';
+const DEFAULT_CSV_PATH = 'C:\\Users\\shama\\Downloads\\Protection-Valley-products.csv';
 const IMAGES_DIR = path.join(PROJECT_ROOT, 'static', 'images', 'products');
 const OUTPUT_JSON = path.join(__dirname, 'cleaned-products.json');
 
-// ─── CSV Parsing ─────────────────────────────────────────────
+const args = process.argv.slice(2);
+const csvArgIndex = args.indexOf('--csv');
+const CSV_PATH = csvArgIndex >= 0 ? args[csvArgIndex + 1] : DEFAULT_CSV_PATH;
+
 function parseCSVLine(line) {
   const result = [];
   let current = '';
   let inQuotes = false;
+
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
     if (inQuotes) {
@@ -34,79 +37,83 @@ function parseCSVLine(line) {
       } else {
         current += ch;
       }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      result.push(current.trim());
+      current = '';
     } else {
-      if (ch === '"') {
-        inQuotes = true;
-      } else if (ch === ',') {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += ch;
-      }
+      current += ch;
     }
   }
+
   result.push(current.trim());
   return result;
 }
 
 function parseCSV(text) {
-  // The CSV has multi-line fields (HTML descriptions).
-  // We need to handle quoted fields that span multiple lines.
   const rows = [];
   let currentRow = '';
   let inQuotes = false;
-  
+
   for (const line of text.split('\n')) {
-    if (!currentRow && !inQuotes) {
-      currentRow = line;
-    } else {
-      currentRow += '\n' + line;
-    }
-    // Count unescaped quotes
+    currentRow = currentRow ? `${currentRow}\n${line}` : line;
+
     let quoteCount = 0;
     for (let i = 0; i < currentRow.length; i++) {
       if (currentRow[i] === '"') {
         if (i + 1 < currentRow.length && currentRow[i + 1] === '"') {
-          i++; // skip escaped quote
+          i++;
         } else {
           quoteCount++;
         }
       }
     }
+
     inQuotes = quoteCount % 2 !== 0;
     if (!inQuotes) {
       rows.push(currentRow);
       currentRow = '';
     }
   }
+
   if (currentRow) rows.push(currentRow);
   return rows;
 }
 
-// ─── Image Download ──────────────────────────────────────────
 function downloadFile(url, destPath) {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(destPath)) {
       resolve(true);
       return;
     }
+
     const protocol = url.startsWith('https') ? https : http;
     const request = protocol.get(url, { timeout: 30000 }, (response) => {
       if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
         downloadFile(response.headers.location, destPath).then(resolve).catch(reject);
         return;
       }
+
       if (response.statusCode !== 200) {
         reject(new Error(`HTTP ${response.statusCode} for ${url}`));
         return;
       }
+
       const ws = fs.createWriteStream(destPath);
       response.pipe(ws);
-      ws.on('finish', () => { ws.close(); resolve(true); });
+      ws.on('finish', () => {
+        ws.close();
+        resolve(true);
+      });
       ws.on('error', reject);
     });
+
     request.on('error', reject);
-    request.on('timeout', () => { request.destroy(); reject(new Error(`Timeout: ${url}`)); });
+    request.on('timeout', () => {
+      request.destroy();
+      reject(new Error(`Timeout: ${url}`));
+    });
   });
 }
 
@@ -121,32 +128,33 @@ async function downloadImages(imageUrls) {
     const filename = path.basename(new URL(url).pathname);
     const destPath = path.join(IMAGES_DIR, filename);
     const localUrl = `/images/products/${filename}`;
-    
+
     try {
       const existed = fs.existsSync(destPath);
       await downloadFile(url, destPath);
       if (existed) skipped++;
       else downloaded++;
       localPaths.push(localUrl);
-    } catch (e) {
-      console.error(`  ✗ Failed: ${filename} — ${e.message}`);
+    } catch (error) {
+      console.error(`  Failed: ${filename} - ${error.message}`);
       failed++;
-      localPaths.push(localUrl); // still reference it
+      localPaths.push(localUrl);
     }
   }
+
   return { localPaths, downloaded, skipped, failed };
 }
 
-// ─── Product Name Normalization & Variant Extraction ─────────
 const SIZE_PATTERNS = [
   /\bsize\s+(XXS|XS|S|M|L|XL|XXL|2XL|3XL|XXXL)\b/i,
   /\bsize\s+(\d+)\b/i,
-  /\b(XXS|XS|XXL|2XL|3XL|XXXL)\b/i,
+  /\b(XXS|XS|S|M|L|XL|XXL|2XL|3XL|XXXL)\b/i,
   /\bSize\s+(Extra Large|Large|Medium|Small)\b/i,
   /\b(Extra Large)\s*\(XL\)/i,
   /\b(Large)\s*\(L\)/i,
   /\b(Medium)\s*\(M\)/i,
   /\b(Small)\s*\(S\)/i,
+  /\b(Extra Large|Large|Medium|Small)\b/i,
 ];
 
 const PACK_PATTERNS = [
@@ -163,66 +171,83 @@ const PACK_PATTERNS = [
 ];
 
 const COLOR_PATTERNS = [
-  /\b(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Dark Brown)\b/i,
-  /\bColor\s+(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White)\b/i,
+  /\b(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\b/i,
+  /\bColor\s+(Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Tan)\b/i,
+  /\b(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White)\s*\/\s*(Black|Brown|Tan|Orange|Pink|Red|Blue|Green|Yellow|Gold|White)\b/i,
+];
+
+const TEXTURE_PATTERNS = [
+  { pattern: /\bFull\s*Grain\b/i, value: 'Full Grain' },
+  { pattern: /\bTop\s*Grain\b/i, value: 'Top Grain' },
+  { pattern: /\bOil\s*Tanned\b/i, value: 'Oil Tanned' },
+  { pattern: /\bBrushed\s*Leather\b/i, value: 'Suede' },
+  { pattern: /\bSuede\b/i, value: 'Suede' },
+  { pattern: /\bGoat\s*Skin\b/i, value: 'Goat Skin' },
+  { pattern: /\bCow\s*Hide\b/i, value: 'Cow Hide' },
+  { pattern: /\bCowhide\b/i, value: 'Cow Hide' },
+  { pattern: /\bSynthetic\s+Leather\b/i, value: 'Synthetic Leather' },
+  { pattern: /\bCanvas\b/i, value: 'Canvas' },
+  { pattern: /\bNylon\b/i, value: 'Nylon' },
+  { pattern: /\bJersey\b/i, value: 'Jersey' },
 ];
 
 function extractSize(name) {
-  // Check for explicit size patterns
-  for (const pat of SIZE_PATTERNS) {
-    const m = name.match(pat);
-    if (m) {
-      let size = m[1];
-      // Normalize
+  for (const pattern of SIZE_PATTERNS) {
+    const match = name.match(pattern);
+    if (match) {
+      let size = match[1];
       const sizeMap = {
-        'extra large': 'XL', 'large': 'L', 'medium': 'M', 'small': 'S',
+        'extra large': 'XL',
+        large: 'L',
+        medium: 'M',
+        small: 'S',
       };
       if (sizeMap[size.toLowerCase()]) size = sizeMap[size.toLowerCase()];
       return size.toUpperCase();
     }
   }
-  // Check for (L), (M), (XL) etc at end of name
+
   const endMatch = name.match(/\(([SMLX]{1,3}L?)\)\s*$/i);
   if (endMatch) return endMatch[1].toUpperCase();
 
-  // Check for quoted size like "L" or "M"
-  const quotedMatch = name.match(/\"([SMLX]{1,3}L?)\"/i);
+  const quotedMatch = name.match(/"([SMLX]{1,3}L?)"/i);
   if (quotedMatch) return quotedMatch[1].toUpperCase();
 
   return null;
 }
 
 function extractPackQuantity(name) {
-  for (const pat of PACK_PATTERNS) {
-    const m = name.match(pat);
-    if (m) {
-      let qty = parseInt(m[1], 10);
-      // "10 Dozen" means 120 pairs
-      if (/doz/i.test(m[0])) qty *= 12;
-      return qty;
+  for (const pattern of PACK_PATTERNS) {
+    const match = name.match(pattern);
+    if (match) {
+      let quantity = parseInt(match[1], 10);
+      if (/doz/i.test(match[0])) quantity *= 12;
+      return quantity;
     }
   }
   return 1;
 }
 
 function extractColor(name) {
-  for (const pat of COLOR_PATTERNS) {
-    const m = name.match(pat);
-    if (m) return m[1];
+  for (const pattern of COLOR_PATTERNS) {
+    const match = name.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function extractTexture(name) {
+  for (const { pattern, value } of TEXTURE_PATTERNS) {
+    if (pattern.test(name)) return value;
   }
   return null;
 }
 
 function normalizeBaseName(name) {
-  // Remove size references
   let base = name;
-  // Remove trailing (L), (M), (XL), etc.
   base = base.replace(/\s*\([SMLX]{1,3}L?\)\s*$/i, '');
-  // Remove "Size L", "Size Large", etc.
   base = base.replace(/\s*,?\s*Size\s+\w+/gi, '');
-  // Remove quoted sizes like "L" "M"
-  base = base.replace(/\s*\"[SMLX]{1,3}L?\"\s*/gi, '');
-  // Remove pack quantities
+  base = base.replace(/\s*"([SMLX]{1,3}L?)"\s*/gi, '');
   base = base.replace(/\s*\d+\s*(?:Par|Pair|Pairs?)\s*Pack\b/gi, '');
   base = base.replace(/\s*\d+\s*Doz(?:en)?\s*(?:Pr\s*)?Pack\b/gi, '');
   base = base.replace(/\s*\d+\s*Doz(?:en)?\s*(?:Pairs?|Case)\b/gi, '');
@@ -232,19 +257,17 @@ function normalizeBaseName(name) {
   base = base.replace(/\s*\d+\s*Pairs?\s*Packing\b/gi, '');
   base = base.replace(/\s*\d+\s*Pair\b/gi, '');
   base = base.replace(/\s*\d+\s*pack\b/gi, '');
-  // Remove specific color words that are variant info, not part of product identity
-  // Only remove if product name has color variants
-  // (We'll do this in a second pass after grouping)
-  // Clean up extra commas and spaces
+  base = base.replace(/\b(?:Color|Colour)\s+(?:Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\b/gi, '');
+  base = base.replace(/\b(?:Orange|Black|Brown|Pink|Red|Blue|Green|Yellow|Gold|White|Gray|Grey|Natural|Chocolate|Tan|Dark Brown)\s+Color\b/gi, '');
+  base = base.replace(/\(\s*(?:Full\s*Grain|Top\s*Grain|Oil\s*Tanned|Brushed\s*Leather|Suede|Goat\s*Skin|Cow\s*Hide|Cowhide|Synthetic\s+Leather|Canvas|Nylon|Jersey)\s*\)/gi, '');
   base = base.replace(/,\s*,/g, ',');
   base = base.replace(/\s{2,}/g, ' ');
   base = base.replace(/^[\s,]+|[\s,]+$/g, '');
   return base;
 }
 
-// ─── Category Mapping ────────────────────────────────────────
 function mapCategory(csvCategories) {
-  const cats = csvCategories.split(',').map(c => c.trim());
+  const cats = csvCategories.split(',').map((c) => c.trim());
   const first = cats[0];
 
   if (/work\s*gloves/i.test(first)) return 'Work Gloves';
@@ -276,27 +299,36 @@ function mapCategory(csvCategories) {
   return 'Other';
 }
 
-// ─── Main ────────────────────────────────────────────────────
+function preferredImage(images) {
+  return images?.[0] || '/images/placeholder.png';
+}
+
+function isDeadGroup(group) {
+  const hasAnyImage = group.allImages.size > 0 || group.variants.some((variant) => variant.images.length > 0);
+  const allOutOfStock = group.variants.length > 0 && group.variants.every((variant) => variant.stock <= 0);
+  return !hasAnyImage && allOutOfStock;
+}
+
 async function main() {
-  console.log('📄 Reading CSV...');
+  console.log('Reading CSV...');
   const csvText = fs.readFileSync(CSV_PATH, 'utf-8');
   const allRows = parseCSV(csvText);
-  
-  // Header row
+
   const headers = parseCSVLine(allRows[0]);
   const colIndex = {};
-  headers.forEach((h, i) => colIndex[h] = i);
+  headers.forEach((header, index) => {
+    colIndex[header] = index;
+  });
 
-  console.log(`   Found ${allRows.length - 1} data rows`);
-  console.log(`   Columns: ${headers.length}`);
+  console.log(`Found ${allRows.length - 1} data rows`);
+  console.log(`Columns: ${headers.length}`);
 
-  // Parse data rows
   const rawProducts = [];
   for (let i = 1; i < allRows.length; i++) {
     const row = allRows[i];
     if (!row.trim()) continue;
+
     const cols = parseCSVLine(row);
-    
     const id = parseInt(cols[colIndex['ID']], 10);
     const name = cols[colIndex['Name']] || '';
     const published = cols[colIndex['Published']];
@@ -307,31 +339,35 @@ async function main() {
     const imageStr = cols[colIndex['Images']] || '';
     const inStock = cols[colIndex['In stock?']];
 
-    // Skip placeholder/empty products
     if (!name || name === 'placeholder free' || price <= 0) continue;
     if (published !== '1') continue;
 
-    // Parse image URLs
     const imageUrls = imageStr
       .split(',')
-      .map(u => u.trim())
-      .filter(u => u.startsWith('http'));
+      .map((u) => u.trim())
+      .filter((u) => u.startsWith('http'));
 
     rawProducts.push({
-      id, name, sku, stock, price, categories, imageUrls, inStock: inStock === '1',
+      id,
+      name,
+      sku,
+      stock,
+      price,
+      categories,
+      imageUrls,
+      inStock: inStock === '1',
     });
   }
 
-  console.log(`   ${rawProducts.length} valid products after filtering`);
+  console.log(`Valid products after filtering: ${rawProducts.length}`);
 
-  // ─── Collect all image URLs ───────────────────────────────
   const allImageUrls = new Set();
-  rawProducts.forEach(p => p.imageUrls.forEach(u => allImageUrls.add(u)));
-  console.log(`\n📸 Downloading ${allImageUrls.size} unique images...`);
-  
+  rawProducts.forEach((product) => product.imageUrls.forEach((url) => allImageUrls.add(url)));
+  console.log(`Downloading ${allImageUrls.size} unique images...`);
+
+  const urlToLocal = {};
   const imageUrlList = [...allImageUrls];
   const batchSize = 10;
-  const urlToLocal = {};
   let totalDownloaded = 0;
   let totalSkipped = 0;
   let totalFailed = 0;
@@ -346,46 +382,45 @@ async function main() {
         const destPath = path.join(IMAGES_DIR, filename);
         const localUrl = `/images/products/${filename}`;
         urlToLocal[url] = localUrl;
-        
+
         if (fs.existsSync(destPath)) {
           totalSkipped++;
           return;
         }
+
         await downloadFile(url, destPath);
         totalDownloaded++;
       })
     );
-    results.forEach((r, idx) => {
-      if (r.status === 'rejected') {
+
+    results.forEach((result, index) => {
+      if (result.status === 'rejected') {
         totalFailed++;
-        const url = batch[idx];
+        const url = batch[index];
         const filename = path.basename(new URL(url).pathname);
         urlToLocal[url] = `/images/products/${filename}`;
-        console.error(`  ✗ ${filename}: ${r.reason?.message || r.reason}`);
+        console.error(`Failed: ${filename} - ${result.reason?.message || result.reason}`);
       }
     });
-    process.stdout.write(`\r   Progress: ${Math.min(i + batchSize, imageUrlList.length)}/${imageUrlList.length}`);
-  }
-  console.log(`\n   ✓ Downloaded: ${totalDownloaded}, Skipped: ${totalSkipped}, Failed: ${totalFailed}`);
 
-  // ─── Map image URLs to local paths ────────────────────────
-  rawProducts.forEach(p => {
-    p.localImages = p.imageUrls.map(u => urlToLocal[u] || u);
+    process.stdout.write(`\rProgress: ${Math.min(i + batchSize, imageUrlList.length)}/${imageUrlList.length}`);
+  }
+  console.log(`\nDownloaded: ${totalDownloaded}, Skipped: ${totalSkipped}, Failed: ${totalFailed}`);
+
+  rawProducts.forEach((product) => {
+    product.localImages = product.imageUrls.map((url) => urlToLocal[url] || url);
   });
 
-  // ─── Group products by normalized base name ───────────────
-  console.log('\n🔗 Grouping products by base name...');
-  
+  console.log('Grouping products by base name...');
   const groups = new Map();
-  
-  for (const p of rawProducts) {
-    const baseName = normalizeBaseName(p.name);
-    const size = extractSize(p.name);
-    const packQty = extractPackQuantity(p.name);
-    const color = extractColor(p.name);
-    const category = mapCategory(p.categories);
 
-    // Build a grouping key from base name + category
+  for (const product of rawProducts) {
+    const baseName = normalizeBaseName(product.name);
+    const size = extractSize(product.name);
+    const packQty = extractPackQuantity(product.name);
+    const color = extractColor(product.name);
+    const texture = extractTexture(product.name);
+    const category = mapCategory(product.categories);
     const groupKey = `${baseName.toLowerCase()}::${category.toLowerCase()}`;
 
     if (!groups.has(groupKey)) {
@@ -396,86 +431,87 @@ async function main() {
         allImages: new Set(),
       });
     }
-    
-    const group = groups.get(groupKey);
-    // Collect all unique images
-    p.localImages.forEach(img => group.allImages.add(img));
 
+    const group = groups.get(groupKey);
+    product.localImages.forEach((img) => group.allImages.add(img));
     group.variants.push({
-      id: p.id,
-      sku: p.sku,
-      name: p.name,
-      price: p.price,
-      stock: p.stock,
+      id: product.id,
+      sku: product.sku,
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
       size,
       pack_quantity: packQty,
       color,
-      images: p.localImages,
-      in_stock: p.inStock,
+      texture,
+      images: product.localImages,
+      in_stock: product.inStock,
     });
   }
 
-  // ─── Build final product list ─────────────────────────────
   const products = [];
-  let prodId = 1;
+  for (const group of groups.values()) {
+    if (isDeadGroup(group)) continue;
 
-  for (const [, group] of groups) {
-    const allImages = [...group.allImages];
-    const firstVariant = group.variants[0];
-    
-    // Determine if variants are meaningful
-    const hasSizeVariants = new Set(group.variants.map(v => v.size).filter(Boolean)).size > 1;
-    const hasPackVariants = new Set(group.variants.map(v => v.pack_quantity)).size > 1;
-    const hasColorVariants = new Set(group.variants.map(v => v.color).filter(Boolean)).size > 1;
-    const hasPriceVariants = new Set(group.variants.map(v => v.price)).size > 1;
+    const images = [...group.allImages];
+    const productImages = images.length ? images : ['/images/placeholder.png'];
+    const textures = [...new Set(group.variants.map((variant) => variant.texture).filter(Boolean))];
+    const variantType = new Set(group.variants.map((variant) => variant.size).filter(Boolean)).size > 1
+      ? 'size'
+      : new Set(group.variants.map((variant) => variant.pack_quantity)).size > 1 ||
+        new Set(group.variants.map((variant) => variant.price)).size > 1
+      ? 'pack_quantity'
+      : new Set(group.variants.map((variant) => variant.color).filter(Boolean)).size > 1
+      ? 'color'
+      : null;
 
-    // Build variant label
-    let variantType = null;
-    if (hasSizeVariants) variantType = 'size';
-    else if (hasPackVariants || hasPriceVariants) variantType = 'pack_quantity';
-    else if (hasColorVariants) variantType = 'color';
-
-    const product = {
-      id: prodId++,
+    products.push({
+      id: group.variants[0].id,
       name: group.baseName,
       category: group.category,
-      image_url: allImages[0] || '/images/placeholder.png',
-      images: allImages,
+      description: '',
+      image_url: preferredImage(productImages),
+      images: productImages,
+      texture: textures.length === 1 ? textures[0] : null,
       variant_type: variantType,
-      variants: group.variants.map(v => ({
-        id: v.id,
-        sku: v.sku,
-        original_name: v.name,
-        price: v.price,
-        stock: v.stock,
-        size: v.size,
-        pack_quantity: v.pack_quantity,
-        color: v.color,
-        images: v.images,
-        in_stock: v.in_stock,
+      variants: group.variants.map((variant) => ({
+        id: variant.id,
+        sku: variant.sku,
+        original_name: variant.name,
+        price: variant.price,
+        stock: variant.stock,
+        size: variant.size,
+        pack_quantity: variant.pack_quantity,
+        color: variant.color,
+        texture: variant.texture,
+        images: variant.images.length ? variant.images : productImages,
+        in_stock: variant.in_stock,
       })),
-    };
-    products.push(product);
+    });
   }
 
-  console.log(`   ✓ Grouped ${rawProducts.length} products into ${products.length} product groups`);
+  console.log(`Grouped ${rawProducts.length} products into ${products.length} product groups`);
 
-  // ─── Summary ──────────────────────────────────────────────
   const categories = {};
-  products.forEach(p => {
-    categories[p.category] = (categories[p.category] || 0) + 1;
+  products.forEach((product) => {
+    categories[product.category] = (categories[product.category] || 0) + 1;
   });
-  console.log('\n📊 Categories:');
+
+  console.log('Categories:');
   Object.entries(categories)
     .sort((a, b) => b[1] - a[1])
-    .forEach(([cat, count]) => console.log(`   ${cat}: ${count}`));
+    .forEach(([category, count]) => console.log(`  ${category}: ${count}`));
 
-  const prices = products.flatMap(p => p.variants.map(v => v.price));
-  console.log(`\n💰 Price range: $${Math.min(...prices).toFixed(2)} – $${Math.max(...prices).toFixed(2)}`);
+  const prices = products.flatMap((product) => product.variants.map((variant) => variant.price));
+  if (prices.length) {
+    console.log(`Price range: $${Math.min(...prices).toFixed(2)} - $${Math.max(...prices).toFixed(2)}`);
+  }
 
-  // ─── Write output ─────────────────────────────────────────
   fs.writeFileSync(OUTPUT_JSON, JSON.stringify(products, null, 2));
-  console.log(`\n✅ Wrote ${products.length} grouped products to ${OUTPUT_JSON}`);
+  console.log(`Wrote ${products.length} grouped products to ${OUTPUT_JSON}`);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

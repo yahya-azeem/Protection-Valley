@@ -1,5 +1,4 @@
-use crate::models::{Product, ProductVariant, CreateProductRequest, UpdateProductRequest};
-use chrono::Utc;
+use crate::models::{Product, CreateProductRequest, UpdateProductRequest};
 use std::env;
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 
