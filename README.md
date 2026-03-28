@@ -1,4 +1,4 @@
-# Protection Valley [SvelteKit Edition]
+# Protection Valley 
 
 Premium workgear e-commerce platform — tool belts, pouches, aprons, and professional accessories.
 
