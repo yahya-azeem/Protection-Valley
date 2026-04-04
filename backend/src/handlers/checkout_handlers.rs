@@ -132,5 +132,9 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
 }
 
 fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
+    if candidate.starts_with("http://localhost") || candidate.starts_with("http://127.0.0.1") {
+        return true;
+    }
     candidate == allowed_origin || candidate.starts_with(&format!("{allowed_origin}/"))
 }
+
