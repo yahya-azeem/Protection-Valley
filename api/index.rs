@@ -132,7 +132,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                     .map(|s| s["code=".len()..].to_string())
                     .unwrap_or_default();
                 
-                let code = urlencoding::decode(&code_raw).unwrap_or(code_raw.into()).to_string();
+                let code = match urlencoding::decode(&code_raw) {
+                    Ok(decoded) => decoded.into_owned(),
+                    Err(_) => code_raw,
+                };
                 
                 if code.is_empty() {
                     return Ok(Response::builder()
