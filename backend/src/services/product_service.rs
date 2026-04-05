@@ -28,9 +28,12 @@ impl ProductService {
 
     fn headers(&self) -> HeaderMap {
         let mut headers = HeaderMap::new();
-        if let Ok(val) = HeaderValue::from_str(&self.supabase_key) {
-            headers.insert("apikey", val.clone());
-            headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {}", self.supabase_key)).unwrap());
+        let key = self.supabase_key.trim();
+        if let Ok(val) = HeaderValue::from_str(key) {
+            headers.insert("apikey", val);
+            if let Ok(auth) = HeaderValue::from_str(&format!("Bearer {}", key)) {
+                headers.insert(AUTHORIZATION, auth);
+            }
         }
         headers
     }

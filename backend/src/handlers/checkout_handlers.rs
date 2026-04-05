@@ -12,7 +12,7 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     } = req;
 
     let frontend_url = match env::var("FRONTEND_URL") {
-        Ok(url) => url,
+        Ok(url) => url.trim().to_string(),
         Err(_) => {
             return Ok(Response::builder()
                 .status(StatusCode::SERVICE_UNAVAILABLE)
@@ -24,8 +24,19 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
     };
 
     let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
-        Ok(key) if !key.is_empty() && !key.starts_with("sk_test_mock") => key,
-        _ => {
+        Ok(key) => {
+            let trimmed = key.trim().to_string();
+            if trimmed.is_empty() || trimmed.starts_with("sk_test_mock") {
+                return Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({
+                        "error": "Checkout is not configured"
+                    }).to_string())?);
+            }
+            trimmed
+        }
+        Err(_) => {
             return Ok(Response::builder()
                 .status(StatusCode::SERVICE_UNAVAILABLE)
                 .header("Content-Type", "application/json")
