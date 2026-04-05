@@ -5,7 +5,7 @@
   import { products } from '$lib/stores';
   import { goto } from '$app/navigation';
 
-  let featured = $derived($products.slice(0, 4));
+  let featured = $derived($products.slice(0, 6));
 
   function startShopping() {
     goto('/catalog');
@@ -62,7 +62,7 @@
         </a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 px-1 md:px-2">
         {#each featured as product (product.model_number || product.name)}
           <ProductCard {product} />
         {/each}
