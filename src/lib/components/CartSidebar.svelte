@@ -120,7 +120,7 @@
             <div class="group flex gap-4 bg-black border border-white/10 p-4 hover:border-primary/20 transition-lux rounded">
               <div class="w-20 h-20 bg-[#0A0A0A] p-1 border border-white/5 flex-shrink-0 rounded overflow-hidden">
                 <OptimizedImage 
-                  src={item.image || '/images/placeholder.png'} 
+                  src={item.image || '/images/logo.png'} 
                   alt={item.name} 
                   class="w-full h-full object-contain"
                   width={100}
