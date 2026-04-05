@@ -76,7 +76,13 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
                         let u = product.image_url.trim();
                         if u.is_empty() { None } else { Some(u) }
                     })
-                    .map(str::to_string);
+                    .map(|url| {
+                        if url.starts_with('/') {
+                            format!("{}{}", frontend_url.trim_end_matches('/'), url)
+                        } else {
+                            url.to_string()
+                        }
+                    });
                 let images = image.map(|url| vec![url]);
 
                 line_items.push(stripe::CreateCheckoutSessionLineItems {
