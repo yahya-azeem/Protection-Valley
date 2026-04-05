@@ -2,12 +2,13 @@
   import { base } from '$app/paths';
   import { ArrowRight } from 'lucide-svelte';
   import ProductCard from '$lib/components/ProductCard.svelte';
-  import { products, showPage } from '$lib/stores';
+  import { products } from '$lib/stores';
+  import { goto } from '$app/navigation';
 
   let featured = $derived($products.slice(0, 4));
 
-  function goToCatalog() {
-    showPage('catalog');
+  function startShopping() {
+    goto('/catalog');
   }
 </script>
 
@@ -20,27 +21,23 @@
     </div>
     
     <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
-      <span class="text-primary text-xs font-semibold uppercase tracking-[0.3em] mb-8 block animate-fade-in">HANDCRAFTED IN USA</span>
       <h1 class="text-6xl md:text-8xl font-serif text-white mb-10 animate-fade-in leading-[0.9] tracking-tighter" style="animation-delay: 0.2s">
-        Built for the<br/><span class="italic text-primary">Generation.</span>
+        Built for the<br/><span class="italic text-primary">Professionals.</span>
       </h1>
-      <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-12 animate-fade-in font-serif italic leading-relaxed" style="animation-delay: 0.4s">
+      <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-12 animate-fade-in font-sans leading-relaxed tracking-tight" style="animation-delay: 0.4s">
         Premium leather and canvas workgear engineered to outlast the most demanding environments.
       </p>
       
       <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.6s">
         <button 
-          onclick={goToCatalog} 
+          onclick={startShopping} 
           class="btn-primary text-sm tracking-[0.2em]"
         >
           VIEW CATALOG
         </button>
-        <button 
-          onclick={() => showPage('about')} 
-          class="btn-secondary text-sm tracking-[0.2em]"
-        >
+        <a href="/about" class="btn-secondary text-sm tracking-[0.2em]">
           OUR HERITAGE
-        </button>
+        </a>
       </div>
     </div>
 
@@ -57,12 +54,12 @@
           <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em]">ESTABLISHED QUALITY</span>
           <h2 class="text-5xl font-serif tracking-tight">Best Sellers</h2>
         </div>
-        <button 
-          onclick={goToCatalog}
+        <a 
+          href="/catalog"
           class="text-sm font-semibold text-zinc-500 hover:text-white transition-lux border-b border-white/10 pb-2"
         >
           Explore All →
-        </button>
+        </a>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

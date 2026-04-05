@@ -1,38 +1,29 @@
 <script lang="ts">
   import type { Product } from '$lib/types';
-  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, showPage, isWholesale } from '$lib/stores';
+  import { isWholesale } from '$lib/stores';
   import { base } from '$app/paths';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
+  import OptimizedImage from './OptimizedImage.svelte';
 
   let { product } = $props<{ product: Product }>();
   
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
   let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/placeholder.png`);
-
-  function handleSelect() {
-    selectedProduct.set(product);
-    const variant = product.variants?.[0];
-    if (variant) {
-      selectedVariant.set(variant);
-      selectedSize.set(variant.size || '');
-      selectedColor.set(variant.color || '');
-      selectedTexture.set(variant.texture || '');
-    }
-    showPage('product-detail');
-  }
 </script>
 
-<button 
-  onclick={handleSelect}
+<a 
+  href="/product/{product.id}"
   class="group flex flex-col w-full text-left transition-lux rounded overflow-hidden border-2 border-white/20 bg-[#0A0A0A] hover:border-primary/60 hover:shadow-gold"
 >
   <!-- Image -->
   <div class="relative aspect-square overflow-hidden bg-black flex items-center justify-center">
-    <img 
+    <OptimizedImage 
       src={image} 
       alt={product.name}
       class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
+      width={400}
+      height={400}
     />
     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
   </div>
@@ -65,4 +56,4 @@
       </div>
     </div>
   </div>
-</button>
+</a>

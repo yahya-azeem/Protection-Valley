@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Search, X, SearchX, ArrowRight } from 'lucide-svelte';
+  import { goto } from '$app/navigation';
   import {
     searchOpen,
     products,
@@ -7,10 +8,10 @@
     selectedVariant,
     selectedSize,
     selectedColor,
-    selectedTexture,
-    showPage
+    selectedTexture
   } from '$lib/stores';
   import type { Product } from '$lib/types';
+  import OptimizedImage from '$lib/components/OptimizedImage.svelte';
 
   let query = $state('');
   let results = $derived.by(() => {
@@ -38,7 +39,7 @@
       selectedTexture.set(variant.texture || '');
     }
     close();
-    showPage('product-detail');
+    goto(`/product/${product.id}`);
   }
 
   function highlight(text: string): string {
@@ -95,7 +96,13 @@
                     class="flex items-center gap-4 p-4 bg-black border border-white/10 rounded hover:border-primary/50 transition-lux text-left group"
                   >
                     <div class="w-16 h-16 bg-[#111] border border-white/10 rounded overflow-hidden">
-                      <img src={product.variants?.[0]?.image_url || '/images/placeholder.png'} alt={product.name} class="w-full h-full object-cover" />
+                      <OptimizedImage 
+                        src={product.variants?.[0]?.image_url || product.image_url || ''} 
+                        alt={product.name} 
+                        class="w-full h-full object-cover"
+                        width={100}
+                        height={100}
+                      />
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="text-[11px] uppercase tracking-[0.12em] text-zinc-500">{product.model_number}</p>
