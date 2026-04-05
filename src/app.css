@@ -58,11 +58,11 @@
 
 /* Buttons */
 @utility btn-primary {
-  @apply bg-primary text-black font-bold uppercase py-5 px-12 transition-lux hover:bg-gold-light hover:shadow-gold active:scale-95;
+  @apply bg-primary text-black font-bold uppercase py-3.5 px-6 md:py-5 md:px-12 text-xs md:text-sm transition-lux hover:bg-gold-light hover:shadow-gold active:scale-95 flex items-center justify-center rounded-sm;
 }
 
 @utility btn-secondary {
-  @apply bg-transparent text-white border border-white/10 font-bold uppercase py-5 px-12 transition-lux hover:bg-white hover:text-black active:scale-95;
+  @apply bg-transparent text-white border border-white/10 font-bold uppercase py-3.5 px-6 md:py-5 md:px-12 text-xs md:text-sm transition-lux hover:bg-white hover:text-black active:scale-95 flex items-center justify-center rounded-sm;
 }
 
 /* Official Google Button */
@@ -76,7 +76,7 @@
 
 /* Utility */
 @utility section-padding {
-  @apply py-32 lg:py-48;
+  @apply py-16 md:py-32 lg:py-48;
 }
 
 @utility card-hover {

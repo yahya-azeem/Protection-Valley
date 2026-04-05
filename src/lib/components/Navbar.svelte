@@ -126,13 +126,20 @@
 
       <!-- Mobile Nav -->
       <div class="lg:hidden flex items-center justify-between w-full">
-        <button onclick={() => isMenuOpen = !isMenuOpen} class="text-white" aria-label="Menu">
-          <Menu class="w-6 h-6" />
-        </button>
+        <div class="flex items-center gap-4">
+          <button onclick={() => isMenuOpen = !isMenuOpen} class="text-white p-2 -ml-2" aria-label="Menu">
+            <Menu class="w-6 h-6" />
+          </button>
+          <button onclick={() => searchOpen.set(true)} class="text-zinc-400 hover:text-primary transition-lux p-2" aria-label="Search">
+            <Search class="w-5 h-5" />
+          </button>
+        </div>
+
         <a href="/" class="absolute left-1/2 -translate-x-1/2 h-full flex items-center">
-          <img src="{base}/images/logo-v3.png" alt="Logo" class="h-12 w-auto" />
+          <img src="{base}/images/logo-v3.png" alt="Logo" class="h-10 w-auto" />
         </a>
-        <button onclick={() => cartOpen.set(true)} class="text-white relative flex items-center gap-2">
+
+        <button onclick={() => cartOpen.set(true)} class="text-white relative flex items-center gap-2 p-2 -mr-2">
           <div class="relative">
             <ShoppingBag class="w-5 h-5" />
             {#if $cart.length > 0}

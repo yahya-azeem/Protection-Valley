@@ -20,11 +20,11 @@
       <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60"></div>
     </div>
     
-    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
-      <h1 class="text-6xl md:text-8xl font-serif text-white mb-10 animate-fade-in leading-[0.9] tracking-tighter" style="animation-delay: 0.2s">
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center pt-24 md:pt-0">
+      <h1 class="text-4xl md:text-8xl font-serif text-white mb-6 md:mb-10 animate-fade-in leading-[1.1] md:leading-[0.9] tracking-tighter" style="animation-delay: 0.2s">
         Built for the<br/><span class="italic text-primary">Professionals.</span>
       </h1>
-      <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-12 animate-fade-in font-sans leading-relaxed tracking-tight" style="animation-delay: 0.4s">
+      <p class="text-lg md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-8 md:mb-12 animate-fade-in font-sans leading-relaxed tracking-tight" style="animation-delay: 0.4s">
         Premium leather and canvas workgear engineered to outlast the most demanding environments.
       </p>
       
