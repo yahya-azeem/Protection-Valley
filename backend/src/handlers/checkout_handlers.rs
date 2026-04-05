@@ -66,6 +66,19 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
             };
 
             if let Some(v) = variant {
+                let description = {
+                    let d = product.description.trim().to_string();
+                    if d.is_empty() { None } else { Some(d) }
+                };
+                let image = v.image_url.as_deref()
+                    .filter(|s| !s.is_empty())
+                    .or_else(|| {
+                        let u = product.image_url.trim();
+                        if u.is_empty() { None } else { Some(u) }
+                    })
+                    .map(str::to_string);
+                let images = image.map(|url| vec![url]);
+
                 line_items.push(stripe::CreateCheckoutSessionLineItems {
                     quantity: Some(item.quantity as u64),
                     price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
@@ -73,8 +86,8 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
                         unit_amount: Some((v.price * 100.0) as i64),
                         product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
                             name: format!("{} - {}", product.name, v.original_name),
-                            description: Some(product.description.clone()),
-                            images: Some(vec![v.image_url.clone().unwrap_or(product.image_url.clone())]),
+                            description,
+                            images,
                             ..Default::default()
                         }),
                         ..Default::default()
