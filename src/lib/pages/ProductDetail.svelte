@@ -3,6 +3,7 @@
   import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, goBack, isWholesale, currentCategory } from '$lib/stores';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
   import type { CartItem, Product } from '$lib/types';
+  import OptimizedImage from '$lib/components/OptimizedImage.svelte';
 
   let sp = $derived($selectedProduct);
   
@@ -45,7 +46,7 @@
     <!-- Breadcrumb -->
     <div class="bg-[#0A0A0A] border-b border-white/5 py-3">
       <div class="max-w-7xl mx-auto px-4 flex items-center gap-3 text-sm text-zinc-500">
-        <button onclick={() => goBack()} class="hover:text-primary transition-lux">Catalog</button>
+        <a href="/catalog" class="hover:text-primary transition-lux">Catalog</a>
         <ChevronRight class="w-3 h-3 opacity-30" />
         <span>{$currentCategory}</span>
         <ChevronRight class="w-3 h-3 opacity-30" />
@@ -58,10 +59,13 @@
         <!-- Imagery -->
         <div class="space-y-4 lg:sticky lg:top-24">
           <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden group">
-            <img 
+            <OptimizedImage 
               src={currentVariant?.image_url || sp.image_url || '/images/placeholder.png'} 
-              alt={sp.name} 
-              class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105" 
+              alt={sp.name}
+              class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
+              width={800}
+              height={800}
+              priority={true}
             />
           </div>
           <div class="grid grid-cols-4 gap-3">
@@ -74,7 +78,13 @@
                 }}
                 class="aspect-square bg-[#0A0A0A] border-2 transition-lux rounded {currentVariant?.id === variant.id ? 'border-primary' : 'border-white/10 opacity-50 hover:opacity-100'}"
               >
-                <img src={variant.image_url || sp.image_url} alt="Variant" class="w-full h-full object-cover rounded" />
+                <OptimizedImage 
+                  src={variant.image_url || sp.image_url || ''} 
+                  alt="Variant" 
+                  class="w-full h-full object-cover rounded"
+                  width={200}
+                  height={200}
+                />
               </button>
             {/each}
           </div>

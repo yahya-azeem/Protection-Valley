@@ -1,5 +1,6 @@
 <script lang="ts">
   import { base } from '$app/paths';
+  import { page } from '$app/stores';
   import { ShoppingBag, Search, User, Menu, X, ChevronDown } from 'lucide-svelte';
   import { showPage, cart, cartOpen, searchOpen, currentPage, currentCategory } from '$lib/stores';
   import { NAV_ITEMS } from '$lib/constants';
@@ -8,11 +9,10 @@
   let openDropdown = $state<string | null>(null);
   let dropdownTimer: ReturnType<typeof setTimeout>;
 
-  function navigate(id: string, category?: string) {
+  function handleNavigate(category?: string) {
     if (category) {
       currentCategory.set(category);
     }
-    showPage(id);
     isMenuOpen = false;
     openDropdown = null;
   }
@@ -40,22 +40,14 @@
             onmouseleave={endHover}
             role="navigation"
           >
-            <button
-              onclick={() => navigate(item.id)}
+            <a
+              href={item.id === 'home' ? '/' : `/${item.id}`}
+              onclick={() => handleNavigate()}
               class="text-xs font-semibold uppercase tracking-[0.15em] py-4 flex items-center gap-1.5 transition-lux hover:text-primary
-                {$currentPage === item.id ? 'text-primary' : 'text-zinc-400'}"
+                {$page.url.pathname === (item.id === 'home' ? '/' : `/${item.id}`) ? 'text-primary' : 'text-zinc-400'}"
             >
               {item.name}
-              {'children' in item ? '' : ''}
-            </button>
-            {#if 'children' in item && item.children}
-              <button
-                onclick={() => navigate(item.id)}
-                class="absolute -right-4 top-1/2 -translate-y-1/2 text-zinc-600"
-              >
-                <ChevronDown class="w-3 h-3" />
-              </button>
-            {/if}
+            </a>
 
             <!-- Dropdown -->
             {#if 'children' in item && item.children && openDropdown === item.id}
@@ -68,13 +60,14 @@
               >
                 <div class="bg-[#0A0A0A] border border-white/10 rounded shadow-2xl min-w-[200px] py-2">
                   {#each item.children as child}
-                    <button
-                      onclick={() => navigate(item.id, child.category)}
-                      class="w-full text-left px-5 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-lux"
+                    <a
+                      href="/catalog"
+                      onclick={() => handleNavigate(child.category)}
+                      class="block w-full text-left px-5 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 transition-lux"
                       role="menuitem"
                     >
                       {child.name}
-                    </button>
+                    </a>
                   {/each}
                 </div>
               </div>
@@ -85,26 +78,26 @@
 
       <!-- Center Logo -->
       <div class="absolute left-1/2 -translate-x-1/2 h-full flex items-center">
-        <button onclick={() => navigate('home')} class="hover:scale-105 transition-lux">
+        <a href="/" class="hover:scale-105 transition-lux">
           <img 
             src="{base}/images/logo-v3.png" 
             alt="Protection Valley" 
             class="h-14 w-auto" 
           />
-        </button>
+        </a>
       </div>
 
       <!-- Desktop Right -->
       <div class="hidden lg:flex items-center justify-end gap-8 w-1/3">
         <div class="flex items-center gap-8">
           {#each NAV_ITEMS.slice(2) as item}
-            <button 
-              onclick={() => navigate(item.id)}
+            <a 
+              href="/{item.id}"
               class="text-xs font-semibold uppercase tracking-[0.15em] transition-lux hover:text-primary
-                {$currentPage === item.id ? 'text-primary' : 'text-zinc-400'}"
+                {$page.url.pathname === `/${item.id}` ? 'text-primary' : 'text-zinc-400'}"
             >
               {item.name}
-            </button>
+            </a>
           {/each}
         </div>
 
@@ -113,9 +106,9 @@
             <Search class="w-[18px] h-[18px]" />
           </button>
           
-          <button onclick={() => showPage('login')} class="text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
+          <a href="/login" class="text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
             <User class="w-[18px] h-[18px]" />
-          </button>
+          </a>
 
           <button onclick={() => cartOpen.set(true)} class="relative flex items-center gap-2 text-zinc-400 hover:text-primary transition-lux" aria-label="Cart">
             <span class="text-xs font-semibold uppercase tracking-[0.1em]">Cart</span>
@@ -136,9 +129,9 @@
         <button onclick={() => isMenuOpen = !isMenuOpen} class="text-white" aria-label="Menu">
           <Menu class="w-6 h-6" />
         </button>
-        <button onclick={() => navigate('home')} class="absolute left-1/2 -translate-x-1/2 h-full flex items-center">
+        <a href="/" class="absolute left-1/2 -translate-x-1/2 h-full flex items-center">
           <img src="{base}/images/logo-v3.png" alt="Logo" class="h-12 w-auto" />
-        </button>
+        </a>
         <button onclick={() => cartOpen.set(true)} class="text-white relative flex items-center gap-2">
           <div class="relative">
             <ShoppingBag class="w-5 h-5" />
@@ -161,18 +154,23 @@
         </button>
       </div>
       {#each NAV_ITEMS as item}
-        <button onclick={() => navigate(item.id)} class="text-2xl font-serif text-white tracking-tight text-left hover:text-primary transition-lux">
+        <a 
+          href={item.id === 'home' ? '/' : `/${item.id}`}
+          onclick={() => (isMenuOpen = false)}
+          class="text-2xl font-serif text-white tracking-tight text-left hover:text-primary transition-lux"
+        >
           {item.name}
-        </button>
+        </a>
         {#if 'children' in item && item.children}
           <div class="pl-4 flex flex-col gap-3 -mt-4">
             {#each item.children as child}
-              <button
-                onclick={() => navigate(item.id, child.category)}
+              <a
+                href="/catalog"
+                onclick={() => handleNavigate(child.category)}
                 class="text-sm text-zinc-500 hover:text-primary transition-lux text-left"
               >
                 {child.name}
-              </button>
+              </a>
             {/each}
           </div>
         {/if}

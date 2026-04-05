@@ -313,7 +313,7 @@
         </div>
 
         {#if sortedProducts.length > 0}
-          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-2">
             {#each sortedProducts as product (product.model_number || product.name)}
               <ProductCard {product} />
             {/each}

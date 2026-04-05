@@ -1,7 +1,9 @@
 <script lang="ts">
   import { ShoppingBag, X, Trash2 } from 'lucide-svelte';
-  import { cart, cartOpen, cartTotal, showToast, isWholesale, showPage } from '$lib/stores';
+  import { cart, cartOpen, cartTotal, showToast, isWholesale } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
+  import { goto } from '$app/navigation';
+  import OptimizedImage from '$lib/components/OptimizedImage.svelte';
 
   function close() {
     cartOpen.set(false);
@@ -105,7 +107,7 @@
               <button
                 onclick={() => {
                   close();
-                  showPage('login');
+                  goto('/login');
                 }}
                 class="mt-3 text-xs font-semibold tracking-[0.08em] text-primary hover:text-white transition-lux"
               >
@@ -116,8 +118,14 @@
 
           {#each $cart as item, i}
             <div class="group flex gap-4 bg-black border border-white/10 p-4 hover:border-primary/20 transition-lux rounded">
-              <div class="w-20 h-20 bg-[#0A0A0A] p-1 border border-white/5 flex-shrink-0 rounded">
-                <img src={item.image} alt={item.name} class="w-full h-full object-contain" />
+              <div class="w-20 h-20 bg-[#0A0A0A] p-1 border border-white/5 flex-shrink-0 rounded overflow-hidden">
+                <OptimizedImage 
+                  src={item.image || '/images/placeholder.png'} 
+                  alt={item.name} 
+                  class="w-full h-full object-contain"
+                  width={100}
+                  height={100}
+                />
               </div>
               <div class="flex-1 min-w-0 flex flex-col justify-between">
                 <div class="flex justify-between items-start">

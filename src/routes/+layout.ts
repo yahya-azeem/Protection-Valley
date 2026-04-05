@@ -1,2 +1,2 @@
 export const prerender = true;
-export const ssr = false;
+// SSR is enabled by default in SvelteKit
