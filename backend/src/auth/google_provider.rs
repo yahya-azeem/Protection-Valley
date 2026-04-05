@@ -11,13 +11,19 @@ use std::env;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GoogleUser {
+    #[serde(rename = "sub")]
     pub id: String,
     pub email: String,
+    #[serde(rename = "email_verified")]
     pub verified_email: bool,
     pub name: String,
+    #[serde(default)]
     pub given_name: String,
+    #[serde(default)]
     pub family_name: String,
+    #[serde(default)]
     pub picture: String,
+    #[serde(default)]
     pub locale: String,
 }
 
@@ -70,13 +76,16 @@ pub async fn handle_callback(code: String) -> Result<GoogleUser> {
     
     let user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo";
     let client = reqwest::Client::new();
-    let user_info = client
+    let user_info_text = client
         .get(user_info_url)
         .bearer_auth(access_token)
         .send()
         .await?
-        .json::<GoogleUser>()
+        .text()
         .await?;
+
+    let user_info = serde_json::from_str::<GoogleUser>(&user_info_text)
+        .map_err(|e| anyhow!("Failed to parse Google user info: {e}. Raw: {user_info_text}"))?;
 
     Ok(user_info)
 }
