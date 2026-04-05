@@ -32,17 +32,25 @@ struct EmailContent {
 pub struct EmailService {
     client: reqwest::Client,
     api_key: String,
-    admin_email: String,
+    admin_emails: Vec<String>,
 }
 
 impl EmailService {
     pub fn new() -> Self {
         let api_key = env::var("SENDGRID_API_KEY").unwrap_or_default();
-        let admin_email = env::var("ADMIN_NOTIFICATION_EMAIL").unwrap_or_else(|_| "admin@protectionvalley.com".to_string());
+        let admin_emails_str = env::var("ADMIN_NOTIFICATION_EMAILS")
+            .unwrap_or_else(|_| "admin@protectionvalley.com".to_string());
+        
+        let admin_emails: Vec<String> = admin_emails_str
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
+
         Self {
             client: reqwest::Client::new(),
             api_key,
-            admin_email,
+            admin_emails,
         }
     }
 
@@ -59,6 +67,10 @@ impl EmailService {
     pub async fn send_order_notification(&self, order: &Order) -> Result<()> {
         if self.api_key.is_empty() {
             return Err(anyhow!("SENDGRID_API_KEY not configured"));
+        }
+
+        if self.admin_emails.is_empty() {
+            return Err(anyhow!("No admin notification emails configured"));
         }
 
         let carrier = order.carrier.as_deref().unwrap_or("Unknown");
@@ -111,15 +123,19 @@ impl EmailService {
             country = order.shipping_address.country,
         );
 
+        let recipients: Vec<EmailAddress> = self.admin_emails.iter()
+            .map(|email| EmailAddress {
+                email: email.clone(),
+                name: Some("Protection Valley Admin".to_string()),
+            })
+            .collect();
+
         let email_payload = SendGridEmail {
             personalizations: vec![Personalization {
-                to: vec![EmailAddress {
-                    email: self.admin_email.clone(),
-                    name: Some("Protection Valley Admin".to_string()),
-                }],
+                to: recipients,
             }],
             from: EmailAddress {
-                email: "notifications@protectionvalley.com".to_string(), // Must be verified in SendGrid
+                email: "notifications@protectionvalley.com".to_string(),
                 name: Some("Protection Valley Alerts".to_string()),
             },
             subject: format!("New Order - Shipping Label Generated ({})", order.id),
