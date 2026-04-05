@@ -60,7 +60,7 @@
         <div class="space-y-4 lg:sticky lg:top-24">
           <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden group">
             <OptimizedImage 
-              src={currentVariant?.image_url || sp.image_url || '/images/placeholder.png'} 
+              src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
               alt={sp.name}
               class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
               width={800}

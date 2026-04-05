@@ -9,7 +9,7 @@
   
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
-  let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/placeholder.png`);
+  let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/logo.png`);
 </script>
 
 <a 
