@@ -87,6 +87,9 @@ pub struct Order {
     pub status: OrderStatus,
     pub shipping_address: Address,
     pub payment_method: String,
+    pub carrier: Option<String>,
+    pub tracking_number: Option<String>,
+    pub shipping_label_url: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -115,6 +118,7 @@ pub struct Address {
     pub state: String,
     pub zip: String,
     pub country: String,
+    pub phone: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
