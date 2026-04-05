@@ -127,10 +127,12 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         "/api/v1/auth/google/callback" => {
             if method == "GET" {
                 let query = req.uri().query().unwrap_or("").to_string();
-                let code = query.split('&')
+                let code_raw = query.split('&')
                     .find(|s| s.starts_with("code="))
                     .map(|s| s["code=".len()..].to_string())
                     .unwrap_or_default();
+                
+                let code = urlencoding::decode(&code_raw).unwrap_or(code_raw.into()).to_string();
                 
                 if code.is_empty() {
                     return Ok(Response::builder()
