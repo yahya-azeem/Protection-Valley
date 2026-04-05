@@ -1,3 +1,4 @@
+// Auth handlers for the Protection Valley application. Updated: 2026-04-05T03:45Z
 use vercel_runtime::{Response, Error};
 use http::StatusCode;
 use crate::models::{LoginRequest, RegisterRequest};
