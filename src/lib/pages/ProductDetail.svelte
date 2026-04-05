@@ -97,17 +97,17 @@
             {sp.category}
           </span>
           
-          <h1 class="text-4xl lg:text-5xl font-serif text-white mb-4 leading-tight">
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif text-white mb-4 leading-tight">
             {sp.name}
           </h1>
           
-          <p class="text-base text-zinc-400 leading-relaxed mb-8 border-l-2 border-primary/20 pl-5">
+          <p class="text-base text-zinc-400 leading-relaxed mb-6 md:mb-8 border-l-2 border-primary/20 pl-4 md:pl-5">
             {sp.description || 'Premium handcrafted workgear built for the modern professional.'}
           </p>
 
           <!-- Price -->
           <div class="flex items-baseline gap-4 mb-2">
-            <span class="text-4xl font-serif text-primary">
+            <span class="text-3xl md:text-4xl font-serif text-primary">
               ${($isWholesale ? (currentVariant?.price || 0) * (1 - WHOLESALE_DISCOUNT) : (currentVariant?.price || 0)).toFixed(2)}
             </span>
             {#if $isWholesale}

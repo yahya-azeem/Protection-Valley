@@ -95,8 +95,8 @@
     </button>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 py-8 lg:py-12">
-    <div class="flex gap-8">
+  <div class="max-w-7xl mx-auto px-4 py-4 lg:py-12">
+    <div class="flex flex-col lg:flex-row gap-4 lg:gap-8">
       <aside class="hidden lg:block w-64 flex-shrink-0 space-y-8 sticky top-28 self-start">
         <div>
           <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 mb-4">Category</h3>

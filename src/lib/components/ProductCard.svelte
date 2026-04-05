@@ -29,30 +29,30 @@
   </div>
   
   <!-- Content -->
-  <div class="p-5 flex flex-col gap-2 border-t-2 border-white/10">
-    <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
+  <div class="p-3.5 md:p-5 flex flex-col gap-1.5 md:gap-2 border-t md:border-t-2 border-white/10">
+    <span class="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">
       {product.category}
     </span>
     
-    <h3 class="text-base font-serif text-white group-hover:text-primary transition-lux leading-snug">
+    <h3 class="text-sm md:text-base font-serif text-white group-hover:text-primary transition-lux leading-snug truncate">
       {product.name}
     </h3>
 
     {#if displayVariant?.texture}
-      <span class="text-[11px] text-zinc-500">{displayVariant.texture}</span>
+      <span class="text-[10px] md:text-[11px] text-zinc-500">{displayVariant.texture}</span>
     {/if}
     
     <div class="pt-1 flex items-center justify-between">
-      <div class="flex items-baseline gap-2">
-        <span class="text-lg font-serif text-white">
+      <div class="flex items-baseline gap-1.5 md:gap-2">
+        <span class="text-base md:text-lg font-serif text-white">
           ${$isWholesale ? (price * (1 - WHOLESALE_DISCOUNT)).toFixed(2) : price.toFixed(2)}
         </span>
         {#if $isWholesale}
-          <span class="text-xs text-zinc-600 line-through">${price.toFixed(2)}</span>
+          <span class="text-[10px] md:text-xs text-zinc-600 line-through">${price.toFixed(2)}</span>
         {/if}
       </div>
-      <div class="w-7 h-7 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary transition-lux group-hover:border-primary">
-        <span class="text-primary group-hover:text-black text-sm">→</span>
+      <div class="w-6 h-6 md:w-7 md:h-7 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary transition-lux group-hover:border-primary">
+        <span class="text-primary group-hover:text-black text-xs md:text-sm">→</span>
       </div>
     </div>
   </div>
