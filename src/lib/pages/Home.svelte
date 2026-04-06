@@ -7,6 +7,7 @@
 
   let featured = $derived($products.slice(0, 8));
   let scrollContainer = $state<HTMLDivElement | null>(null);
+  let isPaused = $state(false);
 
   function startShopping() {
     goto('/catalog');
@@ -15,11 +16,32 @@
   function scroll(direction: 'left' | 'right') {
     if (!scrollContainer) return;
     const scrollAmount = scrollContainer.clientWidth * 0.8;
+    
+    // Check if we're at the end when scrolling right
+    if (direction === 'right') {
+      const isAtEnd = scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10;
+      if (isAtEnd) {
+        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
     scrollContainer.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth'
     });
   }
+
+  // Auto-slide logic
+  $effect(() => {
+    const interval = setInterval(() => {
+      if (!isPaused) {
+        scroll('right');
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 <div class="bg-black min-h-screen text-white antialiased overflow-x-hidden">
@@ -102,6 +124,10 @@
       <!-- Carousel Container -->
       <div 
         bind:this={scrollContainer}
+        onmouseenter={() => isPaused = true}
+        onmouseleave={() => isPaused = false}
+        role="region"
+        aria-label="Signature Products Carousel"
         class="flex gap-4 md:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
       >
         {#each featured as product, i}
