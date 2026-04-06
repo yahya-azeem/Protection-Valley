@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Mail, Phone, MapPin, MessageSquare } from 'lucide-svelte';
+  import { Mail, Phone, MapPin, Clock } from 'lucide-svelte';
   import { BUSINESS } from '$lib/constants';
 </script>
 
 <svelte:head>
-  <title>Contact Support | Protection Valley</title>
+  <title>Contact Support | {BUSINESS.name}</title>
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24">
@@ -13,60 +13,67 @@
       <!-- Contact Info -->
       <div class="space-y-12">
         <div>
-          <h1 class="text-5xl font-serif text-white mb-6">Support & Inquiries</h1>
+          <h1 class="text-5xl font-serif text-white mb-6 tracking-tighter">Support & Inquiries</h1>
           <p class="text-lg text-zinc-400 leading-relaxed max-w-md">
             Our team is here to assist with technical gear specifications, wholesale accounts, and order fulfillment.
           </p>
         </div>
 
         <div class="space-y-8">
-          <div class="flex items-start gap-6">
-            <div class="w-12 h-12 bg-primary/10 rounded flex items-center justify-center shrink-0">
-              <Phone class="w-6 h-6 text-primary" />
+          <div class="flex items-start gap-6 group">
+            <div class="w-12 h-12 bg-[#0A0A0A] border border-white/10 rounded flex items-center justify-center shrink-0 transition-lux group-hover:border-primary/50">
+              <Phone class="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-2">Phone</h3>
-              <p class="text-xl text-white font-serif">{BUSINESS.phone}</p>
+              <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 mb-2">Phone</h3>
+              <p class="text-2xl text-white font-serif">{BUSINESS.phone}</p>
             </div>
           </div>
 
-          <div class="flex items-start gap-6">
-            <div class="w-12 h-12 bg-primary/10 rounded flex items-center justify-center shrink-0">
-              <MapPin class="w-6 h-6 text-primary" />
+          <div class="flex items-start gap-6 group">
+            <div class="w-12 h-12 bg-[#0A0A0A] border border-white/10 rounded flex items-center justify-center shrink-0 transition-lux group-hover:border-primary/50">
+              <Mail class="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-2">Office</h3>
-              <p class="text-xl text-white font-serif whitespace-pre-line">{BUSINESS.address.full}</p>
+              <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 mb-2">Electronic Mail</h3>
+              <p class="text-2xl text-white font-serif tracking-tight">{BUSINESS.email}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-6 group">
+            <div class="w-12 h-12 bg-[#0A0A0A] border border-white/10 rounded flex items-center justify-center shrink-0 transition-lux group-hover:border-primary/50">
+              <MapPin class="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 mb-2">Regional Headquarters</h3>
+              <p class="text-xl text-white font-serif whitespace-pre-line leading-snug">{BUSINESS.address.full}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-6 group">
+            <div class="w-12 h-12 bg-[#0A0A0A] border border-white/10 rounded flex items-center justify-center shrink-0 transition-lux group-hover:border-primary/50">
+              <Clock class="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 mb-2">Operations</h3>
+              <p class="text-xl text-white font-serif leading-snug">{BUSINESS.hours}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Simple Form Placeholder -->
-      <div class="bg-[#0A0A0A] border border-white/10 p-8 md:p-12 rounded shadow-2xl">
-        <form class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-zinc-500" for="name">Full Name</label>
-              <input type="text" id="name" class="w-full bg-black border border-white/15 rounded py-3 px-4 text-white focus:border-primary outline-none" />
-            </div>
-            <div class="space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-zinc-500" for="email">Email Address</label>
-              <input type="email" id="email" class="w-full bg-black border border-white/15 rounded py-3 px-4 text-white focus:border-primary outline-none" />
-            </div>
-          </div>
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-widest text-zinc-500" for="subject">Subject</label>
-            <input type="text" id="subject" class="w-full bg-black border border-white/15 rounded py-3 px-4 text-white focus:border-primary outline-none" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-widest text-zinc-500" for="message">Message</label>
-            <textarea id="message" rows="5" class="w-full bg-black border border-white/15 rounded py-3 px-4 text-white focus:border-primary outline-none"></textarea>
-          </div>
-          <button type="submit" class="btn-primary w-full py-4 tracking-[0.2em] text-xs">
-            SEND MESSAGE
-          </button>
-        </form>
+      <!-- Google Maps Restore -->
+      <div class="relative h-[400px] lg:h-auto min-h-[450px] bg-[#0A0A0A] border border-white/10 rounded overflow-hidden shadow-2xl">
+        <iframe 
+          src={BUSINESS.mapsEmbedUrl} 
+          title="Protection Valley Location"
+          class="w-full h-full grayscale invert opacity-70 border-0" 
+          allowfullscreen 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+        
+        <div class="absolute inset-0 pointer-events-none border border-white/5"></div>
       </div>
     </div>
   </div>
