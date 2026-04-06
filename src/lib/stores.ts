@@ -46,11 +46,24 @@ function createCartStore() {
     subscribe,
     add(item: CartItem) {
       update((cartItems) => {
-        const existing = cartItems.find((c) => c.id === item.id && c.variant_id === item.variant_id);
-        if (existing) {
-          existing.quantity += item.quantity;
+        const wholesale = get(isWholesale);
+        const existingIndex = cartItems.findIndex((c) => c.id === item.id && c.variant_id === item.variant_id);
+        
+        if (existingIndex !== -1) {
+          const newQty = cartItems[existingIndex].quantity + item.quantity;
+          if (!wholesale && newQty > 10) {
+            cartItems[existingIndex].quantity = 10;
+            showToast('Retail limit reached (10). Log in for wholesale.');
+          } else {
+            cartItems[existingIndex].quantity = newQty;
+          }
           save([...cartItems]);
           return [...cartItems];
+        }
+
+        if (!wholesale && item.quantity > 10) {
+          item.quantity = 10;
+          showToast('Retail limit reached (10). Log in for wholesale.');
         }
 
         const updated = [...cartItems, item];
@@ -69,7 +82,15 @@ function createCartStore() {
     updateQuantity(index: number, delta: number) {
       update((cartItems) => {
         if (!cartItems[index]) return cartItems;
-        cartItems[index].quantity += delta;
+        const wholesale = get(isWholesale);
+        const newQty = cartItems[index].quantity + delta;
+        
+        if (!wholesale && newQty > 10) {
+          showToast('Retail limit reached (10). Log in for wholesale.');
+          return cartItems;
+        }
+
+        cartItems[index].quantity = newQty;
         if (cartItems[index].quantity <= 0) cartItems.splice(index, 1);
         const updated = [...cartItems];
         save(updated);

@@ -2,7 +2,7 @@
   import { base } from '$app/paths';
   import { page } from '$app/stores';
   import { ShoppingBag, Search, User, Menu, X, ChevronDown } from 'lucide-svelte';
-  import { showPage, cart, cartOpen, searchOpen, currentPage, currentCategory } from '$lib/stores';
+  import { showPage, cart, cartOpen, searchOpen, currentPage, currentCategory, currentUser } from '$lib/stores';
   import { NAV_ITEMS } from '$lib/constants';
 
   let isMenuOpen = $state(false);
@@ -106,9 +106,24 @@
             <Search class="w-[18px] h-[18px]" />
           </button>
           
-          <a href="/login" class="text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
-            <User class="w-[18px] h-[18px]" />
-          </a>
+          {#if $currentUser}
+            <div class="flex items-center gap-4 border-r border-white/10 pr-6 mr-1">
+              <div class="flex flex-col items-end">
+                <span class="text-[10px] text-zinc-500 uppercase tracking-widest leading-none mb-1">Account</span>
+                <span class="text-xs font-medium text-white truncate max-w-[120px]">{$currentUser.email}</span>
+              </div>
+              <button 
+                onclick={() => currentUser.logout()}
+                class="text-[10px] font-bold text-primary hover:text-white transition-lux uppercase tracking-tighter border border-primary/20 px-2 py-1 rounded-sm"
+              >
+                Sign Out
+              </button>
+            </div>
+          {:else}
+            <a href="/login" class="text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
+              <User class="w-[18px] h-[18px]" />
+            </a>
+          {/if}
 
           <button onclick={() => cartOpen.set(true)} class="relative flex items-center gap-2 text-zinc-400 hover:text-primary transition-lux" aria-label="Cart">
             <span class="text-xs font-semibold uppercase tracking-[0.1em]">Cart</span>
@@ -161,27 +176,69 @@
         </button>
       </div>
       {#each NAV_ITEMS as item}
-        <a 
-          href={item.id === 'home' ? '/' : `/${item.id}`}
-          onclick={() => (isMenuOpen = false)}
-          class="text-2xl font-serif text-white tracking-tight text-left hover:text-primary transition-lux"
-        >
-          {item.name}
-        </a>
-        {#if 'children' in item && item.children}
-          <div class="pl-4 flex flex-col gap-3 -mt-4">
-            {#each item.children as child}
-              <a
-                href="/catalog"
-                onclick={() => handleNavigate(child.category)}
-                class="text-sm text-zinc-500 hover:text-primary transition-lux text-left"
-              >
-                {child.name}
-              </a>
-            {/each}
-          </div>
-        {/if}
+        <div class="flex flex-col gap-4">
+          <a 
+            href={item.id === 'home' ? '/' : `/${item.id}`}
+            onclick={() => (isMenuOpen = false)}
+            class="text-2xl font-serif text-white tracking-tight text-left hover:text-primary transition-lux"
+          >
+            {item.name}
+          </a>
+          {#if 'children' in item && item.children}
+            <div class="pl-4 flex flex-col gap-3 -mt-2">
+              {#each item.children as child}
+                <a
+                  href="/catalog"
+                  onclick={() => handleNavigate(child.category)}
+                  class="text-sm text-zinc-500 hover:text-primary transition-lux text-left"
+                >
+                  {child.name}
+                </a>
+              {/each}
+            </div>
+          {/if}
+        </div>
       {/each}
+
+      <!-- Mobile Auth -->
+      <div class="mt-auto border-t border-white/10 pt-8 pb-10">
+        {#if $currentUser}
+          <div class="space-y-4 text-left">
+            <div>
+              <p class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Logged in as</p>
+              <p class="text-lg font-serif text-white">{$currentUser.email}</p>
+            </div>
+            <button 
+              onclick={() => {
+                currentUser.logout();
+                isMenuOpen = false;
+              }}
+              class="w-full btn-primary py-4 text-xs tracking-[0.2em]"
+            >
+              SIGN OUT
+            </button>
+          </div>
+        {:else}
+          <a 
+            href="/login" 
+            onclick={() => isMenuOpen = false}
+            class="w-full flex items-center justify-center gap-3 bg-white text-black py-4 text-xs font-bold tracking-[0.2em] rounded-sm"
+          >
+            <User class="w-4 h-4" />
+            WHOLESALE LOGIN
+          </a>
+        {/if}
+      </div>
     </div>
   {/if}
 </nav>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>

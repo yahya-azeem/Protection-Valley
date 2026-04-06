@@ -3,7 +3,7 @@ use http::StatusCode;
 use http_body_util::BodyExt;
 use serde_json::json;
 
-use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers};
+use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers, review_handlers};
 use backend_v2_lib::models;
 
 #[tokio::main]
@@ -64,6 +64,18 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                     }
                     "DELETE" => wrap(product_handlers::delete_product(id).await),
                     _ => method_not_allowed(),
+                }
+            } else {
+                not_found()
+            }
+        }
+        p if p.starts_with("/api/v1/products/") && p.ends_with("/reviews") => {
+            let id_str = &p["/api/v1/products/".len()..p.len() - "/reviews".len()];
+            if let Ok(id) = id_str.parse::<i64>() {
+                if method == "GET" {
+                    wrap(review_handlers::get_product_reviews(id).await)
+                } else {
+                    method_not_allowed()
                 }
             } else {
                 not_found()
@@ -173,6 +185,34 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         "/api/v1/ebay/products" => {
             if method == "GET" {
                 wrap(ebay_handlers::get_ebay_products().await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/reviews/eligibility" => {
+            let query = req.uri().query().unwrap_or("");
+            let product_id = query.split('&')
+                .find(|s| s.starts_with("product_id="))
+                .and_then(|s| s.split('=').nth(1))
+                .and_then(|s| s.parse::<i64>().ok());
+            
+            if let Some(id) = product_id {
+                if method == "GET" {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok());
+                    wrap(review_handlers::check_eligibility(auth_header, id).await)
+                } else {
+                    method_not_allowed()
+                }
+            } else {
+                not_found()
+            }
+        }
+        "/api/v1/reviews" => {
+            if method == "POST" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok());
+                let bytes = read_body(&mut req).await?;
+                let body: models::CreateReviewRequest = serde_json::from_slice(&bytes)?;
+                wrap(review_handlers::create_review(auth_header, body).await)
             } else {
                 method_not_allowed()
             }
