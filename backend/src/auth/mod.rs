@@ -1,17 +1,17 @@
 pub mod google_provider;
 
 use anyhow::{anyhow, Result};
+use serde::{Deserialize, Serialize};
 
-pub fn generate_jwt(user_id: i64, email: &str) -> Result<String> {
-    use jsonwebtoken::{encode, EncodingKey, Header};
-    use serde::{Deserialize, Serialize};
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
     pub user_id: i64,
     pub exp: usize,
 }
+
+pub fn generate_jwt(user_id: i64, email: &str) -> Result<String> {
+    use jsonwebtoken::{encode, EncodingKey, Header};
 
     let expiration = chrono::Utc::now()
         .checked_add_signed(chrono::Duration::hours(24))
