@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { dev } from '$app/environment';
+  import { dev, browser } from '$app/environment';
+  import { page } from '$app/stores';
   
   /**
    * OptimizedImage.svelte
-   * Leverages Vercel Image Optimization for high performance image delivery in production.
-   * Region-aware: Defaults to standard images in development to prevent 404s.
+   * High-performance image loading with Vercel Image Optimization fallback.
+   * Region-aware: Prepends the site origin in production to satisfy absolute URL requirement.
    */
   interface Props {
     src: string;
@@ -28,15 +29,25 @@
     priority = false 
   }: Props = $props();
 
-  // Redirect to Vercel Image Optimization endpoint ONLY if in production
+  // Redirect to Vercel Image Optimization endpoint with ABSOLUTE URL in production
   function getOptimizedUrl(sourceUrl: string, w: number) {
     if (!sourceUrl || dev) return sourceUrl;
+    
+    // Absolute URLs start with http:// or https://
+    // Vercel optimizer requires internal URLs to be absolute too when passed as a param
+    let absoluteUrl = sourceUrl;
+    
+    // If it's a relative internal path, prepend the origin
+    if (sourceUrl.startsWith('/') && browser) {
+      const origin = $page.url.origin;
+      absoluteUrl = `${origin}${sourceUrl}`;
+    }
     
     // Skip optimization for transient sources
     if (sourceUrl.startsWith('data:') || sourceUrl.startsWith('blob:')) return sourceUrl;
     
-    // Encode the URL for Vercel's optimizer
-    const encodedUrl = encodeURIComponent(sourceUrl);
+    // Encode the ABSOLUTE URL for Vercel's optimizer
+    const encodedUrl = encodeURIComponent(absoluteUrl);
     return `/_vercel/image?url=${encodedUrl}&w=${w}&q=75`;
   }
 
@@ -47,6 +58,8 @@
       .map((w) => `${getOptimizedUrl(src, w)} ${w}w`)
       .join(', ')
   );
+
+  let hasError = $state(false);
 </script>
 
 <div 
@@ -56,13 +69,14 @@
   <img
     {src}
     {alt}
-    srcset={srcset || undefined}
+    srcset={!hasError ? (srcset || undefined) : undefined}
     {sizes}
     loading={priority ? 'eager' : loading}
     decoding={priority ? 'sync' : 'async'}
     class="w-full h-full object-cover transition-opacity duration-300"
     {width}
     {height}
+    onerror={() => hasError = true}
   />
 </div>
 
