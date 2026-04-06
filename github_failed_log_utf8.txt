@@ -1,0 +1,801 @@
+﻿deploy	Set up job	∩╗┐2026-04-06T00:05:15.7808905Z Current runner version: '2.333.1'
+deploy	Set up job	2026-04-06T00:05:15.7844110Z ##[group]Runner Image Provisioner
+deploy	Set up job	2026-04-06T00:05:15.7845299Z Hosted Compute Agent
+deploy	Set up job	2026-04-06T00:05:15.7846552Z Version: 20260213.493
+deploy	Set up job	2026-04-06T00:05:15.7847715Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+deploy	Set up job	2026-04-06T00:05:15.7848939Z Build Date: 2026-02-13T00:28:41Z
+deploy	Set up job	2026-04-06T00:05:15.7850164Z Worker ID: {89c6113a-7e1d-4d78-b425-504ade8e373f}
+deploy	Set up job	2026-04-06T00:05:15.7851296Z Azure Region: eastus2
+deploy	Set up job	2026-04-06T00:05:15.7852330Z ##[endgroup]
+deploy	Set up job	2026-04-06T00:05:15.7854462Z ##[group]Operating System
+deploy	Set up job	2026-04-06T00:05:15.7855377Z Ubuntu
+deploy	Set up job	2026-04-06T00:05:15.7856640Z 24.04.4
+deploy	Set up job	2026-04-06T00:05:15.7857437Z LTS
+deploy	Set up job	2026-04-06T00:05:15.7858136Z ##[endgroup]
+deploy	Set up job	2026-04-06T00:05:15.7859043Z ##[group]Runner Image
+deploy	Set up job	2026-04-06T00:05:15.7859868Z Image: ubuntu-24.04
+deploy	Set up job	2026-04-06T00:05:15.7860675Z Version: 20260329.72.1
+deploy	Set up job	2026-04-06T00:05:15.7862535Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260329.72/images/ubuntu/Ubuntu2404-Readme.md
+deploy	Set up job	2026-04-06T00:05:15.7865296Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260329.72
+deploy	Set up job	2026-04-06T00:05:15.7867104Z ##[endgroup]
+deploy	Set up job	2026-04-06T00:05:15.7868917Z ##[group]GITHUB_TOKEN Permissions
+deploy	Set up job	2026-04-06T00:05:15.7871905Z Contents: read
+deploy	Set up job	2026-04-06T00:05:15.7872825Z Metadata: read
+deploy	Set up job	2026-04-06T00:05:15.7873691Z Packages: read
+deploy	Set up job	2026-04-06T00:05:15.7874608Z ##[endgroup]
+deploy	Set up job	2026-04-06T00:05:15.7878158Z Secret source: Actions
+deploy	Set up job	2026-04-06T00:05:15.7879680Z Prepare workflow directory
+deploy	Set up job	2026-04-06T00:05:15.8342689Z Prepare all required actions
+deploy	Set up job	2026-04-06T00:05:15.8398969Z Getting action download info
+deploy	Set up job	2026-04-06T00:05:16.2006921Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+deploy	Set up job	2026-04-06T00:05:16.3791023Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:29eef336d9b2848a0b548edc03f92a220660cdb8)
+deploy	Set up job	2026-04-06T00:05:16.5429088Z Download action repository 'actions/cache@v4' (SHA:0057852bfaa89a56745cba8c7296529d2fc39830)
+deploy	Set up job	2026-04-06T00:05:16.6866249Z Download action repository 'goto-bus-stop/setup-zig@v2' (SHA:abea47f85e598557f500fa1fd2ab7464fcb39406)
+deploy	Set up job	2026-04-06T00:05:17.0267023Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+deploy	Set up job	2026-04-06T00:05:17.3575940Z Complete job name: deploy
+deploy	Run actions/checkout@v4	∩╗┐2026-04-06T00:05:17.4467207Z ##[group]Run actions/checkout@v4
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4468477Z with:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4469158Z   fetch-depth: 0
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4469971Z   repository: yahya-azeem/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4471204Z   token: ***
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4471896Z   ssh-strict: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4472608Z   ssh-user: git
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4473335Z   persist-credentials: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4474149Z   clean: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4474903Z   sparse-checkout-cone-mode: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4476055Z   fetch-tags: false
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4476797Z   show-progress: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4477567Z   lfs: false
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4478242Z   submodules: false
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4478980Z   set-safe-directory: true
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.4480153Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5555294Z Syncing repository: yahya-azeem/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5558332Z ##[group]Getting Git version info
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5559730Z Working directory is '/home/runner/work/Protection-Valley/Protection-Valley'
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5561680Z [command]/usr/bin/git version
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5633555Z git version 2.53.0
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5660775Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5677605Z Temporarily overriding HOME='/home/runner/work/_temp/331e39ac-5abc-4898-981a-3ff9677eb8ac' before making global git config changes
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5682199Z Adding repository directory to the temporary git global config as a safe directory
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5692476Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Protection-Valley/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5724971Z Deleting the contents of '/home/runner/work/Protection-Valley/Protection-Valley'
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5728964Z ##[group]Initializing the repository
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5734232Z [command]/usr/bin/git init /home/runner/work/Protection-Valley/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5826792Z hint: Using 'master' as the name for the initial branch. This default branch name
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5829260Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5830987Z hint: to use in all of your new repositories, which will suppress this warning,
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5832290Z hint: call:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5833006Z hint:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5834336Z hint: 	git config --global init.defaultBranch <name>
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5835441Z hint:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5836812Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5838453Z hint: 'development'. The just-created branch can be renamed via this command:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5840381Z hint:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5841470Z hint: 	git branch -m <name>
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5842759Z hint:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5843904Z hint: Disable this message with "git config set advice.defaultBranchName false"
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5846403Z Initialized empty Git repository in /home/runner/work/Protection-Valley/Protection-Valley/.git/
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5849524Z [command]/usr/bin/git remote add origin https://github.com/yahya-azeem/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5872251Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5874015Z ##[group]Disabling automatic garbage collection
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5876180Z [command]/usr/bin/git config --local gc.auto 0
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5903913Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5905792Z ##[group]Setting up auth
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5909889Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.5939084Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6234893Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6266119Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6480518Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6509525Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6733758Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6766678Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6767961Z ##[group]Fetching the repository
+deploy	Run actions/checkout@v4	2026-04-06T00:05:17.6775246Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1407528Z From https://github.com/yahya-azeem/Protection-Valley
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1409880Z  * [new branch]      main       -> origin/main
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1440253Z [command]/usr/bin/git branch --list --remote origin/main
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1462738Z   origin/main
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1470933Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1490555Z 3c504e25c188f6623f49fcf63e294101826784de
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1561410Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1562436Z ##[group]Determining the checkout info
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1563522Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1566672Z [command]/usr/bin/git sparse-checkout disable
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1569405Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1571752Z ##[group]Checking out the ref
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.1572735Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.4731986Z Switched to a new branch 'main'
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.4733116Z branch 'main' set up to track 'origin/main'.
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.4767101Z ##[endgroup]
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.4804653Z [command]/usr/bin/git log -1 --format=%H
+deploy	Run actions/checkout@v4	2026-04-06T00:05:19.4826540Z 3c504e25c188f6623f49fcf63e294101826784de
+deploy	Detect changed components	∩╗┐2026-04-06T00:05:19.4997425Z ##[group]Run set -euo pipefail
+deploy	Detect changed components	2026-04-06T00:05:19.4997829Z [36;1mset -euo pipefail[0m
+deploy	Detect changed components	2026-04-06T00:05:19.4998061Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.4998336Z [36;1mif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then[0m
+deploy	Detect changed components	2026-04-06T00:05:19.4998715Z [36;1m  echo "frontend=true" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.4999038Z [36;1m  echo "backend=true" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.4999558Z [36;1m  echo "relevant=true" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5000012Z [36;1m  exit 0[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5000341Z [36;1mfi[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5000632Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5000928Z [36;1mbefore="${GITHUB_EVENT_BEFORE:-}"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5001550Z [36;1mif [[ -z "$before" || "$before" == "0000000000000000000000000000000000000000" ]]; then[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5002359Z [36;1m  before="$(git rev-parse HEAD^)"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5002809Z [36;1mfi[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5003127Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5003623Z [36;1mchanged_files="$(git diff --name-only "$before" "$GITHUB_SHA")"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5004359Z [36;1mfrontend=false[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5004763Z [36;1mbackend=false[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5005117Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5005456Z [36;1mwhile IFS= read -r file; do[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5006224Z [36;1m  case "$file" in[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5006960Z [36;1m    src/*|static/*|package.json|package-lock.json|svelte.config.js|vite.config.ts|vercel.json)[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5007753Z [36;1m      frontend=true[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5007985Z [36;1m      ;;[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5008174Z [36;1m  esac[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5008362Z [36;1m  case "$file" in[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5008703Z [36;1m    backend/*|api/*|Cargo.toml|Cargo.lock|.github/workflows/deploy.yml)[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5009096Z [36;1m      backend=true[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5009315Z [36;1m      ;;[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5009502Z [36;1m  esac[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5009693Z [36;1mdone <<< "$changed_files"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5009938Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5010189Z [36;1mif [[ "$frontend" == "true" || "$backend" == "true" ]]; then[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5010554Z [36;1m  echo "relevant=true" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5010831Z [36;1melse[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5011053Z [36;1m  echo "relevant=false" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5011325Z [36;1mfi[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5011502Z [36;1m[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5011719Z [36;1mecho "frontend=$frontend" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5012045Z [36;1mecho "backend=$backend" >> "$GITHUB_OUTPUT"[0m
+deploy	Detect changed components	2026-04-06T00:05:19.5043992Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Detect changed components	2026-04-06T00:05:19.5044358Z ##[endgroup]
+deploy	Install Rust	∩╗┐2026-04-06T00:05:19.5359189Z ##[group]Run dtolnay/rust-toolchain@stable
+deploy	Install Rust	2026-04-06T00:05:19.5359586Z with:
+deploy	Install Rust	2026-04-06T00:05:19.5359786Z   toolchain: stable
+deploy	Install Rust	2026-04-06T00:05:19.5359988Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:19.5463527Z ##[group]Run : parse toolchain version
+deploy	Install Rust	2026-04-06T00:05:19.5463857Z [36;1m: parse toolchain version[0m
+deploy	Install Rust	2026-04-06T00:05:19.5464119Z [36;1mif [[ -z $toolchain ]]; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5464620Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+deploy	Install Rust	2026-04-06T00:05:19.5465153Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+deploy	Install Rust	2026-04-06T00:05:19.5465438Z [36;1m  exit 1[0m
+deploy	Install Rust	2026-04-06T00:05:19.5465985Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5466395Z [36;1m  if [[ Linux == macOS ]]; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5466907Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5467446Z [36;1m  else[0m
+deploy	Install Rust	2026-04-06T00:05:19.5467998Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5468443Z [36;1m  fi[0m
+deploy	Install Rust	2026-04-06T00:05:19.5468730Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5469263Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5469711Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5470207Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5470686Z [36;1melse[0m
+deploy	Install Rust	2026-04-06T00:05:19.5470922Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5471201Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:19.5497208Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:19.5497554Z env:
+deploy	Install Rust	2026-04-06T00:05:19.5497729Z   toolchain: stable
+deploy	Install Rust	2026-04-06T00:05:19.5497935Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:19.5579738Z ##[group]Run : construct rustup command line
+deploy	Install Rust	2026-04-06T00:05:19.5580063Z [36;1m: construct rustup command line[0m
+deploy	Install Rust	2026-04-06T00:05:19.5580554Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5581174Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5581657Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:19.5607600Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:19.5607927Z env:
+deploy	Install Rust	2026-04-06T00:05:19.5608106Z   targets: 
+deploy	Install Rust	2026-04-06T00:05:19.5608295Z   components: 
+deploy	Install Rust	2026-04-06T00:05:19.5608481Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:19.5683217Z ##[group]Run : set $CARGO_HOME
+deploy	Install Rust	2026-04-06T00:05:19.5683489Z [36;1m: set $CARGO_HOME[0m
+deploy	Install Rust	2026-04-06T00:05:19.5683799Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:19.5709877Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:19.5710225Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:19.5785206Z ##[group]Run : install rustup if needed
+deploy	Install Rust	2026-04-06T00:05:19.5785882Z [36;1m: install rustup if needed[0m
+deploy	Install Rust	2026-04-06T00:05:19.5786385Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+deploy	Install Rust	2026-04-06T00:05:19.5787614Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+deploy	Install Rust	2026-04-06T00:05:19.5788875Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+deploy	Install Rust	2026-04-06T00:05:19.5789334Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:19.5826352Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:19.5826884Z env:
+deploy	Install Rust	2026-04-06T00:05:19.5827200Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:19.5827588Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:19.5913975Z ##[group]Run rustup toolchain install stable --profile minimal --no-self-update
+deploy	Install Rust	2026-04-06T00:05:19.5914725Z [36;1mrustup toolchain install stable --profile minimal --no-self-update[0m
+deploy	Install Rust	2026-04-06T00:05:19.5942361Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:19.5942694Z env:
+deploy	Install Rust	2026-04-06T00:05:19.5942890Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:19.5943153Z   RUSTUP_PERMIT_COPY_RENAME: 1
+deploy	Install Rust	2026-04-06T00:05:19.5943378Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.5195894Z info: syncing channel updates for stable-x86_64-unknown-linux-gnu
+deploy	Install Rust	2026-04-06T00:05:21.5989075Z 
+deploy	Install Rust	2026-04-06T00:05:21.6073370Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.94.1 (e408947bf 2026-03-25)
+deploy	Install Rust	2026-04-06T00:05:21.6073954Z 
+deploy	Install Rust	2026-04-06T00:05:21.6116079Z ##[group]Run rustup default stable
+deploy	Install Rust	2026-04-06T00:05:21.6116388Z [36;1mrustup default stable[0m
+deploy	Install Rust	2026-04-06T00:05:21.6141877Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.6142199Z env:
+deploy	Install Rust	2026-04-06T00:05:21.6142381Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.6142639Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.6240205Z info: using existing install for stable-x86_64-unknown-linux-gnu
+deploy	Install Rust	2026-04-06T00:05:21.6256810Z info: default toolchain set to stable-x86_64-unknown-linux-gnu
+deploy	Install Rust	2026-04-06T00:05:21.6257273Z 
+deploy	Install Rust	2026-04-06T00:05:21.6336969Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.94.1 (e408947bf 2026-03-25)
+deploy	Install Rust	2026-04-06T00:05:21.6337540Z 
+deploy	Install Rust	2026-04-06T00:05:21.6368496Z ##[group]Run : create cachekey
+deploy	Install Rust	2026-04-06T00:05:21.6368773Z [36;1m: create cachekey[0m
+deploy	Install Rust	2026-04-06T00:05:21.6369258Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+deploy	Install Rust	2026-04-06T00:05:21.6369879Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+deploy	Install Rust	2026-04-06T00:05:21.6370343Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+deploy	Install Rust	2026-04-06T00:05:21.6396205Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.6396604Z env:
+deploy	Install Rust	2026-04-06T00:05:21.6396811Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.6397061Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.6777757Z ##[group]Run : disable incremental compilation
+deploy	Install Rust	2026-04-06T00:05:21.6778106Z [36;1m: disable incremental compilation[0m
+deploy	Install Rust	2026-04-06T00:05:21.6778412Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.6778728Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:21.6778999Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:21.6804021Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.6804346Z env:
+deploy	Install Rust	2026-04-06T00:05:21.6804525Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.6804757Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.6864381Z ##[group]Run : enable colors in Cargo output
+deploy	Install Rust	2026-04-06T00:05:21.6864699Z [36;1m: enable colors in Cargo output[0m
+deploy	Install Rust	2026-04-06T00:05:21.6864995Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.6865321Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:21.6865941Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:21.6889060Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.6889391Z env:
+deploy	Install Rust	2026-04-06T00:05:21.6889577Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.6889820Z   CARGO_INCREMENTAL: 0
+deploy	Install Rust	2026-04-06T00:05:21.6890012Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.6950261Z ##[group]Run : enable Cargo sparse registry
+deploy	Install Rust	2026-04-06T00:05:21.6950573Z [36;1m: enable Cargo sparse registry[0m
+deploy	Install Rust	2026-04-06T00:05:21.6950920Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+deploy	Install Rust	2026-04-06T00:05:21.6951596Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.6952302Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.6952842Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+deploy	Install Rust	2026-04-06T00:05:21.6953350Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:21.6954013Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.6954545Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+deploy	Install Rust	2026-04-06T00:05:21.6955040Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:21.6955367Z [36;1m  fi[0m
+deploy	Install Rust	2026-04-06T00:05:21.6955791Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:21.6978783Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.6979106Z env:
+deploy	Install Rust	2026-04-06T00:05:21.6979283Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.6979520Z   CARGO_INCREMENTAL: 0
+deploy	Install Rust	2026-04-06T00:05:21.6979722Z   CARGO_TERM_COLOR: always
+deploy	Install Rust	2026-04-06T00:05:21.6979924Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.7310168Z ##[group]Run : work around spurious network errors in curl 8.0
+deploy	Install Rust	2026-04-06T00:05:21.7310607Z [36;1m: work around spurious network errors in curl 8.0[0m
+deploy	Install Rust	2026-04-06T00:05:21.7311151Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+deploy	Install Rust	2026-04-06T00:05:21.7311933Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+deploy	Install Rust	2026-04-06T00:05:21.7312387Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+deploy	Install Rust	2026-04-06T00:05:21.7312690Z [36;1mfi[0m
+deploy	Install Rust	2026-04-06T00:05:21.7338134Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.7338456Z env:
+deploy	Install Rust	2026-04-06T00:05:21.7338647Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.7338889Z   CARGO_INCREMENTAL: 0
+deploy	Install Rust	2026-04-06T00:05:21.7339093Z   CARGO_TERM_COLOR: always
+deploy	Install Rust	2026-04-06T00:05:21.7339302Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.7538930Z ##[group]Run rustc +stable --version --verbose
+deploy	Install Rust	2026-04-06T00:05:21.7539272Z [36;1mrustc +stable --version --verbose[0m
+deploy	Install Rust	2026-04-06T00:05:21.7564212Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+deploy	Install Rust	2026-04-06T00:05:21.7564542Z env:
+deploy	Install Rust	2026-04-06T00:05:21.7564725Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Rust	2026-04-06T00:05:21.7564986Z   CARGO_INCREMENTAL: 0
+deploy	Install Rust	2026-04-06T00:05:21.7565203Z   CARGO_TERM_COLOR: always
+deploy	Install Rust	2026-04-06T00:05:21.7565409Z ##[endgroup]
+deploy	Install Rust	2026-04-06T00:05:21.7726855Z rustc 1.94.1 (e408947bf 2026-03-25)
+deploy	Install Rust	2026-04-06T00:05:21.7727361Z binary: rustc
+deploy	Install Rust	2026-04-06T00:05:21.7728130Z commit-hash: e408947bfd200af42db322daf0fadfe7e26d3bd1
+deploy	Install Rust	2026-04-06T00:05:21.7729679Z commit-date: 2026-03-25
+deploy	Install Rust	2026-04-06T00:05:21.7730177Z host: x86_64-unknown-linux-gnu
+deploy	Install Rust	2026-04-06T00:05:21.7730773Z release: 1.94.1
+deploy	Install Rust	2026-04-06T00:05:21.7731109Z LLVM version: 21.1.8
+deploy	Cache Rust dependencies	∩╗┐2026-04-06T00:05:21.9089159Z ##[group]Run actions/cache@v4
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9089430Z with:
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9089640Z   path: ~/.cargo/registry
+deploy	Cache Rust dependencies	~/.cargo/git
+deploy	Cache Rust dependencies	target
+deploy	Cache Rust dependencies	
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9090098Z   key: Linux-cargo-be67bdb8297cfd28a17bf5617e2defeba947df9e9c6f1cdee111053616834a95
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9090542Z   restore-keys: Linux-cargo-
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9090779Z   enableCrossOsArchive: false
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9091022Z   fail-on-cache-miss: false
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9091238Z   lookup-only: false
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9091456Z   save-always: false
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9091642Z env:
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9091815Z   CARGO_HOME: /home/runner/.cargo
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9092048Z   CARGO_INCREMENTAL: 0
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9092248Z   CARGO_TERM_COLOR: always
+deploy	Cache Rust dependencies	2026-04-06T00:05:21.9092456Z ##[endgroup]
+deploy	Cache Rust dependencies	2026-04-06T00:05:22.1424492Z Cache hit for: Linux-cargo-be67bdb8297cfd28a17bf5617e2defeba947df9e9c6f1cdee111053616834a95
+deploy	Cache Rust dependencies	2026-04-06T00:05:23.1862646Z Received 247463936 of 409672767 (60.4%), 235.1 MBs/sec
+deploy	Cache Rust dependencies	2026-04-06T00:05:23.9774615Z Received 409672767 of 409672767 (100.0%), 217.5 MBs/sec
+deploy	Cache Rust dependencies	2026-04-06T00:05:23.9777901Z Cache Size: ~391 MB (409672767 B)
+deploy	Cache Rust dependencies	2026-04-06T00:05:23.9821318Z [command]/usr/bin/tar -xf /home/runner/work/_temp/a91b8ede-903c-4dad-8098-68ca8a492181/cache.tzst -P -C /home/runner/work/Protection-Valley/Protection-Valley --use-compress-program unzstd
+deploy	Cache Rust dependencies	2026-04-06T00:05:27.4494541Z Cache restored successfully
+deploy	Cache Rust dependencies	2026-04-06T00:05:27.4752732Z Cache restored from key: Linux-cargo-be67bdb8297cfd28a17bf5617e2defeba947df9e9c6f1cdee111053616834a95
+deploy	Set up Zig	∩╗┐2026-04-06T00:05:27.4884048Z ##[group]Run goto-bus-stop/setup-zig@v2
+deploy	Set up Zig	2026-04-06T00:05:27.4884352Z with:
+deploy	Set up Zig	2026-04-06T00:05:27.4884533Z   version: master
+deploy	Set up Zig	2026-04-06T00:05:27.4884721Z   cache: true
+deploy	Set up Zig	2026-04-06T00:05:27.4884894Z env:
+deploy	Set up Zig	2026-04-06T00:05:27.4885076Z   CARGO_HOME: /home/runner/.cargo
+deploy	Set up Zig	2026-04-06T00:05:27.4885324Z   CARGO_INCREMENTAL: 0
+deploy	Set up Zig	2026-04-06T00:05:27.4885802Z   CARGO_TERM_COLOR: always
+deploy	Set up Zig	2026-04-06T00:05:27.4886175Z ##[endgroup]
+deploy	Set up Zig	2026-04-06T00:05:28.3180577Z attempting restore of zig-zig-x86_64-linux-0.16.0-dev.3121+d34b868bc to /opt/hostedtoolcache/zig/master/x64
+deploy	Set up Zig	2026-04-06T00:05:28.4326066Z ##[warning]Failed to restore: Cache service responded with 400
+deploy	Set up Zig	2026-04-06T00:05:28.4338234Z no cached version found. downloading zig zig-x86_64-linux-0.16.0-dev.3121+d34b868bc
+deploy	Set up Zig	2026-04-06T00:05:32.0840216Z [command]/usr/bin/tar x --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/e56f8e1f-558a-4e94-80a0-da416a41d07a -f /home/runner/work/_temp/befe13e1-526b-4e3a-8205-0cf7dc643238
+deploy	Set up Zig	2026-04-06T00:05:43.0153457Z adding zig master at /opt/hostedtoolcache/zig/master/x64 to local cache zig-zig-x86_64-linux-0.16.0-dev.3121+d34b868bc
+deploy	Set up Zig	2026-04-06T00:05:43.0299149Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/Protection-Valley/Protection-Valley --files-from manifest.txt --use-compress-program zstdmt
+deploy	Set up Zig	2026-04-06T00:05:44.3789112Z ##[warning]Failed to save: <h2>Our services aren't available right now</h2><p>We're working to restore all services as soon as possible. Please check back soon.</p>02PjSaQAAAAAT4N3OhRpuS4r1RpPRC8e5UEhMMzBFREdFMDQwNgBFZGdl
+deploy	Set up Zig	2026-04-06T00:05:44.3857282Z zig installed at /opt/hostedtoolcache/zig/master/x64
+deploy	Install cargo-zigbuild	∩╗┐2026-04-06T00:05:44.4024007Z ##[group]Run cargo install cargo-zigbuild --locked
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4024409Z [36;1mcargo install cargo-zigbuild --locked[0m
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4052025Z shell: /usr/bin/bash -e {0}
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4052278Z env:
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4052473Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4052747Z   CARGO_INCREMENTAL: 0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4052963Z   CARGO_TERM_COLOR: always
+deploy	Install cargo-zigbuild	2026-04-06T00:05:44.4053180Z ##[endgroup]
+deploy	Install cargo-zigbuild	2026-04-06T00:05:45.0868794Z [1m[92m    Updating[0m crates.io index
+deploy	Install cargo-zigbuild	2026-04-06T00:05:45.2004782Z [1m[92m  Installing[0m cargo-zigbuild v0.22.1
+deploy	Install cargo-zigbuild	2026-04-06T00:05:45.2020735Z [1m[92m    Updating[0m crates.io index
+deploy	Install cargo-zigbuild	2026-04-06T00:05:46.2036339Z [1m[92m    Updating[0m crates.io index
+deploy	Install cargo-zigbuild	2026-04-06T00:05:46.3449471Z [1m[92m   Compiling[0m proc-macro2 v1.0.106
+deploy	Install cargo-zigbuild	2026-04-06T00:05:46.3450494Z [1m[92m   Compiling[0m quote v1.0.44
+deploy	Install cargo-zigbuild	2026-04-06T00:05:46.3451499Z [1m[92m   Compiling[0m unicode-ident v1.0.24
+deploy	Install cargo-zigbuild	2026-04-06T00:05:46.3453217Z [1m[92m   Compiling[0m serde_core v1.0.228
+deploy	Install cargo-zigbuild	2026-04-06T00:05:49.7097340Z [1m[92m   Compiling[0m rustix v1.1.3
+deploy	Install cargo-zigbuild	2026-04-06T00:05:52.2653616Z [1m[92m   Compiling[0m bitflags v2.11.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:52.3421348Z [1m[92m   Compiling[0m linux-raw-sys v0.11.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:52.6267999Z [1m[92m   Compiling[0m utf8parse v0.2.2
+deploy	Install cargo-zigbuild	2026-04-06T00:05:52.6772100Z [1m[92m   Compiling[0m anstyle-parse v0.2.7
+deploy	Install cargo-zigbuild	2026-04-06T00:05:52.9859943Z [1m[92m   Compiling[0m syn v2.0.116
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.0246117Z [1m[92m   Compiling[0m colorchoice v1.0.4
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.0747505Z [1m[92m   Compiling[0m anstyle v1.0.13
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.2712872Z [1m[92m   Compiling[0m zmij v1.0.21
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.4038764Z [1m[92m   Compiling[0m libc v0.2.182
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.6217754Z [1m[92m   Compiling[0m is_terminal_polyfill v1.70.2
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.6581651Z [1m[92m   Compiling[0m anstyle-query v1.1.5
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.7022996Z [1m[92m   Compiling[0m serde v1.0.228
+deploy	Install cargo-zigbuild	2026-04-06T00:05:53.8838656Z [1m[92m   Compiling[0m anstream v0.6.21
+deploy	Install cargo-zigbuild	2026-04-06T00:05:54.3907158Z [1m[92m   Compiling[0m autocfg v1.5.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:54.7648991Z [1m[92m   Compiling[0m terminal_size v0.4.3
+deploy	Install cargo-zigbuild	2026-04-06T00:05:54.8390632Z [1m[92m   Compiling[0m camino v1.2.2
+deploy	Install cargo-zigbuild	2026-04-06T00:05:54.9923152Z [1m[92m   Compiling[0m strsim v0.11.1
+deploy	Install cargo-zigbuild	2026-04-06T00:05:55.0232310Z [1m[92m   Compiling[0m heck v0.5.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:55.1747008Z [1m[92m   Compiling[0m winnow v0.7.14
+deploy	Install cargo-zigbuild	2026-04-06T00:05:55.7732467Z [1m[92m   Compiling[0m clap_lex v1.0.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.0758750Z [1m[92m   Compiling[0m serde_json v1.0.149
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.1521523Z [1m[92m   Compiling[0m thiserror v2.0.18
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.2605047Z [1m[92m   Compiling[0m clap_builder v4.5.59
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.3897389Z [1m[92m   Compiling[0m toml_datetime v1.0.0+spec-1.1.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.7707226Z [1m[92m   Compiling[0m semver v1.0.27
+deploy	Install cargo-zigbuild	2026-04-06T00:05:56.9266558Z [1m[92m   Compiling[0m scroll_derive v0.13.1
+deploy	Install cargo-zigbuild	2026-04-06T00:05:57.1976062Z [1m[92m   Compiling[0m serde_derive v1.0.228
+deploy	Install cargo-zigbuild	2026-04-06T00:05:57.4110913Z [1m[92m   Compiling[0m toml_parser v1.0.9+spec-1.1.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:57.5786357Z [1m[92m   Compiling[0m scroll v0.13.0
+deploy	Install cargo-zigbuild	2026-04-06T00:05:57.8161490Z [1m[92m   Compiling[0m thiserror-impl v2.0.18
+deploy	Install cargo-zigbuild	2026-04-06T00:05:58.8723662Z [1m[92m   Compiling[0m clap_derive v4.5.55
+deploy	Install cargo-zigbuild	2026-04-06T00:05:58.9155116Z [1m[92m   Compiling[0m serde_spanned v1.0.4
+deploy	Install cargo-zigbuild	2026-04-06T00:05:58.9956810Z [1m[92m   Compiling[0m fs-err v3.3.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.5416842Z [1m[92m   Compiling[0m itoa v1.0.17
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.5803789Z [1m[92m   Compiling[0m anyhow v1.0.101
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.7233622Z [1m[92m   Compiling[0m memchr v2.8.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.7426987Z [1m[92m   Compiling[0m option-ext v0.2.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.7556551Z [1m[92m   Compiling[0m log v0.4.29
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.7785871Z [1m[92m   Compiling[0m target-lexicon v0.13.5
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.9018567Z [1m[92m   Compiling[0m plain v0.2.3
+deploy	Install cargo-zigbuild	2026-04-06T00:06:00.9552051Z [1m[92m   Compiling[0m goblin v0.10.5
+deploy	Install cargo-zigbuild	2026-04-06T00:06:01.1168832Z [1m[92m   Compiling[0m dirs-sys v0.5.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:02.0276042Z [1m[92m   Compiling[0m clap v4.5.59
+deploy	Install cargo-zigbuild	2026-04-06T00:06:02.1036957Z [1m[92m   Compiling[0m toml v1.0.2+spec-1.1.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.0350761Z [1m[92m   Compiling[0m cargo-platform v0.3.2
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.5615514Z [1m[92m   Compiling[0m env_home v0.1.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.6246639Z [1m[92m   Compiling[0m crc-catalog v2.4.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.6669832Z [1m[92m   Compiling[0m crc v3.4.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.8139153Z [1m[92m   Compiling[0m which v8.0.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:05.9701389Z [1m[92m   Compiling[0m cargo_metadata v0.23.1
+deploy	Install cargo-zigbuild	2026-04-06T00:06:06.2149108Z [1m[92m   Compiling[0m fat-macho v0.4.10
+deploy	Install cargo-zigbuild	2026-04-06T00:06:06.5217608Z [1m[92m   Compiling[0m cargo-config2 v0.1.42
+deploy	Install cargo-zigbuild	2026-04-06T00:06:09.6436468Z [1m[92m   Compiling[0m cargo-options v0.7.6
+deploy	Install cargo-zigbuild	2026-04-06T00:06:12.6613433Z [1m[92m   Compiling[0m dirs v6.0.0
+deploy	Install cargo-zigbuild	2026-04-06T00:06:13.3357748Z [1m[92m   Compiling[0m rustc_version v0.4.1
+deploy	Install cargo-zigbuild	2026-04-06T00:06:13.9471921Z [1m[92m   Compiling[0m rustflags v0.1.7
+deploy	Install cargo-zigbuild	2026-04-06T00:06:14.3883193Z [1m[92m   Compiling[0m path-slash v0.2.1
+deploy	Install cargo-zigbuild	2026-04-06T00:06:14.5372329Z [1m[92m   Compiling[0m shell-words v1.1.1
+deploy	Install cargo-zigbuild	2026-04-06T00:06:14.7240597Z [1m[92m   Compiling[0m cargo-zigbuild v0.22.1
+deploy	Install cargo-zigbuild	2026-04-06T00:06:23.1477462Z [1m[92m    Finished[0m `release` profile [optimized] target(s) in 38.14s
+deploy	Install cargo-zigbuild	2026-04-06T00:06:23.1535725Z [1m[92m  Installing[0m /home/runner/.cargo/bin/cargo-zigbuild
+deploy	Install cargo-zigbuild	2026-04-06T00:06:23.1537591Z [1m[92m   Installed[0m package `cargo-zigbuild v0.22.1` (executable `cargo-zigbuild`)
+deploy	Set up Node	∩╗┐2026-04-06T00:06:23.1929261Z ##[group]Run actions/setup-node@v4
+deploy	Set up Node	2026-04-06T00:06:23.1929597Z with:
+deploy	Set up Node	2026-04-06T00:06:23.1929961Z   node-version: 20
+deploy	Set up Node	2026-04-06T00:06:23.1930255Z   cache: npm
+deploy	Set up Node	2026-04-06T00:06:23.1930564Z   always-auth: false
+deploy	Set up Node	2026-04-06T00:06:23.1930846Z   check-latest: false
+deploy	Set up Node	2026-04-06T00:06:23.1931307Z   token: ***
+deploy	Set up Node	2026-04-06T00:06:23.1931618Z env:
+deploy	Set up Node	2026-04-06T00:06:23.1931916Z   CARGO_HOME: /home/runner/.cargo
+deploy	Set up Node	2026-04-06T00:06:23.1932224Z   CARGO_INCREMENTAL: 0
+deploy	Set up Node	2026-04-06T00:06:23.1932556Z   CARGO_TERM_COLOR: always
+deploy	Set up Node	2026-04-06T00:06:23.1932880Z ##[endgroup]
+deploy	Set up Node	2026-04-06T00:06:23.3971086Z Found in cache @ /opt/hostedtoolcache/node/20.20.2/x64
+deploy	Set up Node	2026-04-06T00:06:23.3977867Z ##[group]Environment details
+deploy	Set up Node	2026-04-06T00:06:26.0515446Z node: v20.20.2
+deploy	Set up Node	2026-04-06T00:06:26.0516915Z npm: 10.8.2
+deploy	Set up Node	2026-04-06T00:06:26.0517584Z yarn: 1.22.22
+deploy	Set up Node	2026-04-06T00:06:26.0518519Z ##[endgroup]
+deploy	Set up Node	2026-04-06T00:06:26.0538834Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache
+deploy	Set up Node	2026-04-06T00:06:26.2283788Z /home/runner/.npm
+deploy	Set up Node	2026-04-06T00:06:26.3372027Z npm cache is not found
+deploy	Install frontend dependencies	∩╗┐2026-04-06T00:06:26.3478184Z ##[group]Run npm ci
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3478552Z [36;1mnpm ci[0m
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3511955Z shell: /usr/bin/bash -e {0}
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3512284Z env:
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3512722Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3513117Z   CARGO_INCREMENTAL: 0
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3513382Z   CARGO_TERM_COLOR: always
+deploy	Install frontend dependencies	2026-04-06T00:06:26.3513608Z ##[endgroup]
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7433759Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7441286Z added 104 packages, and audited 105 packages in 4s
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7441605Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7441798Z 15 packages are looking for funding
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7442105Z   run `npm fund` for details
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7516113Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7516850Z 5 vulnerabilities (3 low, 1 moderate, 1 high)
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7517253Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7517615Z To address issues that do not require attention, run:
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7518162Z   npm audit fix
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7518373Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7518747Z To address all issues (including breaking changes), run:
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7519380Z   npm audit fix --force
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7519619Z 
+deploy	Install frontend dependencies	2026-04-06T00:06:30.7519810Z Run `npm audit` for details.
+deploy	Frontend checks	∩╗┐2026-04-06T00:06:30.7732369Z ##[group]Run npx svelte-kit sync && npx svelte-check && npm run build
+deploy	Frontend checks	2026-04-06T00:06:30.7732848Z [36;1mnpx svelte-kit sync && npx svelte-check && npm run build[0m
+deploy	Frontend checks	2026-04-06T00:06:30.7758939Z shell: /usr/bin/bash -e {0}
+deploy	Frontend checks	2026-04-06T00:06:30.7759607Z env:
+deploy	Frontend checks	2026-04-06T00:06:30.7759810Z   CARGO_HOME: /home/runner/.cargo
+deploy	Frontend checks	2026-04-06T00:06:30.7760061Z   CARGO_INCREMENTAL: 0
+deploy	Frontend checks	2026-04-06T00:06:30.7760272Z   CARGO_TERM_COLOR: always
+deploy	Frontend checks	2026-04-06T00:06:30.7760494Z ##[endgroup]
+deploy	Frontend checks	2026-04-06T00:06:37.7496000Z Loading svelte-check in workspace: /home/runner/work/Protection-Valley/Protection-Valley
+deploy	Frontend checks	2026-04-06T00:06:37.7496907Z Getting Svelte diagnostics...
+deploy	Frontend checks	2026-04-06T00:06:37.7497200Z 
+deploy	Frontend checks	2026-04-06T00:06:37.7654455Z [32msvelte-check found 0 errors and 0 warnings
+deploy	Frontend checks	2026-04-06T00:06:37.9273838Z [39m
+deploy	Frontend checks	2026-04-06T00:06:37.9274651Z > protection-valley@1.0.0 build
+deploy	Frontend checks	2026-04-06T00:06:37.9275170Z > vite build
+deploy	Frontend checks	2026-04-06T00:06:37.9275418Z 
+deploy	Frontend checks	2026-04-06T00:06:39.1402444Z [36mvite v6.4.1 [32mbuilding SSR bundle for production...[36m[39m
+deploy	Frontend checks	2026-04-06T00:06:39.1854463Z transforming...
+deploy	Frontend checks	2026-04-06T00:06:45.3262522Z [32mΓ£ô[39m 3488 modules transformed.
+deploy	Frontend checks	2026-04-06T00:06:45.4439027Z rendering chunks...
+deploy	Frontend checks	2026-04-06T00:06:45.9573841Z [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+deploy	Frontend checks	2026-04-06T00:06:45.9617846Z transforming...
+deploy	Frontend checks	2026-04-06T00:06:52.0811094Z [32mΓ£ô[39m 3507 modules transformed.
+deploy	Frontend checks	2026-04-06T00:06:52.2734970Z rendering chunks...
+deploy	Frontend checks	2026-04-06T00:06:52.3305816Z computing gzip size...
+deploy	Frontend checks	2026-04-06T00:06:52.3391624Z [2m.svelte-kit/output/client/[22m[32m_app/version.json                                  [39m[1m[2m 0.03 kB[22m[1m[22m[2m Γöé gzip:  0.05 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3393801Z [2m.svelte-kit/output/client/[22m[32m.vite/manifest.json                                [39m[1m[2m 9.49 kB[22m[1m[22m[2m Γöé gzip:  1.23 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3396437Z [2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3398808Z [2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/0._FUREZaj.css               [39m[1m[2m45.85 kB[22m[1m[22m[2m Γöé gzip:  7.79 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3401026Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ceJCmhJR.js                  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3403258Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/start.EcFbkxWy.js             [39m[1m[2m 0.12 kB[22m[1m[22m[2m Γöé gzip:  0.11 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3405465Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BRBp4A1j.js                  [39m[1m[2m 0.32 kB[22m[1m[22m[2m Γöé gzip:  0.25 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3407901Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/6ebY6yCc.js                  [39m[1m[2m 0.38 kB[22m[1m[22m[2m Γöé gzip:  0.28 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3410056Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CCggIZoF.js                  [39m[1m[2m 0.40 kB[22m[1m[22m[2m Γöé gzip:  0.29 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3412147Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DbMQHxwx.js                  [39m[1m[2m 0.52 kB[22m[1m[22m[2m Γöé gzip:  0.33 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3414268Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/1.BUKA9muP.js                 [39m[1m[2m 0.65 kB[22m[1m[22m[2m Γöé gzip:  0.38 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3416668Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D-ymRn6B.js                  [39m[1m[2m 0.97 kB[22m[1m[22m[2m Γöé gzip:  0.56 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3419077Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DzX7Gx7C.js                  [39m[1m[2m 1.44 kB[22m[1m[22m[2m Γöé gzip:  0.89 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3421121Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DOFcd_NJ.js                  [39m[1m[2m 1.61 kB[22m[1m[22m[2m Γöé gzip:  1.01 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3423482Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/6kCV1LNm.js                  [39m[1m[2m 2.74 kB[22m[1m[22m[2m Γöé gzip:  1.29 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3426304Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ZTNvVy4R.js                  [39m[1m[2m 3.05 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3428450Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/9.Dh4uf3BT.js                 [39m[1m[2m 3.11 kB[22m[1m[22m[2m Γöé gzip:  1.69 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3430570Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/7.CXXvaV18.js                 [39m[1m[2m 3.22 kB[22m[1m[22m[2m Γöé gzip:  1.80 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3432671Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/2.CfTaxnRQ.js                 [39m[1m[2m 3.30 kB[22m[1m[22m[2m Γöé gzip:  1.65 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3434818Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CrKoxU2b.js                  [39m[1m[2m 3.69 kB[22m[1m[22m[2m Γöé gzip:  1.84 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3437358Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D_rxJ-FA.js                  [39m[1m[2m 4.22 kB[22m[1m[22m[2m Γöé gzip:  2.03 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3439566Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/6.Dq5coCEt.js                 [39m[1m[2m 4.34 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3441761Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Be2JvwNi.js                  [39m[1m[2m 5.33 kB[22m[1m[22m[2m Γöé gzip:  2.26 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3443948Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/5.wQtT1R_2.js                 [39m[1m[2m 6.25 kB[22m[1m[22m[2m Γöé gzip:  2.22 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3446324Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DX2YE6IM.js                  [39m[1m[2m 6.63 kB[22m[1m[22m[2m Γöé gzip:  2.81 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3448531Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DJEupvvE.js                  [39m[1m[2m 6.97 kB[22m[1m[22m[2m Γöé gzip:  3.14 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3450739Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/app.ycOMh0iw.js               [39m[1m[2m 8.06 kB[22m[1m[22m[2m Γöé gzip:  3.50 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3452936Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/3.CwpwP1qX.js                 [39m[1m[2m 8.51 kB[22m[1m[22m[2m Γöé gzip:  2.96 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3455097Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BE6IEMoq.js                  [39m[1m[2m11.42 kB[22m[1m[22m[2m Γöé gzip:  5.11 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3457421Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/4.DyI1QPE6.js                 [39m[1m[2m14.67 kB[22m[1m[22m[2m Γöé gzip:  4.51 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3459458Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/8.CQzyyZh4.js                 [39m[1m[2m19.55 kB[22m[1m[22m[2m Γöé gzip:  5.25 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3461497Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/_yfxvQuv.js                  [39m[1m[2m23.07 kB[22m[1m[22m[2m Γöé gzip:  9.05 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3463490Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Cc35BBlo.js                  [39m[1m[2m27.58 kB[22m[1m[22m[2m Γöé gzip: 10.79 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3465899Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/0.Ch89TW3o.js                 [39m[1m[2m32.54 kB[22m[1m[22m[2m Γöé gzip:  9.38 kB[22m
+deploy	Frontend checks	2026-04-06T00:06:52.3467390Z [32mΓ£ô built in 6.38s[39m
+deploy	Frontend checks	2026-04-06T00:06:52.8977452Z [2m.svelte-kit/output/server/[22m[32m.vite/manifest.json                                [39m[1m[2m  7.55 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8981341Z [2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m  0.04 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8984279Z [2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/_layout.CUGGmd6n.css         [39m[1m[2m 45.74 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8987051Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.ts.js                        [39m[1m[2m  0.05 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8988062Z [2m.svelte-kit/output/server/[22m[36mchunks/false.js                                    [39m[1m[2m  0.05 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8988945Z [2m.svelte-kit/output/server/[22m[36mchunks/config.js                                   [39m[1m[2m  0.12 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8989880Z [2m.svelte-kit/output/server/[22m[36mchunks/environment.js                              [39m[1m[2m  0.19 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8990803Z [2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.ts.js                  [39m[1m[2m  0.37 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8991749Z [2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.ts.js             [39m[1m[2m  0.39 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8992640Z [2m.svelte-kit/output/server/[22m[36minternal.js                                        [39m[1m[2m  0.40 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8993669Z [2m.svelte-kit/output/server/[22m[36mchunks/server.js                                   [39m[1m[2m  0.45 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8994553Z [2m.svelte-kit/output/server/[22m[36mchunks/state.svelte.js                             [39m[1m[2m  0.45 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8995410Z [2m.svelte-kit/output/server/[22m[36mchunks/utils.js                                    [39m[1m[2m  1.15 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8996603Z [2m.svelte-kit/output/server/[22m[36mentries/fallbacks/error.svelte.js                  [39m[1m[2m  1.15 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8997513Z [2m.svelte-kit/output/server/[22m[36mchunks/constants.js                                [39m[1m[2m  1.38 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8998378Z [2m.svelte-kit/output/server/[22m[36mchunks/exports.js                                  [39m[1m[2m  2.39 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.8999238Z [2m.svelte-kit/output/server/[22m[36mchunks/index.js                                    [39m[1m[2m  2.65 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9000101Z [2m.svelte-kit/output/server/[22m[36mchunks/shield-check.js                             [39m[1m[2m  2.97 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9000991Z [2m.svelte-kit/output/server/[22m[36mchunks/ProductCard.js                              [39m[1m[2m  3.12 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9001850Z [2m.svelte-kit/output/server/[22m[36mchunks/url.js                                      [39m[1m[2m  3.16 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9002681Z [2m.svelte-kit/output/server/[22m[36mchunks/Icon.js                                     [39m[1m[2m  3.31 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9003552Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_page.svelte.js                      [39m[1m[2m  3.68 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9004443Z [2m.svelte-kit/output/server/[22m[36mchunks/internal.js                                 [39m[1m[2m  4.13 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9005358Z [2m.svelte-kit/output/server/[22m[36mentries/pages/terms/_page.svelte.js                [39m[1m[2m  4.49 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9006604Z [2m.svelte-kit/output/server/[22m[36mentries/pages/privacy/_page.svelte.js              [39m[1m[2m  4.53 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9007555Z [2m.svelte-kit/output/server/[22m[36mchunks/OptimizedImage.js                           [39m[1m[2m  5.88 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9008712Z [2m.svelte-kit/output/server/[22m[36mentries/pages/login/_page.svelte.js                [39m[1m[2m  6.96 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9009661Z [2m.svelte-kit/output/server/[22m[36mentries/pages/contact/_page.svelte.js              [39m[1m[2m  8.94 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9010603Z [2m.svelte-kit/output/server/[22m[36mentries/pages/about/_page.svelte.js                [39m[1m[2m 11.22 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9011670Z [2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.svelte.js              [39m[1m[2m 16.04 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9012613Z [2m.svelte-kit/output/server/[22m[36mremote-entry.js                                    [39m[1m[2m 19.07 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9013477Z [2m.svelte-kit/output/server/[22m[36mchunks/shared.js                                   [39m[1m[2m 27.07 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9014341Z [2m.svelte-kit/output/server/[22m[36mchunks/root.js                                     [39m[1m[2m 27.91 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9015242Z [2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.svelte.js         [39m[1m[2m 29.84 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9016328Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.svelte.js                    [39m[1m[2m 41.94 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9017218Z [2m.svelte-kit/output/server/[22m[36mchunks/index2.js                                   [39m[1m[2m 95.34 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9018062Z [2m.svelte-kit/output/server/[22m[36mindex.js                                           [39m[1m[2m125.82 kB[22m[1m[22m
+deploy	Frontend checks	2026-04-06T00:06:52.9018588Z [32mΓ£ô built in 13.73s[39m
+deploy	Frontend checks	2026-04-06T00:06:52.9018748Z 
+deploy	Frontend checks	2026-04-06T00:06:52.9018989Z Run npm run preview to preview your production build locally.
+deploy	Frontend checks	2026-04-06T00:06:52.9119701Z 
+deploy	Frontend checks	2026-04-06T00:06:52.9120048Z > Using @sveltejs/adapter-vercel
+deploy	Frontend checks	2026-04-06T00:06:53.3666813Z   Γ£ö done
+deploy	Install Vercel CLI	∩╗┐2026-04-06T00:06:53.4962730Z ##[group]Run npm install --global vercel@latest
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4963105Z [36;1mnpm install --global vercel@latest[0m
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4989974Z shell: /usr/bin/bash -e {0}
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4990219Z env:
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4990412Z   CARGO_HOME: /home/runner/.cargo
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4990658Z   CARGO_INCREMENTAL: 0
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4990873Z   CARGO_TERM_COLOR: always
+deploy	Install Vercel CLI	2026-04-06T00:06:53.4991091Z ##[endgroup]
+deploy	Install Vercel CLI	2026-04-06T00:07:04.4742122Z npm warn deprecated tar@7.5.7: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+deploy	Install Vercel CLI	2026-04-06T00:07:04.8424203Z 
+deploy	Install Vercel CLI	2026-04-06T00:07:04.8424726Z added 288 packages in 11s
+deploy	Install Vercel CLI	2026-04-06T00:07:04.8425072Z 
+deploy	Install Vercel CLI	2026-04-06T00:07:04.8436983Z 34 packages are looking for funding
+deploy	Install Vercel CLI	2026-04-06T00:07:04.8437662Z   run `npm fund` for details
+deploy	Pull Vercel Environment	∩╗┐2026-04-06T00:07:04.8682210Z ##[group]Run vercel pull --yes --environment=production --token=***
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8683483Z [36;1mvercel pull --yes --environment=production --token=***[0m
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8718157Z shell: /usr/bin/bash -e {0}
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8718406Z env:
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8718607Z   CARGO_HOME: /home/runner/.cargo
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8718869Z   CARGO_INCREMENTAL: 0
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8719087Z   CARGO_TERM_COLOR: always
+deploy	Pull Vercel Environment	2026-04-06T00:07:04.8719302Z ##[endgroup]
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.3878461Z > NOTE: The Vercel CLI now collects telemetry regarding usage of the CLI.
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.3879791Z > This information is used to shape the CLI roadmap and prioritize features.
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.3880614Z > You can learn more, including how to opt-out if you'd not like to participate in this program, by visiting the following URL:
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.3881264Z > https://vercel.com/docs/cli/about-telemetry
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.5851958Z Loading scopesΓÇª
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.8659990Z Searching for existing projectsΓÇª
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.9836607Z Linked to yahya-azeems-projects/protection-valley (created .vercel)
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.9842428Z > Downloading `production` Environment Variables for yahya-azeems-projects/protection-valley
+deploy	Pull Vercel Environment	2026-04-06T00:07:05.9842946Z Downloading
+deploy	Pull Vercel Environment	2026-04-06T00:07:06.2278505Z Created .vercel/.env.production.local file  [243ms]
+deploy	Pull Vercel Environment	2026-04-06T00:07:06.2278971Z 
+deploy	Pull Vercel Environment	2026-04-06T00:07:06.2279249Z > Downloading project settings
+deploy	Pull Vercel Environment	2026-04-06T00:07:06.2286548Z Downloaded project settings to ~/work/Protection-Valley/Protection-Valley/.vercel/project.json [0ms]
+deploy	Build	∩╗┐2026-04-06T00:07:06.5706995Z ##[group]Run vercel build --prod --token=***
+deploy	Build	2026-04-06T00:07:06.5708047Z [36;1mvercel build --prod --token=***[0m
+deploy	Build	2026-04-06T00:07:06.5744737Z shell: /usr/bin/bash -e {0}
+deploy	Build	2026-04-06T00:07:06.5744995Z env:
+deploy	Build	2026-04-06T00:07:06.5745185Z   CARGO_HOME: /home/runner/.cargo
+deploy	Build	2026-04-06T00:07:06.5745450Z   CARGO_INCREMENTAL: 0
+deploy	Build	2026-04-06T00:07:06.5746052Z   CARGO_TERM_COLOR: always
+deploy	Build	2026-04-06T00:07:06.5746306Z ##[endgroup]
+deploy	Build	2026-04-06T00:07:07.2099144Z WARNING! Build not running on Vercel. System environment variables will not be available.
+deploy	Build	2026-04-06T00:07:07.7272159Z Installing dependencies...
+deploy	Build	2026-04-06T00:07:08.2021800Z 
+deploy	Build	2026-04-06T00:07:08.2022294Z up to date in 414ms
+deploy	Build	2026-04-06T00:07:08.2023705Z 
+deploy	Build	2026-04-06T00:07:08.2024017Z 15 packages are looking for funding
+deploy	Build	2026-04-06T00:07:08.2024529Z   run `npm fund` for details
+deploy	Build	2026-04-06T00:07:08.2162237Z Running "npm run build"
+deploy	Build	2026-04-06T00:07:08.3263448Z 
+deploy	Build	2026-04-06T00:07:08.3264248Z > protection-valley@1.0.0 build
+deploy	Build	2026-04-06T00:07:08.3264901Z > vite build
+deploy	Build	2026-04-06T00:07:08.3265133Z 
+deploy	Build	2026-04-06T00:07:09.4934948Z [36mvite v6.4.1 [32mbuilding SSR bundle for production...[36m[39m
+deploy	Build	2026-04-06T00:07:09.5722243Z transforming...
+deploy	Build	2026-04-06T00:07:15.6158620Z [32mΓ£ô[39m 3488 modules transformed.
+deploy	Build	2026-04-06T00:07:15.7396317Z rendering chunks...
+deploy	Build	2026-04-06T00:07:16.2257037Z [36mvite v6.4.1 [32mbuilding for production...[36m[39m
+deploy	Build	2026-04-06T00:07:16.2302400Z transforming...
+deploy	Build	2026-04-06T00:07:22.2362722Z [32mΓ£ô[39m 3507 modules transformed.
+deploy	Build	2026-04-06T00:07:22.4238240Z rendering chunks...
+deploy	Build	2026-04-06T00:07:22.4686698Z computing gzip size...
+deploy	Build	2026-04-06T00:07:22.4769412Z [2m.svelte-kit/output/client/[22m[32m_app/version.json                                  [39m[1m[2m 0.03 kB[22m[1m[22m[2m Γöé gzip:  0.05 kB[22m
+deploy	Build	2026-04-06T00:07:22.4771549Z [2m.svelte-kit/output/client/[22m[32m.vite/manifest.json                                [39m[1m[2m 9.49 kB[22m[1m[22m[2m Γöé gzip:  1.23 kB[22m
+deploy	Build	2026-04-06T00:07:22.4773794Z [2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+deploy	Build	2026-04-06T00:07:22.4776444Z [2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/0._FUREZaj.css               [39m[1m[2m45.85 kB[22m[1m[22m[2m Γöé gzip:  7.79 kB[22m
+deploy	Build	2026-04-06T00:07:22.4778670Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ceJCmhJR.js                  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+deploy	Build	2026-04-06T00:07:22.4780902Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/start.BALcQw4W.js             [39m[1m[2m 0.12 kB[22m[1m[22m[2m Γöé gzip:  0.11 kB[22m
+deploy	Build	2026-04-06T00:07:22.4783109Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BRBp4A1j.js                  [39m[1m[2m 0.32 kB[22m[1m[22m[2m Γöé gzip:  0.25 kB[22m
+deploy	Build	2026-04-06T00:07:22.4785257Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/6ebY6yCc.js                  [39m[1m[2m 0.38 kB[22m[1m[22m[2m Γöé gzip:  0.28 kB[22m
+deploy	Build	2026-04-06T00:07:22.4787613Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CCggIZoF.js                  [39m[1m[2m 0.40 kB[22m[1m[22m[2m Γöé gzip:  0.29 kB[22m
+deploy	Build	2026-04-06T00:07:22.4789795Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DbMQHxwx.js                  [39m[1m[2m 0.52 kB[22m[1m[22m[2m Γöé gzip:  0.33 kB[22m
+deploy	Build	2026-04-06T00:07:22.4794065Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/1.COFbw2V3.js                 [39m[1m[2m 0.65 kB[22m[1m[22m[2m Γöé gzip:  0.39 kB[22m
+deploy	Build	2026-04-06T00:07:22.4796373Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D-ymRn6B.js                  [39m[1m[2m 0.97 kB[22m[1m[22m[2m Γöé gzip:  0.56 kB[22m
+deploy	Build	2026-04-06T00:07:22.4798540Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DzX7Gx7C.js                  [39m[1m[2m 1.44 kB[22m[1m[22m[2m Γöé gzip:  0.89 kB[22m
+deploy	Build	2026-04-06T00:07:22.4800694Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DOFcd_NJ.js                  [39m[1m[2m 1.61 kB[22m[1m[22m[2m Γöé gzip:  1.01 kB[22m
+deploy	Build	2026-04-06T00:07:22.4803350Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BQVxYaw5.js                  [39m[1m[2m 2.74 kB[22m[1m[22m[2m Γöé gzip:  1.29 kB[22m
+deploy	Build	2026-04-06T00:07:22.4805405Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ZTNvVy4R.js                  [39m[1m[2m 3.05 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+deploy	Build	2026-04-06T00:07:22.4807788Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/9.Dh4uf3BT.js                 [39m[1m[2m 3.11 kB[22m[1m[22m[2m Γöé gzip:  1.69 kB[22m
+deploy	Build	2026-04-06T00:07:22.4809911Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/7.CXXvaV18.js                 [39m[1m[2m 3.22 kB[22m[1m[22m[2m Γöé gzip:  1.80 kB[22m
+deploy	Build	2026-04-06T00:07:22.4812077Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/2.D3rGMi9Z.js                 [39m[1m[2m 3.30 kB[22m[1m[22m[2m Γöé gzip:  1.65 kB[22m
+deploy	Build	2026-04-06T00:07:22.4814234Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CrKoxU2b.js                  [39m[1m[2m 3.69 kB[22m[1m[22m[2m Γöé gzip:  1.84 kB[22m
+deploy	Build	2026-04-06T00:07:22.4816656Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D_rxJ-FA.js                  [39m[1m[2m 4.22 kB[22m[1m[22m[2m Γöé gzip:  2.03 kB[22m
+deploy	Build	2026-04-06T00:07:22.4818793Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/6.BL4lYv70.js                 [39m[1m[2m 4.34 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+deploy	Build	2026-04-06T00:07:22.4820944Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Be2JvwNi.js                  [39m[1m[2m 5.33 kB[22m[1m[22m[2m Γöé gzip:  2.26 kB[22m
+deploy	Build	2026-04-06T00:07:22.4823090Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/5.wQtT1R_2.js                 [39m[1m[2m 6.25 kB[22m[1m[22m[2m Γöé gzip:  2.22 kB[22m
+deploy	Build	2026-04-06T00:07:22.4825210Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DX2YE6IM.js                  [39m[1m[2m 6.63 kB[22m[1m[22m[2m Γöé gzip:  2.81 kB[22m
+deploy	Build	2026-04-06T00:07:22.4827618Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/1XQE0q9h.js                  [39m[1m[2m 6.97 kB[22m[1m[22m[2m Γöé gzip:  3.14 kB[22m
+deploy	Build	2026-04-06T00:07:22.4829808Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/app.CA3iutxn.js               [39m[1m[2m 8.06 kB[22m[1m[22m[2m Γöé gzip:  3.50 kB[22m
+deploy	Build	2026-04-06T00:07:22.4831911Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/3.Do-4GHrO.js                 [39m[1m[2m 8.51 kB[22m[1m[22m[2m Γöé gzip:  2.96 kB[22m
+deploy	Build	2026-04-06T00:07:22.4833972Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BE6IEMoq.js                  [39m[1m[2m11.42 kB[22m[1m[22m[2m Γöé gzip:  5.11 kB[22m
+deploy	Build	2026-04-06T00:07:22.4836262Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/4.FpLMAgqk.js                 [39m[1m[2m14.67 kB[22m[1m[22m[2m Γöé gzip:  4.51 kB[22m
+deploy	Build	2026-04-06T00:07:22.4838349Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/8.CQzyyZh4.js                 [39m[1m[2m19.55 kB[22m[1m[22m[2m Γöé gzip:  5.25 kB[22m
+deploy	Build	2026-04-06T00:07:22.4840390Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CAy-LF3d.js                  [39m[1m[2m23.07 kB[22m[1m[22m[2m Γöé gzip:  9.05 kB[22m
+deploy	Build	2026-04-06T00:07:22.4842567Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Cc35BBlo.js                  [39m[1m[2m27.58 kB[22m[1m[22m[2m Γöé gzip: 10.79 kB[22m
+deploy	Build	2026-04-06T00:07:22.4844978Z [2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/0.DlZ4KyeX.js                 [39m[1m[2m32.54 kB[22m[1m[22m[2m Γöé gzip:  9.38 kB[22m
+deploy	Build	2026-04-06T00:07:22.4846235Z [32mΓ£ô built in 6.25s[39m
+deploy	Build	2026-04-06T00:07:23.0215327Z [2m.svelte-kit/output/server/[22m[32m.vite/manifest.json                                [39m[1m[2m  7.55 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0217584Z [2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m  0.04 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0219739Z [2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/_layout.CUGGmd6n.css         [39m[1m[2m 45.74 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0222159Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.ts.js                        [39m[1m[2m  0.05 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0224093Z [2m.svelte-kit/output/server/[22m[36mchunks/false.js                                    [39m[1m[2m  0.05 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0226217Z [2m.svelte-kit/output/server/[22m[36mchunks/config.js                                   [39m[1m[2m  0.12 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0228016Z [2m.svelte-kit/output/server/[22m[36mchunks/environment.js                              [39m[1m[2m  0.19 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0229775Z [2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.ts.js                  [39m[1m[2m  0.37 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0231617Z [2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.ts.js             [39m[1m[2m  0.39 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0234804Z [2m.svelte-kit/output/server/[22m[36minternal.js                                        [39m[1m[2m  0.40 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0237919Z [2m.svelte-kit/output/server/[22m[36mchunks/server.js                                   [39m[1m[2m  0.45 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0241000Z [2m.svelte-kit/output/server/[22m[36mchunks/state.svelte.js                             [39m[1m[2m  0.45 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0242326Z [2m.svelte-kit/output/server/[22m[36mchunks/utils.js                                    [39m[1m[2m  1.15 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0243299Z [2m.svelte-kit/output/server/[22m[36mentries/fallbacks/error.svelte.js                  [39m[1m[2m  1.15 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0244240Z [2m.svelte-kit/output/server/[22m[36mchunks/constants.js                                [39m[1m[2m  1.38 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0245159Z [2m.svelte-kit/output/server/[22m[36mchunks/exports.js                                  [39m[1m[2m  2.39 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0246415Z [2m.svelte-kit/output/server/[22m[36mchunks/index.js                                    [39m[1m[2m  2.65 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0247321Z [2m.svelte-kit/output/server/[22m[36mchunks/shield-check.js                             [39m[1m[2m  2.97 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0248240Z [2m.svelte-kit/output/server/[22m[36mchunks/ProductCard.js                              [39m[1m[2m  3.12 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0249116Z [2m.svelte-kit/output/server/[22m[36mchunks/url.js                                      [39m[1m[2m  3.16 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0249968Z [2m.svelte-kit/output/server/[22m[36mchunks/Icon.js                                     [39m[1m[2m  3.31 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0250854Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_page.svelte.js                      [39m[1m[2m  3.68 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0251760Z [2m.svelte-kit/output/server/[22m[36mchunks/internal.js                                 [39m[1m[2m  4.13 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0252689Z [2m.svelte-kit/output/server/[22m[36mentries/pages/terms/_page.svelte.js                [39m[1m[2m  4.49 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0253919Z [2m.svelte-kit/output/server/[22m[36mentries/pages/privacy/_page.svelte.js              [39m[1m[2m  4.53 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0254901Z [2m.svelte-kit/output/server/[22m[36mchunks/OptimizedImage.js                           [39m[1m[2m  5.88 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0256015Z [2m.svelte-kit/output/server/[22m[36mentries/pages/login/_page.svelte.js                [39m[1m[2m  6.96 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0256980Z [2m.svelte-kit/output/server/[22m[36mentries/pages/contact/_page.svelte.js              [39m[1m[2m  8.94 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0257933Z [2m.svelte-kit/output/server/[22m[36mentries/pages/about/_page.svelte.js                [39m[1m[2m 11.22 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0259036Z [2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.svelte.js              [39m[1m[2m 16.04 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0259954Z [2m.svelte-kit/output/server/[22m[36mremote-entry.js                                    [39m[1m[2m 19.07 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0260869Z [2m.svelte-kit/output/server/[22m[36mchunks/shared.js                                   [39m[1m[2m 27.07 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0261760Z [2m.svelte-kit/output/server/[22m[36mchunks/root.js                                     [39m[1m[2m 27.91 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0262674Z [2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.svelte.js         [39m[1m[2m 29.84 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0263622Z [2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.svelte.js                    [39m[1m[2m 41.94 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0264520Z [2m.svelte-kit/output/server/[22m[36mchunks/index2.js                                   [39m[1m[2m 95.34 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0265363Z [2m.svelte-kit/output/server/[22m[36mindex.js                                           [39m[1m[2m125.82 kB[22m[1m[22m
+deploy	Build	2026-04-06T00:07:23.0266045Z [32mΓ£ô built in 13.50s[39m
+deploy	Build	2026-04-06T00:07:23.0266215Z 
+deploy	Build	2026-04-06T00:07:23.0266453Z Run npm run preview to preview your production build locally.
+deploy	Build	2026-04-06T00:07:23.0368956Z 
+deploy	Build	2026-04-06T00:07:23.0369391Z > Using @sveltejs/adapter-vercel
+deploy	Build	2026-04-06T00:07:23.5317333Z   Γ£ö done
+deploy	Build	2026-04-06T00:07:24.9079899Z Error: Command failed with exit code 101: cargo zigbuild --target x86_64-unknown-linux-gnu --bin api --quiet --release
+deploy	Build	2026-04-06T00:07:24.9081486Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9082065Z   [1m[94m--> [0mbackend/src/services/shipping_service.rs:85:24
+deploy	Build	2026-04-06T00:07:24.9082436Z    [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9082984Z [1m[94m85[0m [1m[94m|[0m             return Err(anyhow!("EASYPOST_API_KEY not configured"));
+deploy	Build	2026-04-06T00:07:24.9083518Z    [1m[94m|[0m                        [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9083842Z    [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9084267Z    [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9085060Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9085379Z    [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9086663Z [1m[94m 1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9087018Z    [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9087160Z 
+deploy	Build	2026-04-06T00:07:24.9087467Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9087999Z    [1m[94m--> [0mbackend/src/services/shipping_service.rs:129:24
+deploy	Build	2026-04-06T00:07:24.9088358Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9088914Z [1m[94m129[0m [1m[94m|[0m             return Err(anyhow!("EasyPost Shipment Error: {}", err));
+deploy	Build	2026-04-06T00:07:24.9089459Z     [1m[94m|[0m                        [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9089778Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9090189Z     [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9090912Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9091544Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9091920Z [1m[94m  1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9092219Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9092332Z 
+deploy	Build	2026-04-06T00:07:24.9092623Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9093129Z    [1m[94m--> [0mbackend/src/services/shipping_service.rs:141:28
+deploy	Build	2026-04-06T00:07:24.9093470Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9094079Z [1m[94m141[0m [1m[94m|[0m             .ok_or_else(|| anyhow!("No shipping rates available for this destination"))?;
+deploy	Build	2026-04-06T00:07:24.9094661Z     [1m[94m|[0m                            [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9095140Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9095800Z     [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9096335Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9096640Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9096987Z [1m[94m  1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9097285Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9097395Z 
+deploy	Build	2026-04-06T00:07:24.9097685Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9098184Z    [1m[94m--> [0mbackend/src/services/shipping_service.rs:161:24
+deploy	Build	2026-04-06T00:07:24.9098532Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9099011Z [1m[94m161[0m [1m[94m|[0m             return Err(anyhow!("EasyPost Buy Error: {}", err));
+deploy	Build	2026-04-06T00:07:24.9099511Z     [1m[94m|[0m                        [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9099820Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9100223Z     [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9100727Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9101027Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9101364Z [1m[94m  1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9101652Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9101762Z 
+deploy	Build	2026-04-06T00:07:24.9102053Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9102556Z    [1m[94m--> [0mbackend/src/services/shipping_service.rs:167:28
+deploy	Build	2026-04-06T00:07:24.9102901Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9103408Z [1m[94m167[0m [1m[94m|[0m             .ok_or_else(|| anyhow!("Failed to generate postage label"))?
+deploy	Build	2026-04-06T00:07:24.9103938Z     [1m[94m|[0m                            [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9104251Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9104650Z     [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9105144Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9105452Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9106190Z [1m[94m  1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9106492Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9106610Z 
+deploy	Build	2026-04-06T00:07:24.9106895Z [1m[91merror[0m[1m: cannot find macro `anyhow` in this scope[0m
+deploy	Build	2026-04-06T00:07:24.9107404Z    [1m[94m--> [0mbackend/src/services/shipping_service.rs:171:28
+deploy	Build	2026-04-06T00:07:24.9107754Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9108242Z [1m[94m171[0m [1m[94m|[0m             .ok_or_else(|| anyhow!("No tracking code returned"))?;
+deploy	Build	2026-04-06T00:07:24.9108760Z     [1m[94m|[0m                            [1m[91m^^^^^^[0m
+deploy	Build	2026-04-06T00:07:24.9109065Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9109465Z     [1m[94m= [0m[1mnote[0m: `anyhow` is in scope, but it is a crate, not a macro
+deploy	Build	2026-04-06T00:07:24.9109950Z [1m[96mhelp[0m: consider importing this macro
+deploy	Build	2026-04-06T00:07:24.9110250Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9110584Z [1m[94m  1[0m [92m+ use anyhow::anyhow;[0m
+deploy	Build	2026-04-06T00:07:24.9110875Z     [1m[94m|[0m
+deploy	Build	2026-04-06T00:07:24.9110983Z 
+deploy	Build	2026-04-06T00:07:24.9111343Z [1m[91merror[0m: could not compile `backend_v2_pkg` (lib) due to 6 previous errors
+deploy	Build	2026-04-06T00:07:24.9315476Z ##[error]Process completed with exit code 1.
+deploy	Post Run actions/checkout@v4	∩╗┐2026-04-06T00:07:24.9391130Z Post job cleanup.
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0436505Z [command]/usr/bin/git version
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0477723Z git version 2.53.0
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0549899Z Temporarily overriding HOME='/home/runner/work/_temp/992542ea-6b4c-4657-8ff5-b08b2396962a' before making global git config changes
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0551384Z Adding repository directory to the temporary git global config as a safe directory
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0556575Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Protection-Valley/Protection-Valley
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0606109Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0646919Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0920306Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0925920Z http.https://github.com/.extraheader
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0938849Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.0972121Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.1272761Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+deploy	Post Run actions/checkout@v4	2026-04-06T00:07:25.1311821Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+deploy	Complete job	∩╗┐2026-04-06T00:07:25.1702429Z Cleaning up orphan processes
+deploy	Complete job	2026-04-06T00:07:25.1999195Z Terminate orphan process: pid (4171) (node)
+deploy	Complete job	2026-04-06T00:07:25.2017575Z ##[warning]Node.js 20 actions are deprecated. The following actions are running on Node.js 20 and may not work as expected: actions/cache@v4, actions/checkout@v4, actions/setup-node@v4, goto-bus-stop/setup-zig@v2. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026. Node.js 20 will be removed from the runner on September 16th, 2026. Please check if updated versions of these actions are available that support Node.js 24. To opt into Node.js 24 now, set the FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true environment variable on the runner or in your workflow file. Once Node.js 24 becomes the default, you can temporarily opt out by setting ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
