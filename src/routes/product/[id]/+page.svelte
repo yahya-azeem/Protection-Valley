@@ -1,17 +1,22 @@
 <script lang="ts">
   import ProductDetail from '$lib/pages/ProductDetail.svelte';
-  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, products } from '$lib/stores';
-  import { onMount } from 'svelte';
+  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture } from '$lib/stores';
+  import type { Product } from '$lib/types';
 
-  /** @type {import('./$types').PageData} */
-  let { data } = $props();
+  interface Props {
+    data: {
+      product: Product | null;
+    };
+  }
 
-  // Sync server-side product to the client-side store
-  onMount(() => {
+  let { data }: Props = $props();
+
+  // Sync server-side product to the client-side store using effect
+  $effect(() => {
     if (data.product) {
       selectedProduct.set(data.product);
       
-      // Initialize variant selection
+      // Initialize variant selection if not already set
       const variant = data.product.variants?.[0];
       if (variant) {
         selectedVariant.set(variant);
@@ -22,13 +27,14 @@
     }
   });
 
-  const title = data.product ? `${data.product.name} - Protection Valley` : 'Product Details';
+  // Reactive page title
+  let title = $derived(data.product ? `${data.product.name} - Protection Valley` : 'Product Details');
 </script>
 
 <svelte:head>
   <title>{title}</title>
   {#if data.product}
-    <meta name="description" content={data.product.description.slice(0, 160)} />
+    <meta name="description" content={data.product.description?.slice(0, 160) || ''} />
   {/if}
 </svelte:head>
 

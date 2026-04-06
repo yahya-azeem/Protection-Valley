@@ -1,0 +1,185 @@
+﻿
+> protection-valley@1.0.0 build
+> vite build
+
+[36mvite v6.4.1 [32mbuilding SSR bundle for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 3488 modules transformed.
+rendering chunks...
+[36mvite v6.4.1 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 3507 modules transformed.
+rendering chunks...
+computing gzip size...
+[2m.svelte-kit/output/client/[22m[32m_app/version.json                                  [39m[1m[2m 0.03 kB[22m[1m[22m[2m Γöé gzip:  0.05 kB[22m
+[2m.svelte-kit/output/client/[22m[32m.vite/manifest.json                                [39m[1m[2m 9.49 kB[22m[1m[22m[2m Γöé gzip:  1.22 kB[22m
+[2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+[2m.svelte-kit/output/client/[22m[35m_app/immutable/assets/0.Z8tQbx4u.css               [39m[1m[2m45.60 kB[22m[1m[22m[2m Γöé gzip:  7.75 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ceJCmhJR.js                  [39m[1m[2m 0.04 kB[22m[1m[22m[2m Γöé gzip:  0.06 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/start.B2mZ4RgX.js             [39m[1m[2m 0.12 kB[22m[1m[22m[2m Γöé gzip:  0.11 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BRBp4A1j.js                  [39m[1m[2m 0.32 kB[22m[1m[22m[2m Γöé gzip:  0.25 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/6ebY6yCc.js                  [39m[1m[2m 0.38 kB[22m[1m[22m[2m Γöé gzip:  0.28 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CCggIZoF.js                  [39m[1m[2m 0.40 kB[22m[1m[22m[2m Γöé gzip:  0.29 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DbMQHxwx.js                  [39m[1m[2m 0.52 kB[22m[1m[22m[2m Γöé gzip:  0.33 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/1.CIevSic3.js                 [39m[1m[2m 0.65 kB[22m[1m[22m[2m Γöé gzip:  0.39 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D-ymRn6B.js                  [39m[1m[2m 0.97 kB[22m[1m[22m[2m Γöé gzip:  0.56 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DzX7Gx7C.js                  [39m[1m[2m 1.44 kB[22m[1m[22m[2m Γöé gzip:  0.89 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DOFcd_NJ.js                  [39m[1m[2m 1.61 kB[22m[1m[22m[2m Γöé gzip:  1.01 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BwYQebdn.js                  [39m[1m[2m 2.74 kB[22m[1m[22m[2m Γöé gzip:  1.29 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ZTNvVy4R.js                  [39m[1m[2m 3.05 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/9.Dh4uf3BT.js                 [39m[1m[2m 3.11 kB[22m[1m[22m[2m Γöé gzip:  1.69 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/7.CXXvaV18.js                 [39m[1m[2m 3.22 kB[22m[1m[22m[2m Γöé gzip:  1.80 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/2.Cs8hc-FQ.js                 [39m[1m[2m 3.30 kB[22m[1m[22m[2m Γöé gzip:  1.65 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/CrKoxU2b.js                  [39m[1m[2m 3.69 kB[22m[1m[22m[2m Γöé gzip:  1.84 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/D_rxJ-FA.js                  [39m[1m[2m 4.22 kB[22m[1m[22m[2m Γöé gzip:  2.03 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/6.wSqkosnu.js                 [39m[1m[2m 4.34 kB[22m[1m[22m[2m Γöé gzip:  1.77 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Be2JvwNi.js                  [39m[1m[2m 5.33 kB[22m[1m[22m[2m Γöé gzip:  2.26 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/5.wQtT1R_2.js                 [39m[1m[2m 6.25 kB[22m[1m[22m[2m Γöé gzip:  2.22 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/DX2YE6IM.js                  [39m[1m[2m 6.63 kB[22m[1m[22m[2m Γöé gzip:  2.81 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/ydZKzh_n.js                  [39m[1m[2m 6.97 kB[22m[1m[22m[2m Γöé gzip:  3.14 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/entry/app.DM083leS.js               [39m[1m[2m 8.06 kB[22m[1m[22m[2m Γöé gzip:  3.49 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/3.DVASZAnd.js                 [39m[1m[2m 8.51 kB[22m[1m[22m[2m Γöé gzip:  2.96 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BE6IEMoq.js                  [39m[1m[2m11.42 kB[22m[1m[22m[2m Γöé gzip:  5.11 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/4.BwC2Uam7.js                 [39m[1m[2m14.67 kB[22m[1m[22m[2m Γöé gzip:  4.51 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/8.CQzyyZh4.js                 [39m[1m[2m19.55 kB[22m[1m[22m[2m Γöé gzip:  5.25 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/BD2oWn-t.js                  [39m[1m[2m23.07 kB[22m[1m[22m[2m Γöé gzip:  9.05 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/chunks/Cc35BBlo.js                  [39m[1m[2m27.58 kB[22m[1m[22m[2m Γöé gzip: 10.79 kB[22m
+[2m.svelte-kit/output/client/[22m[36m_app/immutable/nodes/0.CpdSToRQ.js                 [39m[1m[2m32.54 kB[22m[1m[22m[2m Γöé gzip:  9.38 kB[22m
+[32mΓ£ô built in 20.85s[39m
+[2m.svelte-kit/output/server/[22m[32m.vite/manifest.json                                [39m[1m[2m  7.55 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/OptimizedImage.C0ZazluQ.css  [39m[1m[2m  0.04 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[35m_app/immutable/assets/_layout.Dsd0JKUM.css         [39m[1m[2m 45.48 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.ts.js                        [39m[1m[2m  0.05 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/false.js                                    [39m[1m[2m  0.05 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/config.js                                   [39m[1m[2m  0.12 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/environment.js                              [39m[1m[2m  0.19 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.ts.js                  [39m[1m[2m  0.37 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.ts.js             [39m[1m[2m  0.39 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36minternal.js                                        [39m[1m[2m  0.40 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/server.js                                   [39m[1m[2m  0.45 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/state.svelte.js                             [39m[1m[2m  0.45 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/utils.js                                    [39m[1m[2m  1.15 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/fallbacks/error.svelte.js                  [39m[1m[2m  1.15 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/constants.js                                [39m[1m[2m  1.38 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/exports.js                                  [39m[1m[2m  2.39 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/index.js                                    [39m[1m[2m  2.65 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/shield-check.js                             [39m[1m[2m  2.97 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/ProductCard.js                              [39m[1m[2m  3.12 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/url.js                                      [39m[1m[2m  3.16 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/Icon.js                                     [39m[1m[2m  3.31 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/_page.svelte.js                      [39m[1m[2m  3.68 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/internal.js                                 [39m[1m[2m  4.13 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/terms/_page.svelte.js                [39m[1m[2m  4.49 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/privacy/_page.svelte.js              [39m[1m[2m  4.53 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/OptimizedImage.js                           [39m[1m[2m  5.88 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/login/_page.svelte.js                [39m[1m[2m  6.96 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/contact/_page.svelte.js              [39m[1m[2m  8.94 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/about/_page.svelte.js                [39m[1m[2m 11.22 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/catalog/_page.svelte.js              [39m[1m[2m 16.04 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mremote-entry.js                                    [39m[1m[2m 19.07 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/shared.js                                   [39m[1m[2m 27.07 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/root.js                                     [39m[1m[2m 27.91 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/product/_id_/_page.svelte.js         [39m[1m[2m 29.84 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mentries/pages/_layout.svelte.js                    [39m[1m[2m 41.94 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mchunks/index2.js                                   [39m[1m[2m 95.34 kB[22m[1m[22m
+[2m.svelte-kit/output/server/[22m[36mindex.js                                           [39m[1m[2m125.82 kB[22m[1m[22m
+[32mΓ£ô built in 46.05s[39m
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-vercel
+node.exe : [31merror 
+during build:
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([31merror du   
+ ring build::String    
+) [], RemoteExcept    
+ion
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+Error: EPERM: 
+operation not 
+permitted, symlink 
+'![-]\catchall.func' 
+-> 'C:\Users\shama\Docu
+ments\Quick\Protection-
+Valley\.vercel\output\f
+unctions\catalog.func'
+    at 
+Object.symlinkSync 
+(node:fs:1873:11)
+    at adapt (file:///C
+:/Users/shama/Documents
+/Quick/Protection-Valle
+y/node_modules/@sveltej
+s/adapter-vercel/index.
+js:477:9)
+    at async adapt (fil
+e:///C:/Users/shama/Doc
+uments/Quick/Protection
+-Valley/node_modules/@s
+veltejs/kit/src/core/ad
+apt/index.js:41:2)
+    at async finalise (
+file:///C:/Users/shama/
+Documents/Quick/Protect
+ion-Valley/node_modules
+/@sveltejs/kit/src/expo
+rts/vite/index.js:1359:
+7)
+    at async 
+Object.handler (file://
+/C:/Users/shama/Documen
+ts/Quick/Protection-Val
+ley/node_modules/@svelt
+ejs/kit/src/exports/vit
+e/index.js:1390:5)
+    at async PluginDriv
+er.hookParallel (file:/
+//C:/Users/shama/Docume
+nts/Quick/Protection-Va
+lley/node_modules/rollu
+p/dist/es/shared/node-e
+ntry.js:22479:17)
+    at async 
+Object.close (file:///C
+:/Users/shama/Documents
+/Quick/Protection-Valle
+y/node_modules/rollup/d
+ist/es/shared/node-entr
+y.js:23498:13)
+    at async 
+buildEnvironment (file:
+///C:/Users/shama/Docum
+ents/Quick/Protection-V
+alley/node_modules/vite
+/dist/node/chunks/dep-D
+4NMHUTW.js:46258:17)
+    at async 
+Object.defaultBuildApp 
+[as buildApp] (file:///
+C:/Users/shama/Document
+s/Quick/Protection-Vall
+ey/node_modules/vite/di
+st/node/chunks/dep-D4NM
+HUTW.js:46713:5)
+    at async 
+CAC.<anonymous> (file:/
+//C:/Users/shama/Docume
+nts/Quick/Protection-Va
+lley/node_modules/vite/
+dist/node/cli.js:863:7)
+[39m
