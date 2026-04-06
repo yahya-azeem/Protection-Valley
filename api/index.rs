@@ -198,8 +198,8 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             
             if let Some(id) = product_id {
                 if method == "GET" {
-                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok());
-                    wrap(review_handlers::check_eligibility(auth_header, id).await)
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(review_handlers::check_eligibility(auth_header.as_deref(), id).await)
                 } else {
                     method_not_allowed()
                 }
@@ -209,10 +209,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         }
         "/api/v1/reviews" => {
             if method == "POST" {
-                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok());
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                 let bytes = read_body(&mut req).await?;
                 let body: models::CreateReviewRequest = serde_json::from_slice(&bytes)?;
-                wrap(review_handlers::create_review(auth_header, body).await)
+                wrap(review_handlers::create_review(auth_header.as_deref(), body).await)
             } else {
                 method_not_allowed()
             }
