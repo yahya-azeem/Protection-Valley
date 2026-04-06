@@ -91,7 +91,7 @@
       <div class="relative group">
         <div class="absolute -inset-4 border border-primary/20 scale-95 group-hover:scale-105 transition-lux duration-1000"></div>
         <div class="relative aspect-[4/5] bg-black overflow-hidden shadow-2xl">
-          <img src="{base}/images/about-detail.jpg" alt="Craftsmanship" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+          <img src="{base}/images/hero-bg.jpg" alt="Craftsmanship" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
         </div>
       </div>
     </div>
