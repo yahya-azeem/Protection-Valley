@@ -1,7 +1,7 @@
 use std::env;
 use anyhow::{Result, anyhow};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
-use crate::models::{Review, CreateReviewRequest, Order};
+use crate::models::{Review, CreateReviewRequest};
 
 pub struct ReviewService {
     client: reqwest::Client,
