@@ -1,43 +1,30 @@
 use std::env;
-use serde::{Deserialize, Serialize};
-use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use crate::models::Order;
 use anyhow::{Result, anyhow};
-
-#[derive(Debug, Serialize, Deserialize)]
-struct SendGridEmail {
-    pub personalizations: Vec<Personalization>,
-    pub from: EmailAddress,
-    pub subject: String,
-    pub content: Vec<EmailContent>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Personalization {
-    pub to: Vec<EmailAddress>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct EmailAddress {
-    pub email: String,
-    pub name: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct EmailContent {
-    pub r#type: String,
-    pub value: String,
-}
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::message::SinglePart;
+use lettre::{Message, AsyncSmtpTransport, AsyncTransport, Tokio1Executor};
 
 pub struct EmailService {
-    client: reqwest::Client,
-    api_key: String,
+    smtp_host: String,
+    smtp_port: u16,
+    smtp_user: String,
+    smtp_pass: String,
+    smtp_from: String,
     admin_emails: Vec<String>,
 }
 
 impl EmailService {
     pub fn new() -> Self {
-        let api_key = env::var("SENDGRID_API_KEY").unwrap_or_default();
+        let smtp_host = env::var("SMTP_HOST").unwrap_or_else(|_| "localhost".to_string());
+        let smtp_port = env::var("SMTP_PORT")
+            .unwrap_or_else(|_| "587".to_string())
+            .parse::<u16>()
+            .unwrap_or(587);
+        let smtp_user = env::var("SMTP_USERNAME").unwrap_or_default();
+        let smtp_pass = env::var("SMTP_PASSWORD").unwrap_or_default();
+        let smtp_from = env::var("SMTP_FROM_EMAIL").unwrap_or_else(|_| "notifications@protectionvalley.com".to_string());
+        
         let admin_emails_str = env::var("ADMIN_NOTIFICATION_EMAILS")
             .unwrap_or_else(|_| "admin@protectionvalley.com".to_string());
         
@@ -48,25 +35,18 @@ impl EmailService {
             .collect();
 
         Self {
-            client: reqwest::Client::new(),
-            api_key,
+            smtp_host,
+            smtp_port,
+            smtp_user,
+            smtp_pass,
+            smtp_from,
             admin_emails,
         }
     }
 
-    fn headers(&self) -> HeaderMap {
-        let mut headers = HeaderMap::new();
-        let auth = format!("Bearer {}", self.api_key);
-        if let Ok(val) = HeaderValue::from_str(&auth) {
-            headers.insert(AUTHORIZATION, val);
-        }
-        headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-        headers
-    }
-
     pub async fn send_order_notification(&self, order: &Order) -> Result<()> {
-        if self.api_key.is_empty() {
-            return Err(anyhow!("SENDGRID_API_KEY not configured"));
+        if self.smtp_host.is_empty() || self.smtp_user.is_empty() {
+            return Err(anyhow!("SMTP credentials or host not configured"));
         }
 
         if self.admin_emails.is_empty() {
@@ -80,32 +60,44 @@ impl EmailService {
         let mut items_html = String::new();
         for item in &order.items {
             items_html.push_str(&format!(
-                "<li>{} x {} (@ ${:.2})</li>",
-                item.quantity, item.product_name, item.unit_price
+                "<li>{} x {} (@ ${:.2}) - Total: ${:.2}</li>",
+                item.quantity, item.product_name, item.unit_price, item.total_price
             ));
         }
 
         let html_content = format!(
             r#"
-            <h2>New Order Received: {order_id}</h2>
-            <p><strong>Customer:</strong> {customer_name} ({customer_email})</p>
-            <p><strong>Total:</strong> ${total:.2}</p>
-            
-            <h3>Shipping Label Information</h3>
-            <p><strong>Carrier:</strong> {carrier}</p>
-            <p><strong>Tracking Number:</strong> {tracking}</p>
-            <p><a href="{label_url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Download Shipping Label</a></p>
-            
-            <h3>Order Items</h3>
-            <ul>{items_html}</ul>
-            
-            <h3>Shipping Address</h3>
-            <p>
-                {address_line1}<br>
-                {address_line2}
-                {city}, {state} {zip}<br>
-                {country}
-            </p>
+            <html>
+            <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px;">
+                    <h2 style="color: #FF8800;">New Order Received: {order_id}</h2>
+                    <p><strong>Customer:</strong> {customer_name} ({customer_email})</p>
+                    <p><strong>Total Amount:</strong> ${total:.2}</p>
+                    
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <h3 style="margin-top: 0;">Shipping Information</h3>
+                        <p><strong>Carrier:</strong> {carrier}</p>
+                        <p><strong>Tracking:</strong> {tracking}</p>
+                        <p><a href="{label_url}" style="background-color: #FF8800; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Download Label</a></p>
+                    </div>
+                    
+                    <h3>Order Details</h3>
+                    <ul style="padding-left: 20px;">
+                        {items_html}
+                    </ul>
+                    
+                    <h3>Shipping Destination</h3>
+                    <p style="background-color: #eee; padding: 10px;">
+                        {address_line1}<br>
+                        {address_line2}
+                        {city}, {state} {zip}<br>
+                        {country}
+                    </p>
+                    <hr>
+                    <p style="font-size: 12px; color: #888;">This is an automated alert from Protection Valley Production System.</p>
+                </div>
+            </body>
+            </html>
             "#,
             order_id = order.id,
             customer_name = order.customer_name,
@@ -123,40 +115,28 @@ impl EmailService {
             country = order.shipping_address.country,
         );
 
-        let recipients: Vec<EmailAddress> = self.admin_emails.iter()
-            .map(|email| EmailAddress {
-                email: email.clone(),
-                name: Some("Protection Valley Admin".to_string()),
-            })
-            .collect();
+        // Build the email message
+        let mut builder = Message::builder()
+            .from(self.smtp_from.parse()?)
+            .subject(format!("Order Alert: {} (Label Generated)", order.id));
 
-        let email_payload = SendGridEmail {
-            personalizations: vec![Personalization {
-                to: recipients,
-            }],
-            from: EmailAddress {
-                email: "notifications@protectionvalley.com".to_string(),
-                name: Some("Protection Valley Alerts".to_string()),
-            },
-            subject: format!("New Order - Shipping Label Generated ({})", order.id),
-            content: vec![EmailContent {
-                r#type: "text/html".to_string(),
-                value: html_content,
-            }],
-        };
-
-        let response = self.client
-            .post("https://api.sendgrid.com/v3/mail/send")
-            .headers(self.headers())
-            .json(&email_payload)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            let err = response.text().await?;
-            eprintln!("[email_service] SendGrid Error: {err}");
-            return Err(anyhow!("Failed to send email notification"));
+        for admin_email in &self.admin_emails {
+            builder = builder.to(admin_email.parse()?);
         }
+
+        let email = builder.singlepart(SinglePart::html(html_content))?;
+
+        // Configure SMTP transport
+        let creds = Credentials::new(self.smtp_user.clone(), self.smtp_pass.clone());
+
+        let mailer: AsyncSmtpTransport<Tokio1Executor> = 
+            AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&self.smtp_host)?
+                .credentials(creds)
+                .port(self.smtp_port)
+                .build();
+
+        // Send the email
+        mailer.send(email).await.map_err(|e| anyhow!("SMTP Error: {}", e))?;
 
         Ok(())
     }

@@ -11,7 +11,7 @@
 
   const wholesaleSuggestion = $derived.by(() => {
     if ($isWholesale) return null;
-    const item = $cart.find((line) => line.quantity > 10);
+    const item = $cart.find((line) => line.quantity >= 10);
     return item ?? null;
   });
 
@@ -100,9 +100,10 @@
           {#if wholesaleSuggestion}
             <div class="rounded border border-primary/40 bg-primary/10 p-4">
               <p class="text-xs text-zinc-200 leading-relaxed">
-                You have more than 10 units of
-                <span class="font-semibold text-primary"> {wholesaleSuggestion.name}</span>.
-                Sign in for wholesale bulk pricing.
+                You've reached the 
+                <span class="font-semibold text-primary"> 10 unit retail limit</span> for
+                {wholesaleSuggestion.name}.
+                Sign in for wholesale to order more.
               </p>
               <button
                 onclick={() => {
@@ -139,10 +140,14 @@
                     <p class="text-xs text-zinc-500">{[item.size, item.color, item.texture].filter(Boolean).join(' / ')}</p>
                   {/if}
                   <div class="flex items-center justify-between">
-                    <div class="flex items-center bg-[#111] border border-white/5 rounded overflow-hidden">
+                     <div class="flex items-center bg-[#111] border border-white/5 rounded overflow-hidden">
                       <button onclick={() => cart.updateQuantity(i, -1)} class="px-3 py-1 text-xs text-zinc-400 hover:text-primary transition-lux">-</button>
                       <span class="px-2 text-xs font-semibold text-white w-6 text-center">{item.quantity}</span>
-                      <button onclick={() => cart.updateQuantity(i, 1)} class="px-3 py-1 text-xs text-zinc-400 hover:text-primary transition-lux">+</button>
+                      <button 
+                        onclick={() => cart.updateQuantity(i, 1)} 
+                        disabled={!$isWholesale && item.quantity >= 10}
+                        class="px-3 py-1 text-xs text-zinc-400 hover:text-primary disabled:opacity-20 disabled:cursor-not-allowed transition-lux"
+                      >+</button>
                     </div>
                     <span class="text-base font-serif text-primary">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>

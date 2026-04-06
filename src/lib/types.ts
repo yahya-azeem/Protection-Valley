@@ -81,3 +81,20 @@ export interface SyncResponse {
 }
 
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'name';
+
+export interface Review {
+  id: string;
+  user_id: number;
+  product_id: number;
+  user_name: string;
+  rating: number;
+  comment: string;
+  is_verified: boolean;
+  created_at: string;
+}
+
+export interface CreateReviewRequest {
+  product_id: number;
+  rating: number;
+  comment: string;
+}

@@ -6,12 +6,12 @@ pub fn generate_jwt(user_id: i64, email: &str) -> Result<String> {
     use jsonwebtoken::{encode, EncodingKey, Header};
     use serde::{Deserialize, Serialize};
 
-    #[derive(Debug, Serialize, Deserialize)]
-    struct Claims {
-        sub: String,
-        user_id: i64,
-        exp: usize,
-    }
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct Claims {
+    pub sub: String,
+    pub user_id: i64,
+    pub exp: usize,
+}
 
     let expiration = chrono::Utc::now()
         .checked_add_signed(chrono::Duration::hours(24))
@@ -34,4 +34,17 @@ pub fn generate_jwt(user_id: i64, email: &str) -> Result<String> {
         &claims,
         &EncodingKey::from_secret(secret.as_bytes()),
     )?)
+}
+
+pub fn decode_jwt(token: &str) -> Result<Claims> {
+    use jsonwebtoken::{decode, DecodingKey, Validation};
+
+    let secret = std::env::var("JWT_SECRET").map_err(|_| anyhow!("JWT_SECRET is not set"))?;
+    let token_data = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_bytes()),
+        &Validation::default(),
+    )?;
+
+    Ok(token_data.claims)
 }

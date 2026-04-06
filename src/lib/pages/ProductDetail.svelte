@@ -1,9 +1,12 @@
 <script lang="ts">
-  import { Truck, ShieldCheck, RotateCcw, Package, ShoppingCart, ChevronRight, Boxes } from 'lucide-svelte';
-  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, goBack, isWholesale, currentCategory } from '$lib/stores';
+  import { Truck, ShieldCheck, RotateCcw, Package, ShoppingCart, ChevronRight, Boxes, Star, MessageCircle } from 'lucide-svelte';
+  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, goBack, isWholesale, currentCategory, currentUser } from '$lib/stores';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
-  import type { CartItem, Product } from '$lib/types';
+  import type { CartItem, Product, Review } from '$lib/types';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
+  import ReviewList from '$lib/components/ReviewList.svelte';
+  import ReviewForm from '$lib/components/ReviewForm.svelte';
+  import { API_CONFIG } from '$lib/config';
 
   let sp = $derived($selectedProduct);
   
@@ -37,7 +40,66 @@
       quantity: qty,
     };
     cart.add(item);
-    showToast(`${qty > 1 ? `${qty} units` : 'Item'} added to cart`);
+    // The store handles the 'Retail limit reached' toast if applicable.
+    // If it's not capped, we can optionally show a success toast here,
+    // but to prevent double toasts, we'll rely on the store's feedback or 
+    // only show success if below limit.
+    const existing = $cart.find(c => c.id === item.id && c.variant_id === item.variant_id);
+    if ($isWholesale || !existing || existing.quantity < 10) {
+      showToast(`${qty > 1 ? `${qty} units` : 'Item'} added to cart`);
+    }
+  }
+
+  // --- Reviews Logic ---
+  let reviews = $state<Review[]>([]);
+  let isEligibleToReview = $state(false);
+  let reviewsLoading = $state(true);
+
+  $effect(() => {
+    if (sp) {
+      fetchReviews();
+      checkReviewEligibility();
+    }
+  });
+
+  async function fetchReviews() {
+    if (!sp) return;
+    reviewsLoading = true;
+    try {
+      const response = await fetch(`${API_CONFIG.baseUrl}/products/${sp.id}/reviews`);
+      if (response.ok) {
+        reviews = await response.json();
+      }
+    } catch (e) {
+      console.error('Failed to fetch reviews:', e);
+    } finally {
+      reviewsLoading = false;
+    }
+  }
+
+  async function checkReviewEligibility() {
+    if (!sp || !$currentUser) {
+      isEligibleToReview = false;
+      return;
+    }
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${API_CONFIG.baseUrl}/reviews/eligibility?product_id=${sp.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const { eligible } = await response.json();
+        isEligibleToReview = eligible;
+      }
+    } catch (e) {
+      console.error('Error checking review eligibility:', e);
+    }
+  }
+
+  function handleReviewPosted(event: CustomEvent<Review>) {
+    const newReview = event.detail;
+    reviews = [newReview, ...reviews];
+    isEligibleToReview = false; // Disable form after posting
   }
 </script>
 
@@ -235,6 +297,52 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="max-w-7xl mx-auto px-4 py-20 border-t border-white/5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <!-- Review Info -->
+        <div class="lg:col-span-4 space-y-8">
+          <div class="space-y-4">
+            <h2 class="text-3xl font-serif text-white tracking-tight">Product Feedback</h2>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-1">
+                {#each Array(5) as _, i}
+                  <Star class="w-4 h-4 { i < Math.round(reviews.reduce((s, r) => s + r.rating, 0) / (reviews.length || 1)) ? 'text-primary fill-primary' : 'text-zinc-800' }" />
+                {/each}
+              </div>
+              <span class="text-zinc-500 text-sm uppercase tracking-widest font-bold">
+                {reviews.length} Review{reviews.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+
+          {#if isEligibleToReview}
+            <ReviewForm productId={sp.id} on:reviewPosted={handleReviewPosted} />
+          {:else if !$currentUser}
+            <div class="bg-[#0A0A0A] border border-white/5 p-8 rounded text-center space-y-4">
+              <MessageCircle class="w-8 h-8 text-primary/30 mx-auto" />
+              <p class="text-xs text-zinc-500 uppercase tracking-widest leading-relaxed">
+                Log in to share your experience with the Gear.
+              </p>
+              <a href="/login" class="text-xs font-bold text-primary hover:text-white transition-lux">GO TO LOGIN</a>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Review List -->
+        <div class="lg:col-span-8">
+          {#if reviewsLoading}
+            <div class="flex items-center gap-3 text-zinc-600 animate-pulse">
+              <Package class="w-4 h-4 animate-spin" />
+              <span class="text-xs uppercase tracking-widest font-bold font-serif">FETCHING FEEDBACK...</span>
+            </div>
+          {:else}
+            <ReviewList {reviews} />
+          {/if}
         </div>
       </div>
     </div>

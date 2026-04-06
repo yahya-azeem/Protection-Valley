@@ -21,6 +21,35 @@
   --shadow-gold: 0 4px 24px rgba(212, 175, 55, 0.12);
   
   --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  --animation-duration: 0.8s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
@@ -54,6 +83,19 @@
 /* Transitions */
 @utility transition-lux {
   @apply transition-all duration-700 ease-lux;
+}
+
+/* Entrance Animations */
+@utility animate-fade-in {
+  animation: fadeIn var(--animation-duration) var(--ease-lux) forwards;
+}
+
+@utility animate-slide-up {
+  animation: slideUp var(--animation-duration) var(--ease-lux) forwards;
+}
+
+@utility animate-slide-down {
+  animation: slideDown var(--animation-duration) var(--ease-lux) forwards;
 }
 
 /* Buttons */

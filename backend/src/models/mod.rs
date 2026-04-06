@@ -184,6 +184,25 @@ pub struct AuthResponse {
     pub user: User,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Review {
+    pub id: String,
+    pub user_id: i64,
+    pub product_id: i64,
+    pub user_name: String,
+    pub rating: i32,
+    pub comment: String,
+    pub is_verified: bool,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateReviewRequest {
+    pub product_id: i64,
+    pub rating: i32,
+    pub comment: String,
+}
+
 // SyncResponse remains for inventory sync status
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SyncResponse {
