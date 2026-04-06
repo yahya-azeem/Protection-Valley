@@ -92,10 +92,6 @@
       </div>
     </div>
 
-    <!-- Scroll Indicator -->
-    <div class="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-20 animate-fade-in" style="animation-delay: 1.2s; animation-fill-mode: forwards;">
-      <div class="w-[1px] h-24 bg-gradient-to-b from-primary to-transparent"></div>
-    </div>
   </section>
 
   <!-- Signature Products Carousel -->
