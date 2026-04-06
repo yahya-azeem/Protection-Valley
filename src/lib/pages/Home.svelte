@@ -5,7 +5,9 @@
   import { products } from '$lib/stores';
   import { goto } from '$app/navigation';
 
-  let featured = $derived($products.slice(0, 8));
+  // Duplicate for seamless looping: [Original, Original, Original]
+  // We use 3x to ensure there's always content to the left/right during jumps
+  let featured = $derived([...$products.slice(0, 8), ...$products.slice(0, 8), ...$products.slice(0, 8)]);
   let scrollContainer = $state<HTMLDivElement | null>(null);
   let isPaused = $state(false);
 
@@ -16,29 +18,41 @@
   function scroll(direction: 'left' | 'right') {
     if (!scrollContainer) return;
     const scrollAmount = scrollContainer.clientWidth * 0.8;
-    
-    // Check if we're at the end when scrolling right
-    if (direction === 'right') {
-      const isAtEnd = scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 10;
-      if (isAtEnd) {
-        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
-        return;
-      }
-    }
-
     scrollContainer.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth'
     });
   }
 
+  // Handle seamless teleportation
+  function handleScroll() {
+    if (!scrollContainer) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+    const singleSetWidth = (scrollWidth / 3);
+
+    // If we've scrolled past the first two sets, jump back to the middle set
+    if (scrollLeft >= singleSetWidth * 2) {
+      scrollContainer.scrollLeft = scrollLeft - singleSetWidth;
+    } 
+    // If we've scrolled before the second set, jump forward to the middle set
+    else if (scrollLeft <= singleSetWidth - clientWidth) {
+      scrollContainer.scrollLeft = scrollLeft + singleSetWidth;
+    }
+  }
+
   // Auto-slide logic
   $effect(() => {
     const interval = setInterval(() => {
-      if (!isPaused) {
+      if (!isPaused && scrollContainer) {
         scroll('right');
       }
     }, 5000);
+
+    // Initial positioning to the middle set
+    if (scrollContainer && scrollContainer.scrollLeft === 0) {
+      const singleSetWidth = scrollContainer.scrollWidth / 3;
+      scrollContainer.scrollLeft = singleSetWidth;
+    }
 
     return () => clearInterval(interval);
   });
@@ -126,12 +140,13 @@
         bind:this={scrollContainer}
         onmouseenter={() => isPaused = true}
         onmouseleave={() => isPaused = false}
+        onscroll={handleScroll}
         role="region"
         aria-label="Signature Products Carousel"
         class="flex gap-4 md:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
       >
         {#each featured as product, i}
-          <div class="flex-none w-[70vw] md:w-[calc(33.333%-12px)] lg:w-[calc(16.666%-14px)] snap-start animate-fade-in opacity-0" style="animation-delay: {0.1 * i}s; animation-fill-mode: forwards;">
+          <div class="flex-none w-[70vw] md:w-[calc(33.333%-12px)] lg:w-[calc(16.666%-14px)] snap-start animate-fade-in opacity-0" style="animation-delay: {0.05 * (i % 8)}s; animation-fill-mode: forwards;">
             <ProductCard {product} />
           </div>
         {/each}
