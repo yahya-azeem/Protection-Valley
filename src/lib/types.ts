@@ -53,7 +53,8 @@ export interface CartItem {
 export interface UserData {
   name: string;
   email: string;
-  role: 'retail' | 'wholesale' | 'admin';
+  role: 'retail' | 'wholesale' | 'admin' | 'Member';
+  token?: string;
   provider?: string;
 }
 
