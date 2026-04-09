@@ -1,6 +1,58 @@
 <script lang="ts">
-  import { Lock, LogIn, LogOut } from 'lucide-svelte';
+  import { onMount } from 'svelte';
+  import { Lock, LogOut } from 'lucide-svelte';
   import { currentUser } from '$lib/stores';
+  import { env } from '$env/dynamic/public';
+
+  onMount(() => {
+    // Initialize Google Sign-In button if script is loaded
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: env.PUBLIC_GOOGLE_CLIENT_ID || '855476311029-79f874i7uubivt2525is5t1u62j8u55k.apps.googleusercontent.com',
+        callback: handleCredentialResponse,
+        context: 'signin',
+        ux_mode: 'popup',
+        auto_select: false
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById('google-btn'),
+        { 
+          theme: 'outline', 
+          size: 'large', 
+          text: 'signin_with', 
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          width: 300
+        }
+      );
+    }
+  });
+
+  async function handleCredentialResponse(response: any) {
+    try {
+      // Send ID token to backend for verification and session creation
+      const res = await fetch('/api/v1/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        currentUser.set({
+          email: data.email,
+          name: data.name,
+          role: data.role || 'Member',
+          token: data.token
+        });
+        // Redirect to catalog
+        window.location.href = '/catalog';
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  }
 </script>
 
 <svelte:head>
@@ -25,7 +77,10 @@
     <!-- Login Area -->
     <div class="bg-[#0A0A0A] border border-white/10 p-10 rounded shadow-2xl space-y-6">
       {#if $currentUser}
-        <div class="space-y-4">
+        <div class="space-y-4 text-center">
+          <p class="text-[10px] text-zinc-500 uppercase tracking-widest">
+            Logged in as: <span class="text-primary">{$currentUser.email}</span>
+          </p>
           <button 
             onclick={() => currentUser.logout()}
             class="apple-btn w-full flex items-center justify-center gap-3"
@@ -33,20 +88,17 @@
             <LogOut class="w-4 h-4" />
             SIGN OUT
           </button>
-          <p class="text-[10px] text-zinc-500 uppercase tracking-widest">
-            Logged in as: <span class="text-primary">{$currentUser.email}</span>
-          </p>
         </div>
       {:else}
-        <button class="apple-btn w-full flex items-center justify-center gap-3">
-          <LogIn class="w-4 h-4" />
-          LOGIN WITH GOOGLE
-        </button>
+        <div class="flex flex-col items-center space-y-4">
+          <!-- Branded Google Sign-In Button Container -->
+          <div id="google-btn" class="flex justify-center min-h-[44px]"></div>
+          
+          <p class="text-[10px] text-zinc-600 uppercase tracking-widest pt-4 italic">
+            Wholesale access requires verified account approval.
+          </p>
+        </div>
       {/if}
-      
-      <p class="text-[10px] text-zinc-600 uppercase tracking-widest pt-4 italic">
-        Wholesale access requires verified account approval.
-      </p>
     </div>
 
     <!-- Links -->
