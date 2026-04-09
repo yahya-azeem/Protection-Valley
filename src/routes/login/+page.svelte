@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  declare var google: any;
+</script>
+
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Lock, LogOut } from 'lucide-svelte';

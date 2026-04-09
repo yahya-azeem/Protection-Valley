@@ -155,6 +155,7 @@ function createUserStore() {
 
   return {
     subscribe,
+    set,
     logout() {
       set(null);
       if (typeof localStorage !== 'undefined') {
