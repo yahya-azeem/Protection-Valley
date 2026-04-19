@@ -53,8 +53,7 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     let product_service = ProductService::new();
     
     // Check if user is wholesale
-    let is_wholesale = auth_header
-        .and_then(extract_token)
+    let is_wholesale = extract_token(auth_header)
         .and_then(|t| decode_jwt(t).ok())
         .map(|c| c.role == "wholesale")
         .unwrap_or(false);
