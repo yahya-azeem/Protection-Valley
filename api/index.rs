@@ -176,6 +176,7 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             }
         }
         "/api/v1/checkout/create-session" => {
+            if method == "POST" {
                 let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                 let bytes = read_body(&mut req).await?;
                 let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(&bytes)?;
