@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ShoppingBag, X, Trash2 } from 'lucide-svelte';
-  import { cart, cartOpen, cartTotal, showToast, isWholesale } from '$lib/stores';
+  import { cart, cartOpen, cartTotal, showToast, isWholesale, currentUser } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import { goto } from '$app/navigation';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
@@ -25,7 +25,10 @@
       showToast('Preparing checkout...');
       const response = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.create_checkout_session, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${$currentUser?.token || ''}`
+        },
         body: JSON.stringify({
           items: $cart.map((item) => ({
             product_id: item.id.toString(),

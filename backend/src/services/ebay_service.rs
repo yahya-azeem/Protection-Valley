@@ -52,7 +52,6 @@ impl EbayService {
                         ebay_item_id: Some("PV-EB-101".into()),
                         original_name: "Heritage Tool Belt - Black / Medium".into(),
                         price: 189.99,
-                        wholesale_price: 132.99,
                         stock: 10,
                         size: Some("Medium".into()),
                         color: Some("Black".into()),
@@ -114,7 +113,6 @@ impl EbayService {
                 ebay_item_id: Some(ebay_id),
                 original_name: title.clone(),
                 price,
-                wholesale_price: price * 0.7, // Default discount
                 stock: 1,
                 size,
                 color,

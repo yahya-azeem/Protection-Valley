@@ -2,9 +2,12 @@ use vercel_runtime::{Response, Error};
 use http::StatusCode;
 use crate::models::CreateCheckoutSessionRequest;
 use crate::services::product_service::ProductService;
+use crate::auth::{decode_jwt, extract_token};
 use std::env;
 
-pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
+const WHOLESALE_DISCOUNT: f64 = 0.30; // 30% off retail
+
+pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
     let CreateCheckoutSessionRequest {
         items,
         success_url,
@@ -48,6 +51,14 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
 
     let client = stripe::Client::new(stripe_secret_key);
     let product_service = ProductService::new();
+    
+    // Check if user is wholesale
+    let is_wholesale = auth_header
+        .and_then(extract_token)
+        .and_then(|t| decode_jwt(t).ok())
+        .map(|c| c.role == "wholesale")
+        .unwrap_or(false);
+
     let mut line_items = Vec::new();
 
     for item in items {
@@ -85,11 +96,17 @@ pub async fn create_checkout_session(req: CreateCheckoutSessionRequest) -> Resul
                     });
                 let images = image.map(|url| vec![url]);
 
+                let unit_price = if is_wholesale {
+                    v.price * (1.0 - WHOLESALE_DISCOUNT)
+                } else {
+                    v.price
+                };
+
                 line_items.push(stripe::CreateCheckoutSessionLineItems {
                     quantity: Some(item.quantity as u64),
                     price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
                         currency: stripe::Currency::USD,
-                        unit_amount: Some((v.price * 100.0) as i64),
+                        unit_amount: Some((unit_price * 100.0) as i64),
                         product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
                             name: format!("{} - {}", product.name, v.original_name),
                             description,
