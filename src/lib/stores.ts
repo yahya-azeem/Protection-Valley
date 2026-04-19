@@ -12,11 +12,10 @@ export const priceRange = writable<{ min: number; max: number }>({ min: 0, max: 
 export const sizeFilter = writable<string>('');
 export const colorFilter = writable<string>('');
 export const textureFilter = writable<string>('');
-export const genericProductFilter = writable<string>('');
 
 export const filteredProducts = derived(
-  [products, currentCategory, priceRange, sizeFilter, colorFilter, textureFilter, genericProductFilter],
-  ([$products, $category, $priceRange, $sizeFilter, $colorFilter, $textureFilter, $genericProductFilter]) =>
+  [products, currentCategory, priceRange, sizeFilter, colorFilter, textureFilter],
+  ([$products, $category, $priceRange, $sizeFilter, $colorFilter, $textureFilter]) =>
     $products.filter((p) => {
       const categoryMatch = $category === 'All' || p.category === $category;
       const minPrice = Math.min(...(p.variants?.map((v) => v.price) || [0]));
@@ -24,8 +23,7 @@ export const filteredProducts = derived(
       const sizeMatch = !$sizeFilter || p.variants?.some((v) => v.size === $sizeFilter);
       const colorMatch = !$colorFilter || p.variants?.some((v) => v.color === $colorFilter);
       const textureMatch = !$textureFilter || p.variants?.some((v) => v.texture === $textureFilter);
-      const genericMatch = !$genericProductFilter || p.name === $genericProductFilter;
-      return categoryMatch && priceMatch && sizeMatch && colorMatch && textureMatch && genericMatch;
+      return categoryMatch && priceMatch && sizeMatch && colorMatch && textureMatch;
     })
 );
 
