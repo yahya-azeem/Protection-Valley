@@ -3,8 +3,8 @@ TRUNCATE products RESTART IDENTITY CASCADE;
 
 -- Insert Products
 INSERT INTO products (id, name, description, category, image_url, model_number) VALUES
-(1, 'Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders', '\n\n\n\n\n\n\n', 'Leather Gold', '/images/products/PV_1000.webp', 'PV-1000'),
-(2, 'Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle', '\n\n\n\n\n\n\n\n\n\n\n\n\n\nItem specifics\n\n\n\n\n\n\n\n 	\n\nCondition\n\n 	\n\nNew with tags: A brand-new, unused, and unworn item (including handmade items) in the original ... Read moreabout the condition\n\n\n\n\n\n 	\n\nMPN\n\n 	\n\n10103\n\n\n\n\n\n\n\n 	\n\nCountry/Region of Manufacture\n\n 	\n\nPakistan\n\n\n\n\n\n 	\n\nBrand\n\n 	\n\nLeather Gold\n\n\n\n\n\n\n\n 	\n\nType\n\n 	\n\nChaps, work apron, Riding, Sports\n\n\n\n\n\n\n\n\n\n\n\n\nItem description from the seller\n\n\n\n\n\n\n\n\n\n\n\n\n', 'Leather Gold', '/images/products/PV_1001.webp', 'PV-1001'),
+(1, 'Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders', 'Premium handcrafted workgear.', 'Leather Gold', '/images/products/PV_1000.webp', 'PV-1000'),
+(2, 'Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle', 'Premium handcrafted workgear.', 'Leather Gold', '/images/products/PV_1001.webp', 'PV-1001'),
 (3, 'placeholder free', 'Premium handcrafted workgear.', 'Leather Gold', '/images/logo.png', 'PV-1002'),
 (4, '12 Par Pack Brown Jersey Industrial And  Work Safety Gloves (PPE) size L', 'Premium handcrafted workgear.', 'Work Gloves', '/images/products/111998124733.jpg', '111998124733'),
 (5, '14" High Voltage Protector Glove With A grade Cow Leather Size 10', 'Premium handcrafted workgear.', 'Work Gloves', '/images/products/112023917471.jpg', '112023917471'),

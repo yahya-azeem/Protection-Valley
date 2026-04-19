@@ -34,7 +34,28 @@ function parseCsvLine(line) {
 
 function stripHtml(html) {
   if (!html) return '';
-  return html.replace(/<[^>]*>?/gm, '').trim();
+  let text = html
+    .replace(/<[^>]*>?/gm, '')           // strip HTML tags
+    .replace(/&nbsp;/gi, ' ')             // HTML entities
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&#\d+;/g, '')               // numeric entities
+    .replace(/\\r\\n/g, ' ')              // literal \r\n in CSV
+    .replace(/\\r/g, ' ')                 // literal \r
+    .replace(/\\n/g, ' ')                 // literal \n
+    .replace(/\\t/g, ' ')                 // literal \t
+    .replace(/[\r\n\t]+/g, ' ')           // actual newlines/tabs
+    .replace(/\s{2,}/g, ' ')              // collapse multiple spaces
+    .trim();
+  // Remove eBay boilerplate chunks
+  text = text.replace(/Item specifics.*?Item description from the seller/gi, '').trim();
+  text = text.replace(/Item specifics.*$/gi, '').trim();
+  text = text.replace(/Condition\s*New with tags:.*?Read moreabout the condition/gi, '').trim();
+  text = text.replace(/\s{2,}/g, ' ').trim();
+  // If cleaned text is empty or only whitespace, use fallback
+  if (!text || text.length < 3) return '';
+  return text;
 }
 
 async function downloadImage(url, filename) {
