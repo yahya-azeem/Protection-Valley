@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS product_variants (
   ebay_item_id TEXT,
   original_name TEXT NOT NULL DEFAULT '',
   price NUMERIC(10,2) NOT NULL DEFAULT 0,
-  wholesale_price NUMERIC(10,2) NOT NULL DEFAULT 0,
   stock INTEGER NOT NULL DEFAULT 0,
   size TEXT,
   color TEXT,

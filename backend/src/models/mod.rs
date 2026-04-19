@@ -23,7 +23,6 @@ pub struct ProductVariant {
     pub ebay_item_id: Option<String>,
     pub original_name: String,
     pub price: f64,
-    pub wholesale_price: f64,
     pub stock: i32,
     pub size: Option<String>,
     pub color: Option<String>,
@@ -41,7 +40,6 @@ pub struct CreateProductRequest {
     pub name: String,
     pub description: String,
     pub price: f64,
-    pub wholesale_price: f64,
     pub category: String,
     pub image_url: String,
     pub stock: i32,
@@ -58,7 +56,6 @@ pub struct UpdateProductRequest {
     pub name: Option<String>,
     pub description: Option<String>,
     pub price: Option<f64>,
-    pub wholesale_price: Option<f64>,
     pub category: Option<String>,
     pub image_url: Option<String>,
     pub stock: Option<i32>,
@@ -149,9 +146,11 @@ pub struct User {
     pub email: String,
     pub name: String,
     pub role: UserRole,
+    pub picture: Option<String>,
     pub company: Option<String>,
     pub created_at: DateTime<Utc>,
 }
+
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum UserRole {
@@ -167,6 +166,11 @@ pub enum UserRole {
 pub struct LoginRequest {
     pub email: String,
     pub password: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GoogleVerifyRequest {
+    pub token: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

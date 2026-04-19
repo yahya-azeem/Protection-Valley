@@ -12,7 +12,8 @@
     // Initialize Google Sign-In button if script is loaded
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
-        client_id: env.PUBLIC_GOOGLE_CLIENT_ID || '855476311029-79f874i7uubivt2525is5t1u62j8u55k.apps.googleusercontent.com',
+        client_id: env.PUBLIC_GOOGLE_CLIENT_ID || '158021442862-21a6g1lgrcddun4pvnvfe0ghv4905ej5.apps.googleusercontent.com',
+
         callback: handleCredentialResponse,
         context: 'signin',
         ux_mode: 'popup',
@@ -44,11 +45,13 @@
       
       if (res.ok) {
         const data = await res.json();
+        const user = data.user || data; // Fallback for flexibility
         currentUser.set({
-          email: data.email,
-          name: data.name,
-          role: data.role || 'Member',
-          token: data.token
+          email: user.email,
+          name: user.name,
+          picture: user.picture,
+          role: user.role || 'Member',
+          token: data.token || user.token
         });
         // Redirect to catalog
         window.location.href = '/catalog';

@@ -11,7 +11,6 @@ export interface ProductVariant {
   ebay_item_id?: string;
   original_name: string;
   price: number;
-  wholesale_price: number;
   stock: number;
   size?: string;
   color?: string;
@@ -56,14 +55,15 @@ export interface UserData {
   role: 'retail' | 'wholesale' | 'admin' | 'Member';
   token?: string;
   provider?: string;
+  picture?: string;
 }
+
 
 export interface ApiProduct {
   id?: number;
   name: string;
   description?: string;
   price: number;
-  wholesale_price?: number;
   category?: string;
   type?: string;
   image_url?: string;

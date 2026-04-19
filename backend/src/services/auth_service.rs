@@ -27,11 +27,18 @@ impl AuthService {
             email: req.email,
             name: req.name,
             role: req.role.unwrap_or(UserRole::Retail),
+            picture: None,
             company: req.company,
             created_at: Utc::now(),
         };
 
-        let token = generate_jwt(user.id, &user.email).map_err(|e| e.to_string())?;
+        let role_str = match &user.role {
+            UserRole::Retail => "retail",
+            UserRole::Wholesale => "wholesale",
+            UserRole::Admin => "admin",
+        };
+
+        let token = generate_jwt(user.id, &user.email, role_str).map_err(|e| e.to_string())?;
         Ok(AuthResponse { token, user })
     }
 }

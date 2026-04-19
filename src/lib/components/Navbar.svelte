@@ -110,11 +110,22 @@
             <div class="flex items-center gap-4 border-r border-white/10 pr-6 mr-1">
               <div class="flex flex-col items-end">
                 <span class="text-[10px] text-zinc-500 uppercase tracking-widest leading-none mb-1">Account</span>
-                <span class="text-xs font-medium text-white truncate max-w-[120px]">{$currentUser.email}</span>
+                <span class="text-xs font-medium text-white truncate max-w-[120px]">{$currentUser.name || $currentUser.email}</span>
               </div>
+              {#if $currentUser.picture}
+                <img 
+                  src={$currentUser.picture} 
+                  alt={$currentUser.name} 
+                  class="w-8 h-8 rounded-full border border-white/10 object-cover shadow-inner"
+                />
+              {:else}
+                <div class="w-8 h-8 rounded-full border border-white/10 bg-zinc-900 flex items-center justify-center">
+                  <User class="w-4 h-4 text-zinc-500" />
+                </div>
+              {/if}
               <button 
                 onclick={() => currentUser.logout()}
-                class="text-[10px] font-bold text-primary hover:text-white transition-lux uppercase tracking-tighter border border-primary/20 px-2 py-1 rounded-sm"
+                class="text-[10px] font-bold text-primary hover:text-white transition-lux uppercase tracking-tighter border border-primary/20 px-2 py-1 rounded-sm ml-2"
               >
                 Sign Out
               </button>
@@ -204,9 +215,18 @@
       <div class="mt-auto border-t border-white/10 pt-8 pb-10">
         {#if $currentUser}
           <div class="space-y-4 text-left">
-            <div>
-              <p class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Logged in as</p>
-              <p class="text-lg font-serif text-white">{$currentUser.email}</p>
+            <div class="flex items-center gap-4">
+              {#if $currentUser.picture}
+                <img 
+                  src={$currentUser.picture} 
+                  alt={$currentUser.name} 
+                  class="w-12 h-12 rounded-full border border-white/10"
+                />
+              {/if}
+              <div>
+                <p class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Logged in as</p>
+                <p class="text-lg font-serif text-white">{$currentUser.name || $currentUser.email}</p>
+              </div>
             </div>
             <button 
               onclick={() => {

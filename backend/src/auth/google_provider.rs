@@ -27,6 +27,23 @@ pub struct GoogleUser {
     pub locale: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GoogleIdToken {
+    pub iss: String,
+    pub sub: String,
+    pub azp: String,
+    pub aud: String,
+    pub iat: String,
+    pub exp: String,
+    pub email: String,
+    pub email_verified: String,
+    pub name: String,
+    pub picture: String,
+    pub given_name: String,
+    pub family_name: String,
+    pub locale: String,
+}
+
 pub fn get_google_client() -> Result<BasicClient> {
     let client_id = env::var("GOOGLE_CLIENT_ID")
         .map_err(|_| anyhow!("GOOGLE_CLIENT_ID not set"))?;
@@ -88,4 +105,26 @@ pub async fn handle_callback(code: String) -> Result<GoogleUser> {
         .map_err(|e| anyhow!("Failed to parse Google user info: {e}. Raw: {user_info_text}"))?;
 
     Ok(user_info)
+}
+
+pub async fn verify_id_token(token: &str) -> Result<GoogleIdToken> {
+    let client = reqwest::Client::new();
+    let url = format!("https://oauth2.googleapis.com/tokeninfo?id_token={}", token);
+    
+    let response = client.get(&url).send().await?;
+    
+    if !response.status().is_success() {
+        let err_text = response.text().await?;
+        return Err(anyhow!("Google token verification failed: {}", err_text));
+    }
+    
+    let id_token_info = response.json::<GoogleIdToken>().await?;
+    
+    // Basic verification: check audience matches our client ID
+    let client_id = env::var("GOOGLE_CLIENT_ID").unwrap_or_default();
+    if !client_id.is_empty() && id_token_info.aud != client_id {
+        return Err(anyhow!("Token audience mismatch. Expected {}, got {}", client_id, id_token_info.aud));
+    }
+    
+    Ok(id_token_info)
 }

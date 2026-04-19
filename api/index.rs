@@ -129,6 +129,15 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 method_not_allowed()
             }
         }
+        "/api/v1/auth/google" => {
+            if method == "POST" {
+                let bytes = read_body(&mut req).await?;
+                let body: models::GoogleVerifyRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::google_verify(body).await)
+            } else {
+                method_not_allowed()
+            }
+        }
         "/api/v1/auth/google/login" => {
             if method == "GET" {
                 wrap(auth_handlers::google_login().await)
@@ -167,10 +176,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             }
         }
         "/api/v1/checkout/create-session" => {
-            if method == "POST" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                 let bytes = read_body(&mut req).await?;
                 let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(&bytes)?;
-                wrap(checkout_handlers::create_checkout_session(body).await)
+                wrap(checkout_handlers::create_checkout_session(auth_header.as_deref(), body).await)
             } else {
                 method_not_allowed()
             }

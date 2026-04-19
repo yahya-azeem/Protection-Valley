@@ -1,7 +1,7 @@
 // Auth handlers for the Protection Valley application. Updated: 2026-04-05T04:09Z
 use vercel_runtime::{Response, Error};
 use http::StatusCode;
-use crate::models::{LoginRequest, RegisterRequest};
+use crate::models::{LoginRequest, RegisterRequest, GoogleVerifyRequest};
 use crate::services::auth_service::AuthService;
 use uuid::Uuid;
 
@@ -86,11 +86,12 @@ pub async fn google_callback(code: String) -> Result<Response<String>, Error> {
                 email: google_user.email.clone(),
                 name: google_user.name,
                 role: crate::models::UserRole::Wholesale,
+                picture: Some(google_user.picture),
                 company: None,
                 created_at: chrono::Utc::now(),
             };
 
-            match crate::auth::generate_jwt(user.id, &user.email) {
+            match crate::auth::generate_jwt(user.id, &user.email, "wholesale") {
                 Ok(token) => {
                     let redirect_url = format!("{frontend_url}/?token={token}&wholesale=true");
 
@@ -114,6 +115,49 @@ pub async fn google_callback(code: String) -> Result<Response<String>, Error> {
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
             .body(serde_json::json!({ "error": "OAuth callback failed" }).to_string())?)
+        }
+    }
+}
+
+pub async fn google_verify(req: GoogleVerifyRequest) -> Result<Response<String>, Error> {
+    match crate::auth::google_provider::verify_id_token(&req.token).await {
+        Ok(token_info) => {
+            let user = crate::models::User {
+                id: generate_user_id(),
+                email: token_info.email.clone(),
+                name: token_info.name,
+                role: crate::models::UserRole::Wholesale,
+                picture: Some(token_info.picture),
+                company: None,
+                created_at: chrono::Utc::now(),
+            };
+
+            match crate::auth::generate_jwt(user.id, &user.email, "wholesale") {
+                Ok(token) => {
+                    let response = crate::models::AuthResponse {
+                        token,
+                        user,
+                    };
+                    Ok(Response::builder()
+                        .status(StatusCode::OK)
+                        .header("Content-Type", "application/json")
+                        .body(serde_json::to_string(&response)?)?)
+                }
+                Err(e) => {
+                    eprintln!("[google_verify] JWT error: {e}");
+                    Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": "Authentication is temporarily unavailable" }).to_string())?)
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("[google_verify] Token verification error: {e}");
+            Ok(Response::builder()
+            .status(StatusCode::UNAUTHORIZED)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": "Invalid Google token" }).to_string())?)
         }
     }
 }

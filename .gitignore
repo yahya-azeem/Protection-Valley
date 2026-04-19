@@ -88,6 +88,7 @@ typings/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 .env*.local
 
 # Stores VS Code state extensions, revisions, and more.
@@ -116,3 +117,6 @@ desktop.ini
 # Protection Valley Specific
 supabase/.temp/
 .agent/
+
+.vercel
+.env*.local

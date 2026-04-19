@@ -151,19 +151,28 @@ function createUserStore() {
   const stored: UserData | null = typeof localStorage !== 'undefined'
     ? JSON.parse(localStorage.getItem('user') || 'null')
     : null;
-  const { subscribe, set } = writable<UserData | null>(stored);
+  const { subscribe, set: baseSet, update } = writable<UserData | null>(stored);
 
   return {
     subscribe,
-    set,
-    logout() {
-      set(null);
+    set(user: UserData | null) {
+      baseSet(user);
       if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem('user');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('authToken');
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('userRole', (user.role || '').toLowerCase());
+          localStorage.setItem('authToken', (user as any).token || '');
+          isWholesale.set((user.role || '').toLowerCase() === 'wholesale');
+        } else {
+          localStorage.removeItem('user');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('authToken');
+          isWholesale.set(false);
+        }
       }
-      isWholesale.set(false);
+    },
+    logout() {
+      this.set(null);
       showToast('Session terminated');
     }
   };
