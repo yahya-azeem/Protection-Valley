@@ -9,7 +9,6 @@
     sizeFilter,
     colorFilter,
     textureFilter,
-    genericProductFilter,
     products
   } from '$lib/stores';
   import { CATEGORIES, PRICE_RANGES, SIZES } from '$lib/constants';
@@ -18,9 +17,7 @@
   let sortBy = $state<SortOption>('featured');
   let showMobileFilters = $state(false);
 
-  const genericProducts = $derived(
-    Array.from(new Set($products.map((p) => p.name))).sort((a, b) => a.localeCompare(b))
-  );
+
   const colors = $derived(
     Array.from(new Set($products.flatMap((p) => p.variants?.map((v) => v.color).filter(Boolean) || []))) as string[]
   );
@@ -51,9 +48,6 @@
     textureFilter.update((current) => (current === texture ? '' : texture));
   }
 
-  function toggleGeneric(productName: string) {
-    genericProductFilter.update((current) => (current === productName ? '' : productName));
-  }
 
   function resetFilters() {
     setCategory('All');
@@ -61,7 +55,7 @@
     sizeFilter.set('');
     colorFilter.set('');
     textureFilter.set('');
-    genericProductFilter.set('');
+
   }
 
   let sortedProducts = $derived.by(() => {
@@ -115,22 +109,6 @@
           </div>
         </div>
 
-        <div>
-          <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 mb-4">Generic Product</h3>
-          <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
-            {#each genericProducts as productName}
-              <button
-                onclick={() => toggleGeneric(productName)}
-                class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
-                  {$genericProductFilter === productName
-                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
-              >
-                {productName}
-              </button>
-            {/each}
-          </div>
-        </div>
 
         <div>
           <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 mb-4">Price Range</h3>
