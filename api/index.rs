@@ -170,7 +170,36 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         }
         "/api/v1/auth/me" => {
             if method == "GET" {
-                wrap(auth_handlers::get_me().await)
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                wrap(auth_handlers::get_me(auth_header.as_deref()).await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/forgot-password" => {
+            if method == "POST" {
+                let bytes = read_body(&mut req).await?;
+                let body: models::ForgotPasswordRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::forgot_password(body).await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/reset-password" => {
+            if method == "POST" {
+                let bytes = read_body(&mut req).await?;
+                let body: models::ResetPasswordRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::reset_password(body).await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/auth/complete-profile" => {
+            if method == "POST" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                let bytes = read_body(&mut req).await?;
+                let body: models::CompleteProfileRequest = serde_json::from_slice(&bytes)?;
+                wrap(auth_handlers::complete_profile(auth_header.as_deref(), body).await)
             } else {
                 method_not_allowed()
             }
