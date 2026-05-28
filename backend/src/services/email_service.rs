@@ -140,4 +140,60 @@ impl EmailService {
 
         Ok(())
     }
+
+    pub async fn send_password_reset_email(&self, to_email: &str, token: &str) -> Result<()> {
+        let frontend_url = env::var("FRONTEND_URL").unwrap_or_else(|_| "https://protectionvalley.com".to_string());
+        let reset_link = format!("{}/reset-password?token={}", frontend_url.trim_end_matches('/'), token);
+
+        println!("==========================================");
+        println!("PASSWORD RESET LINK FOR: {}", to_email);
+        println!("LINK: {}", reset_link);
+        println!("==========================================");
+
+        if self.smtp_host.is_empty() || self.smtp_user.is_empty() {
+            eprintln!("[email_service] SMTP not configured. Logged password reset link to console.");
+            return Ok(());
+        }
+
+        let html_content = format!(
+            r#"
+            <html>
+            <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px;">
+                    <h2 style="color: #FF8800;">Password Reset Request</h2>
+                    <p>We received a request to reset the password for your Protection Valley wholesale account.</p>
+                    <p>Please click the button below to set a new password. This link is valid for 1 hour.</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{reset_link}" style="background-color: #FF8800; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Reset Password</a>
+                    </div>
+                    
+                    <p>If the button doesn't work, you can copy and paste the following link into your browser:</p>
+                    <p style="word-break: break-all; background-color: #f9f9f9; padding: 10px; border-radius: 3px;">{reset_link}</p>
+                    
+                    <hr>
+                    <p style="font-size: 12px; color: #888;">If you did not request this reset, you can safely ignore this email.</p>
+                </div>
+            </body>
+            </html>
+            "#,
+            reset_link = reset_link
+        );
+
+        let email = Message::builder()
+            .from(self.smtp_from.parse()?)
+            .to(to_email.parse()?)
+            .subject("Reset Your Protection Valley Password")
+            .singlepart(SinglePart::html(html_content))?;
+
+        let creds = Credentials::new(self.smtp_user.clone(), self.smtp_pass.clone());
+        let mailer: AsyncSmtpTransport<Tokio1Executor> = 
+            AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&self.smtp_host)?
+                .credentials(creds)
+                .port(self.smtp_port)
+                .build();
+
+        mailer.send(email).await.map_err(|e| anyhow!("SMTP Error: {}", e))?;
+        Ok(())
+    }
 }

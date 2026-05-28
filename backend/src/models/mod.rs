@@ -145,9 +145,17 @@ pub struct User {
     pub id: i64,
     pub email: String,
     pub name: String,
+    pub password_hash: Option<String>,
     pub role: UserRole,
     pub picture: Option<String>,
     pub company: Option<String>,
+    pub sales_tax_id: Option<String>,
+    pub sales_tax_proof_name: Option<String>,
+    pub sales_tax_proof_data: Option<String>,
+    pub is_wholesale_approved: Option<bool>,
+    pub google_id: Option<String>,
+    pub reset_token: Option<String>,
+    pub reset_token_expires_at: Option<DateTime<Utc>>,
     pub created_at: DateTime<Utc>,
 }
 
@@ -180,6 +188,28 @@ pub struct RegisterRequest {
     pub name: String,
     pub role: Option<UserRole>,
     pub company: Option<String>,
+    pub sales_tax_id: Option<String>,
+    pub sales_tax_proof_name: Option<String>,
+    pub sales_tax_proof_data: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ForgotPasswordRequest {
+    pub email: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResetPasswordRequest {
+    pub token: String,
+    pub new_password: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompleteProfileRequest {
+    pub company: String,
+    pub sales_tax_id: String,
+    pub sales_tax_proof_name: String,
+    pub sales_tax_proof_data: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
