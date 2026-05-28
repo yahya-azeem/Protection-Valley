@@ -31,17 +31,12 @@ pub struct GoogleUser {
 pub struct GoogleIdToken {
     pub iss: String,
     pub sub: String,
-    pub azp: String,
     pub aud: String,
-    pub iat: String,
-    pub exp: String,
     pub email: String,
-    pub email_verified: String,
+    #[serde(default)]
     pub name: String,
+    #[serde(default)]
     pub picture: String,
-    pub given_name: String,
-    pub family_name: String,
-    pub locale: String,
 }
 
 pub fn get_google_client() -> Result<BasicClient> {
