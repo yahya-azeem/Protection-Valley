@@ -2,7 +2,7 @@
   import '../app.css';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import { isWholesale, showPage, showToast, loadProducts, cart } from '$lib/stores';
+  import { isWholesale, showPage, showToast, loadProducts, cart, currentUser } from '$lib/stores';
   import Navbar from '$lib/components/Navbar.svelte';
   import CartSidebar from '$lib/components/CartSidebar.svelte';
   import SearchOverlay from '$lib/components/SearchOverlay.svelte';
@@ -11,8 +11,9 @@
 
   let { children } = $props();
 
-  onMount(() => {
+  onMount(async () => {
     loadProducts();
+    await currentUser.refreshSession();
 
     const token = $page.url.searchParams.get('token');
     const wholesale = $page.url.searchParams.get('wholesale');

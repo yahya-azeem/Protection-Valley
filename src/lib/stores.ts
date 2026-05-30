@@ -161,11 +161,18 @@ function createUserStore() {
           localStorage.setItem('userRole', (user.role || '').toLowerCase());
           localStorage.setItem('authToken', (user as any).token || '');
           isWholesale.set((user.role || '').toLowerCase() === 'wholesale' || (user.role || '').toLowerCase() === 'admin');
+          if (typeof document !== 'undefined') {
+            const isAdminUser = (user.role || '').toLowerCase() === 'admin';
+            document.cookie = `isAdmin=${isAdminUser}; path=/; max-age=31536000; SameSite=Lax`;
+          }
         } else {
           localStorage.removeItem('user');
           localStorage.removeItem('userRole');
           localStorage.removeItem('authToken');
           isWholesale.set(false);
+          if (typeof document !== 'undefined') {
+            document.cookie = `isAdmin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+          }
         }
         productsLoaded = false;
         loadProducts();
@@ -174,6 +181,29 @@ function createUserStore() {
     logout() {
       this.set(null);
       showToast('Session terminated');
+    },
+    async refreshSession() {
+      if (typeof localStorage === 'undefined') return;
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API_CONFIG.baseUrl}/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const user = await res.json();
+          this.set({
+            email: user.email,
+            name: user.name,
+            picture: user.picture,
+            role: user.role,
+            token: token
+          });
+        }
+      } catch (e) {
+        console.error('Failed to refresh user session:', e);
+      }
     }
   };
 }
