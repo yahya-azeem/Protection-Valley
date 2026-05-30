@@ -42,10 +42,20 @@
     goto(`/product/${product.id}`);
   }
 
+  function escapeHtml(unsafe: string): string {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function highlight(text: string): string {
-    if (!query.trim()) return text;
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<span class="text-primary">$1</span>');
+    const escapedText = escapeHtml(text);
+    if (!query.trim()) return escapedText;
+    const escapedQuery = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escapedText.replace(new RegExp(`(${escapedQuery})`, 'gi'), '<span class="text-primary">$1</span>');
   }
 </script>
 

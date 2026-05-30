@@ -185,6 +185,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "urlencoding",
  "uuid",
  "vercel_runtime",
 ]

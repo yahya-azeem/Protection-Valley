@@ -23,7 +23,9 @@ impl Default for OrderService {
 impl OrderService {
     pub fn new() -> Self {
         let supabase_url = env::var("SUPABASE_URL").unwrap_or_else(|_| "https://fnirqccmtjzibjhgzyay.supabase.co".to_string());
-        let supabase_key = env::var("SUPABASE_ANON_KEY").unwrap_or_default();
+        let supabase_key = env::var("SUPABASE_SERVICE_ROLE_KEY")
+            .or_else(|_| env::var("SUPABASE_ANON_KEY"))
+            .unwrap_or_default();
         
         Self {
             client: reqwest::Client::new(),
