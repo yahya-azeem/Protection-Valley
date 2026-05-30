@@ -1,6 +1,7 @@
 pub mod google_provider;
 
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
