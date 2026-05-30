@@ -5,6 +5,7 @@
 
 <svelte:head>
   <title>Contact Support | {BUSINESS.name}</title>
+  <meta name="description" content="Get in touch with Protection Valley support. Contact us for inquiries about wholesale contractor pricing, orders, and premium protective workwear." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24">

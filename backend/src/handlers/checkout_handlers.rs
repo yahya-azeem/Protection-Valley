@@ -5,8 +5,6 @@ use crate::services::product_service::ProductService;
 use crate::auth::{decode_jwt, extract_token};
 use std::env;
 
-const WHOLESALE_DISCOUNT: f64 = 0.30; // 30% off retail
-
 pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
     let CreateCheckoutSessionRequest {
         items,
@@ -52,11 +50,30 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     let client = stripe::Client::new(stripe_secret_key);
     let product_service = ProductService::new();
     
-    // Check if user is wholesale
-    let is_wholesale = extract_token(auth_header)
-        .and_then(|t| decode_jwt(t).ok())
-        .map(|c| c.role == "wholesale")
+    // Decode claims
+    let claims = extract_token(auth_header)
+        .and_then(|t| decode_jwt(t).ok());
+
+    let is_wholesale = claims.as_ref()
+        .map(|c| c.role == "wholesale" || c.role == "admin")
         .unwrap_or(false);
+
+    let (wholesale_discount, custom_prices) = if is_wholesale {
+        if let Some(ref c) = claims {
+            let auth_service = crate::services::auth_service::AuthService::new();
+            let product_service = ProductService::new();
+            
+            let user = auth_service.get_user_by_id(c.user_id).await.ok().flatten();
+            let discount = user.and_then(|u| u.wholesale_discount).unwrap_or(0.30);
+            let prices = product_service.get_customer_specific_prices(c.user_id).await.unwrap_or_default();
+            
+            (discount, prices)
+        } else {
+            (0.30, Vec::new())
+        }
+    } else {
+        (0.30, Vec::new())
+    };
 
     let mut line_items = Vec::new();
 
@@ -96,7 +113,15 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
                 let images = image.map(|url| vec![url]);
 
                 let unit_price = if is_wholesale {
-                    v.price * (1.0 - WHOLESALE_DISCOUNT)
+                    let custom = custom_prices.iter()
+                        .find(|p| p.variant_id == v.id)
+                        .map(|p| p.custom_price);
+                    
+                    if let Some(price) = custom {
+                        price
+                    } else {
+                        v.price * (1.0 - wholesale_discount)
+                    }
                 } else {
                     v.price
                 };

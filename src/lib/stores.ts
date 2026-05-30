@@ -160,13 +160,15 @@ function createUserStore() {
           localStorage.setItem('user', JSON.stringify(user));
           localStorage.setItem('userRole', (user.role || '').toLowerCase());
           localStorage.setItem('authToken', (user as any).token || '');
-          isWholesale.set((user.role || '').toLowerCase() === 'wholesale');
+          isWholesale.set((user.role || '').toLowerCase() === 'wholesale' || (user.role || '').toLowerCase() === 'admin');
         } else {
           localStorage.removeItem('user');
           localStorage.removeItem('userRole');
           localStorage.removeItem('authToken');
           isWholesale.set(false);
         }
+        productsLoaded = false;
+        loadProducts();
       }
     },
     logout() {
@@ -189,7 +191,14 @@ export async function loadProducts() {
   productsLoaded = true;
 
   try {
-    const res = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.products).catch(() => null);
+    const headers: Record<string, string> = {};
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+    const res = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.products, { headers }).catch(() => null);
     if (res && res.ok) {
       const data = await res.json();
       products.set(data);

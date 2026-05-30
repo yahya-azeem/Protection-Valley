@@ -27,15 +27,23 @@
     }
   });
 
-  // Reactive page title
-  let title = $derived(data.product ? `${data.product.name} - Protection Valley` : 'Product Details');
+  // Reactive page title and SEO values
+  let title = $derived(data.product ? `${data.product.name} | Protection Valley` : 'Product Details | Protection Valley');
+  let description = $derived(data.product?.description 
+    ? (data.product.description.length > 155 ? `${data.product.description.slice(0, 155)}...` : data.product.description)
+    : 'Premium protective workwear and industrial contractor gear from Protection Valley.');
 </script>
 
 <svelte:head>
   <title>{title}</title>
-  {#if data.product}
-    <meta name="description" content={data.product.description?.slice(0, 160) || ''} />
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="product" />
+  {#if data.product?.image_url}
+    <meta property="og:image" content={data.product.image_url.startsWith('http') ? data.product.image_url : `https://protectionvalley.com${data.product.image_url}`} />
   {/if}
+  <meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
 <div class="pt-20">

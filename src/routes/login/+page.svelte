@@ -121,6 +121,7 @@
 
 <svelte:head>
   <title>Wholesale Portal | Protection Valley</title>
+  <meta name="description" content="Sign in to the Protection Valley Wholesale Portal to access contractor specific pricing, bulk ordering, and tax-exempt safety gear." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">

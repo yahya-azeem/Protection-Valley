@@ -134,4 +134,74 @@ impl ProductService {
     pub async fn delete_product(&self, _id: i64) -> Result<bool, String> {
         Err("Delete product via API not implemented yet.".into())
     }
+
+    pub async fn get_customer_specific_prices(&self, user_id: i64) -> Result<Vec<crate::models::CustomerSpecificPrice>, String> {
+        let url = format!("{}/rest/v1/customer_specific_prices?user_id=eq.{}&select=*", self.supabase_url, user_id);
+        let response = self.client
+            .get(&url)
+            .headers(self.headers())
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        let prices: Vec<crate::models::CustomerSpecificPrice> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse custom prices: {}", e))?;
+
+        Ok(prices)
+    }
+
+    pub async fn upsert_customer_price(&self, user_id: i64, variant_id: i64, custom_price: f64) -> Result<crate::models::CustomerSpecificPrice, String> {
+        let url = format!("{}/rest/v1/customer_specific_prices", self.supabase_url);
+        let payload = serde_json::json!({
+            "user_id": user_id,
+            "variant_id": variant_id,
+            "custom_price": custom_price,
+            "updated_at": chrono::Utc::now()
+        });
+
+        let response = self.client
+            .post(&url)
+            .headers(self.headers())
+            .header("Prefer", "return=representation,resolution=merge-duplicates")
+            .json(&payload)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase upsert error: {}", error));
+        }
+
+        let created_prices: Vec<crate::models::CustomerSpecificPrice> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse upserted custom price: {}", e))?;
+
+        created_prices.into_iter().next()
+            .ok_or_else(|| "Failed to retrieve upserted custom price".to_string())
+    }
+
+    pub async fn delete_customer_price(&self, user_id: i64, variant_id: i64) -> Result<bool, String> {
+        let url = format!("{}/rest/v1/customer_specific_prices?user_id=eq.{}&variant_id=eq.{}", self.supabase_url, user_id, variant_id);
+        
+        let response = self.client
+            .delete(&url)
+            .headers(self.headers())
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase delete error: {}", error));
+        }
+
+        Ok(true)
+    }
 }

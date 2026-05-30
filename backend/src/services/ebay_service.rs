@@ -60,6 +60,7 @@ impl EbayService {
                         image_url: Some("/images/toolbelt-1.jpg".into()),
                         images: vec!["/images/toolbelt-1.jpg".into()],
                         in_stock: true,
+                        wholesale_price: None,
                         created_at: now,
                         updated_at: now,
                     }
@@ -121,6 +122,7 @@ impl EbayService {
                 image_url: image_url.clone(),
                 images: image_url.map(|u| vec![u]).unwrap_or_default(),
                 in_stock: true,
+                wholesale_price: None,
                 created_at: now,
                 updated_at: now,
             };

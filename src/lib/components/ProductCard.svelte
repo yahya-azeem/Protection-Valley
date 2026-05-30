@@ -9,6 +9,7 @@
   
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
+  let wholesalePrice = $derived(displayVariant?.wholesale_price ?? price * (1 - WHOLESALE_DISCOUNT));
   let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/logo.png`);
 </script>
 
@@ -45,7 +46,7 @@
     <div class="pt-1 flex items-center justify-between">
       <div class="flex items-baseline gap-1.5">
         <span class="text-sm md:text-base font-serif text-white">
-          ${$isWholesale ? (price * (1 - WHOLESALE_DISCOUNT)).toFixed(2) : price.toFixed(2)}
+          ${$isWholesale ? wholesalePrice.toFixed(2) : price.toFixed(2)}
         </span>
         {#if $isWholesale}
           <span class="text-[9px] text-zinc-600 line-through">${price.toFixed(2)}</span>

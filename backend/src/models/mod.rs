@@ -31,6 +31,8 @@ pub struct ProductVariant {
     pub image_url: Option<String>,
     pub images: Vec<String>,
     pub in_stock: bool,
+    #[serde(default)]
+    pub wholesale_price: Option<f64>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -153,6 +155,7 @@ pub struct User {
     pub sales_tax_proof_name: Option<String>,
     pub sales_tax_proof_data: Option<String>,
     pub is_wholesale_approved: Option<bool>,
+    pub wholesale_discount: Option<f64>,
     pub google_id: Option<String>,
     pub reset_token: Option<String>,
     pub reset_token_expires_at: Option<DateTime<Utc>>,
@@ -245,3 +248,26 @@ pub struct SyncResponse {
     pub updated: i32,
     pub errors: Vec<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CustomerSpecificPrice {
+    pub id: i64,
+    pub user_id: i64,
+    pub variant_id: i64,
+    pub custom_price: f64,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpsertCustomerPriceRequest {
+    pub user_id: i64,
+    pub variant_id: i64,
+    pub custom_price: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateUserDiscountRequest {
+    pub wholesale_discount: f64,
+}
+

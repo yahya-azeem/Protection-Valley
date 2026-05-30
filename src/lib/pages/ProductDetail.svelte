@@ -32,7 +32,7 @@
       variant_id: currentVariant.id,
       ebay_id: currentVariant.ebay_item_id || '',
       name: `${sp.name} - ${currentVariant.color || ''} ${currentVariant.size || ''}`.trim(),
-      price: $isWholesale ? currentVariant.price * (1 - WHOLESALE_DISCOUNT) : currentVariant.price,
+      price: $isWholesale ? (currentVariant.wholesale_price ?? currentVariant.price * (1 - WHOLESALE_DISCOUNT)) : currentVariant.price,
       image: currentVariant.image_url || sp.image_url || '/images/placeholder.png',
       color: currentVariant.color,
       size: currentVariant.size,
@@ -170,7 +170,7 @@
           <!-- Price -->
           <div class="flex items-baseline gap-4 mb-2">
             <span class="text-3xl md:text-4xl font-serif text-primary">
-              ${($isWholesale ? (currentVariant?.price || 0) * (1 - WHOLESALE_DISCOUNT) : (currentVariant?.price || 0)).toFixed(2)}
+              ${($isWholesale ? (currentVariant?.wholesale_price ?? (currentVariant?.price || 0) * (1 - WHOLESALE_DISCOUNT)) : (currentVariant?.price || 0)).toFixed(2)}
             </span>
             {#if $isWholesale}
               <span class="text-lg text-zinc-600 line-through">${(currentVariant?.price || 0).toFixed(2)}</span>

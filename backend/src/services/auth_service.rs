@@ -191,13 +191,14 @@ impl AuthService {
             email: email_trimmed,
             name: req.name,
             password_hash: Some(hashed_password),
-            role,
+            role: role.clone(),
             picture: None,
             company: req.company,
             sales_tax_id: req.sales_tax_id,
             sales_tax_proof_name: req.sales_tax_proof_name,
             sales_tax_proof_data: req.sales_tax_proof_data,
             is_wholesale_approved: Some(true),
+            wholesale_discount: if let UserRole::Wholesale = role { Some(0.30) } else { None },
             google_id: None,
             reset_token: None,
             reset_token_expires_at: None,
@@ -295,6 +296,7 @@ impl AuthService {
             sales_tax_proof_name: None,
             sales_tax_proof_data: None,
             is_wholesale_approved: Some(false),
+            wholesale_discount: None,
             google_id: Some(google_id.to_string()),
             reset_token: None,
             reset_token_expires_at: None,
@@ -439,6 +441,58 @@ impl AuthService {
             .headers(self.headers())
             .header("Prefer", "return=representation")
             .json(&payload)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase update error: {}", error));
+        }
+
+        let updated_users: Vec<User> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse updated user: {}", e))?;
+
+        updated_users.into_iter().next()
+            .ok_or_else(|| "Failed to retrieve updated user".to_string())
+    }
+
+    /// Fetches all wholesale users
+    pub async fn get_all_wholesale_users(&self) -> Result<Vec<User>, String> {
+        let url = format!("{}/rest/v1/wholesale_users?role=eq.wholesale&select=*", self.supabase_url);
+        
+        let response = self.client
+            .get(&url)
+            .headers(self.headers())
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        let users: Vec<User> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse users: {}", e))?;
+
+        Ok(users)
+    }
+
+    /// Updates a user's wholesale discount rate
+    pub async fn update_user_discount(&self, user_id: i64, discount: f64) -> Result<User, String> {
+        let url = format!("{}/rest/v1/wholesale_users?id=eq.{}", self.supabase_url, user_id);
+        
+        let response = self.client
+            .patch(&url)
+            .headers(self.headers())
+            .header("Prefer", "return=representation")
+            .json(&serde_json::json!({
+                "wholesale_discount": discount,
+                "updated_at": Utc::now()
+            }))
             .send()
             .await
             .map_err(|e| format!("Request failed: {}", e))?;
