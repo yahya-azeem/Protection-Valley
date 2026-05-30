@@ -4,6 +4,7 @@
 
 <svelte:head>
   <title>Terms of Service | Protection Valley</title>
+  <meta name="description" content="Review the Protection Valley Terms of Service regarding commercial use, wholesale accounts, returns, and warranty policies for premium protection gear." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24">

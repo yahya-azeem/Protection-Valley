@@ -58,6 +58,7 @@
 
 <svelte:head>
   <title>Reset Password | Protection Valley</title>
+  <meta name="description" content="Choose a new secure password for your Protection Valley wholesale contractor account." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">

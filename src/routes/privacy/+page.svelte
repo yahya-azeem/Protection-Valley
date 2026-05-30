@@ -4,6 +4,7 @@
 
 <svelte:head>
   <title>Privacy Policy | Protection Valley</title>
+  <meta name="description" content="Read the Protection Valley Privacy Policy to understand how we manage and protect your personal information, account profiles, and transaction data." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24">

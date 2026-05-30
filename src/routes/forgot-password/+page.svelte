@@ -39,6 +39,7 @@
 
 <svelte:head>
   <title>Forgot Password | Protection Valley</title>
+  <meta name="description" content="Request a password reset link to recover access to your Protection Valley wholesale contractor account." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">

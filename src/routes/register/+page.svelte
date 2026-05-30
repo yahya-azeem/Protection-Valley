@@ -90,6 +90,7 @@
 
 <svelte:head>
   <title>Wholesale Registration | Protection Valley</title>
+  <meta name="description" content="Register for a wholesale contractor account at Protection Valley. Submit your company profile and sales tax ID to unlock professional bulk pricing." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">

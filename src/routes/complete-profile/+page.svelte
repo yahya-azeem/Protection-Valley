@@ -95,6 +95,7 @@
 
 <svelte:head>
   <title>Complete Wholesale Profile | Protection Valley</title>
+  <meta name="description" content="Submit your company sales tax registration details to verify and activate your wholesale access at Protection Valley." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">

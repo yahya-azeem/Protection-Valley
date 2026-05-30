@@ -123,6 +123,14 @@
                   <User class="w-4 h-4 text-zinc-500" />
                 </div>
               {/if}
+              {#if $currentUser.role === 'admin'}
+                <a 
+                  href="/admin"
+                  class="text-[10px] font-bold text-white hover:text-primary transition-lux uppercase tracking-tighter border border-white/20 px-2 py-1 rounded-sm ml-2"
+                >
+                  Admin
+                </a>
+              {/if}
               <button 
                 onclick={() => currentUser.logout()}
                 class="text-[10px] font-bold text-primary hover:text-white transition-lux uppercase tracking-tighter border border-primary/20 px-2 py-1 rounded-sm ml-2"

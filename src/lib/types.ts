@@ -19,6 +19,7 @@ export interface ProductVariant {
   image_url?: string;
   images: string[];
   in_stock: boolean;
+  wholesale_price?: number;
   created_at: string;
   updated_at: string;
 }
@@ -56,6 +57,7 @@ export interface UserData {
   token?: string;
   provider?: string;
   picture?: string;
+  wholesale_discount?: number;
 }
 
 

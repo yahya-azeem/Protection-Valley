@@ -3,7 +3,7 @@ use http::StatusCode;
 use http_body_util::BodyExt;
 use serde_json::json;
 
-use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers, review_handlers};
+use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers, review_handlers, admin_handlers};
 use backend_v2_lib::models;
 
 #[tokio::main]
@@ -43,7 +43,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
     match path.as_str() {
         "/api/v1/products" => {
             match method.as_str() {
-                "GET" => wrap(product_handlers::get_products().await),
+                "GET" => {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(product_handlers::get_products(auth_header.as_deref()).await)
+                }
                 "POST" => {
                     let bytes = read_body(&mut req).await?;
                     let body: models::CreateProductRequest = serde_json::from_slice(&bytes)?;
@@ -56,7 +59,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             let id_str = &p["/api/v1/products/".len()..];
             if let Ok(id) = id_str.parse::<i64>() {
                 match method.as_str() {
-                    "GET" => wrap(product_handlers::get_product(id).await),
+                    "GET" => {
+                        let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                        wrap(product_handlers::get_product(id, auth_header.as_deref()).await)
+                    }
                     "PUT" => {
                         let bytes = read_body(&mut req).await?;
                         let body: models::UpdateProductRequest = serde_json::from_slice(&bytes)?;
@@ -212,6 +218,74 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 wrap(checkout_handlers::create_checkout_session(auth_header.as_deref(), body).await)
             } else {
                 method_not_allowed()
+            }
+        }
+        "/api/v1/admin/wholesale-users" => {
+            if method == "GET" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                wrap(admin_handlers::get_wholesale_users(auth_header.as_deref()).await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        p if p.starts_with("/api/v1/admin/wholesale-users/") => {
+            let id_str = &p["/api/v1/admin/wholesale-users/".len()..];
+            if let Ok(id) = id_str.parse::<i64>() {
+                if method == "PATCH" {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    let bytes = read_body(&mut req).await?;
+                    let body: models::UpdateUserDiscountRequest = serde_json::from_slice(&bytes)?;
+                    wrap(admin_handlers::update_user_discount(auth_header.as_deref(), id, body).await)
+                } else {
+                    method_not_allowed()
+                }
+            } else {
+                not_found()
+            }
+        }
+        "/api/v1/admin/customer-prices" => {
+            let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+            match method.as_str() {
+                "GET" => {
+                    let query = req.uri().query().unwrap_or("");
+                    let user_id = query.split('&')
+                        .find(|s| s.starts_with("user_id="))
+                        .and_then(|s| s.split('=').nth(1))
+                        .and_then(|s| s.parse::<i64>().ok());
+                    
+                    if let Some(uid) = user_id {
+                        wrap(admin_handlers::get_customer_prices(auth_header.as_deref(), uid).await)
+                    } else {
+                        Ok(Response::builder()
+                            .status(StatusCode::BAD_REQUEST)
+                            .body(ResponseBody::from("Missing user_id parameter"))?)
+                    }
+                }
+                "POST" => {
+                    let bytes = read_body(&mut req).await?;
+                    let body: models::UpsertCustomerPriceRequest = serde_json::from_slice(&bytes)?;
+                    wrap(admin_handlers::upsert_customer_price(auth_header.as_deref(), body).await)
+                }
+                "DELETE" => {
+                    let query = req.uri().query().unwrap_or("");
+                    let user_id = query.split('&')
+                        .find(|s| s.starts_with("user_id="))
+                        .and_then(|s| s.split('=').nth(1))
+                        .and_then(|s| s.parse::<i64>().ok());
+                    let variant_id = query.split('&')
+                        .find(|s| s.starts_with("variant_id="))
+                        .and_then(|s| s.split('=').nth(1))
+                        .and_then(|s| s.parse::<i64>().ok());
+                    
+                    if let (Some(uid), Some(vid)) = (user_id, variant_id) {
+                        wrap(admin_handlers::delete_customer_price(auth_header.as_deref(), uid, vid).await)
+                    } else {
+                        Ok(Response::builder()
+                            .status(StatusCode::BAD_REQUEST)
+                            .body(ResponseBody::from("Missing user_id or variant_id parameter"))?)
+                    }
+                }
+                _ => method_not_allowed(),
             }
         }
         "/api/v1/ebay/sync" => {
