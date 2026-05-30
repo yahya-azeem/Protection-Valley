@@ -2,7 +2,8 @@ use std::env;
 use serde::{Deserialize, Serialize};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use crate::models::Address;
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
+use anyhow::Result;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ShippingLabel {
