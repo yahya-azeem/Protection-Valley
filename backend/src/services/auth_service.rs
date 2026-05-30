@@ -20,7 +20,9 @@ impl Default for AuthService {
 impl AuthService {
     pub fn new() -> Self {
         let supabase_url = env::var("SUPABASE_URL").unwrap_or_else(|_| "https://fnirqccmtjzibjhgzyay.supabase.co".to_string());
-        let supabase_key = env::var("SUPABASE_ANON_KEY").unwrap_or_default();
+        let supabase_key = env::var("SUPABASE_SERVICE_ROLE_KEY")
+            .or_else(|_| env::var("SUPABASE_ANON_KEY"))
+            .unwrap_or_default();
 
         Self {
             client: reqwest::Client::new(),
@@ -43,7 +45,7 @@ impl AuthService {
 
     /// Fetches a user by email from Supabase
     pub async fn get_user_by_email(&self, email: &str) -> Result<Option<User>, String> {
-        let url = format!("{}/rest/v1/wholesale_users?email=eq.{}&select=*", self.supabase_url, email);
+        let url = format!("{}/rest/v1/wholesale_users?email=eq.{}&select=*", self.supabase_url, urlencoding::encode(email));
         
         let response = self.client
             .get(&url)

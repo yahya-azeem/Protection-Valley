@@ -53,7 +53,44 @@ pub async fn get_product(id: i64, auth_header: Option<&str>) -> Result<Response<
     }
 }
 
-pub async fn create_product(req: CreateProductRequest) -> Result<Response<String>, Error> {
+fn verify_admin(auth_header: Option<&str>) -> Result<(), Response<String>> {
+    let token = match crate::auth::extract_token(auth_header) {
+        Some(t) => t,
+        None => {
+            return Err(Response::builder()
+                .status(StatusCode::UNAUTHORIZED)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": "Authentication token missing" }).to_string())
+                .unwrap())
+        }
+    };
+
+    let claims = match crate::auth::decode_jwt(token) {
+        Ok(c) => c,
+        Err(e) => {
+            return Err(Response::builder()
+                .status(StatusCode::UNAUTHORIZED)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": format!("Invalid token: {}", e) }).to_string())
+                .unwrap())
+        }
+    };
+
+    if claims.role != "admin" {
+        return Err(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": "Access denied. Admin role required." }).to_string())
+            .unwrap());
+    }
+
+    Ok(())
+}
+
+pub async fn create_product(auth_header: Option<&str>, req: CreateProductRequest) -> Result<Response<String>, Error> {
+    if let Err(err_resp) = verify_admin(auth_header) {
+        return Ok(err_resp);
+    }
     let service = ProductService::new();
     
     match service.create_product(req).await {
@@ -68,7 +105,10 @@ pub async fn create_product(req: CreateProductRequest) -> Result<Response<String
     }
 }
 
-pub async fn update_product(id: i64, req: UpdateProductRequest) -> Result<Response<String>, Error> {
+pub async fn update_product(auth_header: Option<&str>, id: i64, req: UpdateProductRequest) -> Result<Response<String>, Error> {
+    if let Err(err_resp) = verify_admin(auth_header) {
+        return Ok(err_resp);
+    }
     let service = ProductService::new();
     
     match service.update_product(id, req).await {
@@ -87,7 +127,10 @@ pub async fn update_product(id: i64, req: UpdateProductRequest) -> Result<Respon
     }
 }
 
-pub async fn delete_product(id: i64) -> Result<Response<String>, Error> {
+pub async fn delete_product(auth_header: Option<&str>, id: i64) -> Result<Response<String>, Error> {
+    if let Err(err_resp) = verify_admin(auth_header) {
+        return Ok(err_resp);
+    }
     let service = ProductService::new();
     
     match service.delete_product(id).await {

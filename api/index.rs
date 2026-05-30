@@ -48,9 +48,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                     wrap(product_handlers::get_products(auth_header.as_deref()).await)
                 }
                 "POST" => {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                     let bytes = read_body(&mut req).await?;
                     let body: models::CreateProductRequest = serde_json::from_slice(&bytes)?;
-                    wrap(product_handlers::create_product(body).await)
+                    wrap(product_handlers::create_product(auth_header.as_deref(), body).await)
                 }
                 _ => method_not_allowed(),
             }
@@ -64,11 +65,15 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                         wrap(product_handlers::get_product(id, auth_header.as_deref()).await)
                     }
                     "PUT" => {
+                        let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                         let bytes = read_body(&mut req).await?;
                         let body: models::UpdateProductRequest = serde_json::from_slice(&bytes)?;
-                        wrap(product_handlers::update_product(id, body).await)
+                        wrap(product_handlers::update_product(auth_header.as_deref(), id, body).await)
                     }
-                    "DELETE" => wrap(product_handlers::delete_product(id).await),
+                    "DELETE" => {
+                        let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                        wrap(product_handlers::delete_product(auth_header.as_deref(), id).await)
+                    }
                     _ => method_not_allowed(),
                 }
             } else {
