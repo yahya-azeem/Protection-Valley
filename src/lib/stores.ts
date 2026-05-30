@@ -164,6 +164,8 @@ function createUserStore() {
           if (typeof document !== 'undefined') {
             const isAdminUser = (user.role || '').toLowerCase() === 'admin';
             document.cookie = `isAdmin=${isAdminUser}; path=/; max-age=31536000; SameSite=Lax`;
+            const token = (user as any).token || '';
+            document.cookie = `authToken=${token}; path=/; max-age=31536000; SameSite=Lax`;
           }
         } else {
           localStorage.removeItem('user');
@@ -172,6 +174,7 @@ function createUserStore() {
           isWholesale.set(false);
           if (typeof document !== 'undefined') {
             document.cookie = `isAdmin=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
+            document.cookie = `authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax`;
           }
         }
         productsLoaded = false;
