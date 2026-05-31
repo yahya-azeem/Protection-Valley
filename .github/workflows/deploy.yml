@@ -141,7 +141,7 @@ jobs:
           target: ${{ env.DEPLOYMENT_URL }}
           allow_issue_writing: false
           # Change fail_action to true if you want to block deployment on any vulnerability detection
-          fail_action: false
+          fail_action: true
 
       - name: Deploy to Production
         if: steps.changes.outputs.relevant == 'true'
