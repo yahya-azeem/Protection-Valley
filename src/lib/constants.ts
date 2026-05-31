@@ -12,8 +12,8 @@ export const BUSINESS = {
     zip: '75229',
     full: '11456 Harry Hines Blvd #103, Dallas, TX 75229',
   },
-  phone: '(469) 305-1119',
-  email: 'HQ@PROTECTIONVALLEY.COM',
+  phone: '+1 469 955 3584',
+  email: 'azeem@protectionvalley.com',
   hours: 'Mon – Fri, 08:00 – 18:00 CST',
   mapsEmbedUrl:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3351.3!2d-96.8903!3d32.8738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864e9f032b4a6c7b%3A0x1234567890abcdef!2s11456+Harry+Hines+Blvd+%23103%2C+Dallas%2C+TX+75229!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus',
