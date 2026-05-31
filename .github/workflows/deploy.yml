@@ -127,6 +127,22 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy
+      - name: Deploy to Preview
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "DEPLOYMENT_URL=$DEPLOYMENT_URL" >> $GITHUB_ENV
+
+      # Scan the Preview deployment using OWASP ZAP baseline scanner
+      - name: ZAP Baseline Scan
+        if: steps.changes.outputs.relevant == 'true'
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: ${{ env.DEPLOYMENT_URL }}
+          allow_issue_writing: false
+          # Change fail_action to true if you want to block deployment on any vulnerability detection
+          fail_action: false
+
+      - name: Deploy to Production
         if: steps.changes.outputs.relevant == 'true'
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
