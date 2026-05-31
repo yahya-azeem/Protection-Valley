@@ -142,6 +142,7 @@ jobs:
           allow_issue_writing: false
           # Change fail_action to true if you want to block deployment on any vulnerability detection
           fail_action: true
+          rules_file_name: '.github/zap-rules.tsv'
 
       - name: Deploy to Production
         if: steps.changes.outputs.relevant == 'true'
