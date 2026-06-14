@@ -4,10 +4,11 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Lock, LogOut } from 'lucide-svelte';
+  import { Lock, LogOut, User, ShieldCheck } from 'lucide-svelte';
   import { currentUser, showToast } from '$lib/stores';
   import { env } from '$env/dynamic/public';
 
+  let activeTab = $state<'retail' | 'wholesale'>('retail');
   let email = $state('');
   let password = $state('');
   let loading = $state(false);
@@ -59,8 +60,8 @@
 
         showToast('Google login successful');
 
-        // Check if sales tax id is missing
-        if (!user.sales_tax_id) {
+        // Check if role is wholesale and sales tax id is missing
+        if (user.role === 'wholesale' && !user.sales_tax_id) {
           window.location.href = `/complete-profile?token=${data.token}`;
         } else {
           window.location.href = '/catalog';
@@ -100,8 +101,8 @@
 
         showToast('Login successful');
 
-        // Check if sales tax id is missing
-        if (!user.sales_tax_id) {
+        // Check redirect logic
+        if (user.role === 'wholesale' && !user.sales_tax_id) {
           window.location.href = `/complete-profile?token=${data.token}`;
         } else {
           window.location.href = '/catalog';
@@ -120,8 +121,8 @@
 </script>
 
 <svelte:head>
-  <title>Wholesale Portal | Protection Valley</title>
-  <meta name="description" content="Sign in to the Protection Valley Wholesale Portal to access contractor specific pricing, bulk ordering, and tax-exempt safety gear." />
+  <title>{activeTab === 'retail' ? 'Sign In' : 'Wholesale Portal'} | Protection Valley</title>
+  <meta name="description" content="Sign in to your Protection Valley account. Access retail discounts or manage your wholesale bulk contractor account." />
 </svelte:head>
 
 <div class="bg-black min-h-screen pt-32 pb-24 flex items-center justify-center">
@@ -129,14 +130,38 @@
     <!-- Icon & Brand Area -->
     <div class="mb-8 text-center flex flex-col items-center">
       <div class="w-16 h-16 bg-[#0A0A0A] border border-white/10 rounded mb-6 flex items-center justify-center">
-        <Lock class="w-6 h-6 text-primary" />
+        {#if activeTab === 'retail'}
+          <User class="w-6 h-6 text-primary" />
+        {:else}
+          <ShieldCheck class="w-6 h-6 text-primary" />
+        {/if}
       </div>
       <h1 class="text-3xl font-serif text-white mb-2">
-        Wholesale Portal
+        {activeTab === 'retail' ? 'Customer Account' : 'Wholesale Portal'}
       </h1>
       <p class="text-xs text-zinc-500 uppercase tracking-widest leading-relaxed">
-        Access specialized wholesale pricing and bulk fulfillment.
+        {activeTab === 'retail' 
+          ? 'Sign in to access retail discounts, coupons, and orders.' 
+          : 'Access specialized contractor pricing and bulk fulfillment.'}
       </p>
+    </div>
+
+    <!-- Tab Selection -->
+    <div class="flex border-b border-white/10 mb-6 bg-[#0A0A0A] p-1 rounded-t">
+      <button 
+        onclick={() => { activeTab = 'retail'; error = ''; }}
+        class="flex-1 py-3 text-xs font-semibold uppercase tracking-widest transition-lux rounded
+          {activeTab === 'retail' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-zinc-500 hover:text-white'}"
+      >
+        Consumer Sign In
+      </button>
+      <button 
+        onclick={() => { activeTab = 'wholesale'; error = ''; }}
+        class="flex-1 py-3 text-xs font-semibold uppercase tracking-widest transition-lux rounded
+          {activeTab === 'wholesale' ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-zinc-500 hover:text-white'}"
+      >
+        Wholesale Portal
+      </button>
     </div>
 
     <!-- Login Area -->
@@ -144,7 +169,7 @@
       {#if $currentUser}
         <div class="space-y-4 text-center">
           <p class="text-xs text-zinc-500 uppercase tracking-widest">
-            Logged in as: <span class="text-primary font-semibold">{$currentUser.email}</span>
+            Logged in as: <span class="text-primary font-semibold">{$currentUser.email}</span> ({$currentUser.role})
           </p>
           <button 
             onclick={() => currentUser.logout()}
@@ -170,7 +195,7 @@
               type="email" 
               bind:value={email}
               required
-              placeholder="name@company.com" 
+              placeholder="name@example.com" 
               class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
             />
           </div>
@@ -203,28 +228,42 @@
           </button>
         </form>
 
-        <div class="relative flex py-2 items-center w-full">
-          <div class="flex-grow border-t border-white/5"></div>
-          <span class="flex-shrink mx-4 text-[10px] text-zinc-600 uppercase tracking-widest">or</span>
-          <div class="flex-grow border-t border-white/5"></div>
-        </div>
+        {#if activeTab === 'retail'}
+          <div class="relative flex py-2 items-center w-full">
+            <div class="flex-grow border-t border-white/5"></div>
+            <span class="flex-shrink mx-4 text-[10px] text-zinc-600 uppercase tracking-widest">or</span>
+            <div class="flex-grow border-t border-white/5"></div>
+          </div>
 
-        <div class="flex flex-col items-center space-y-4">
-          <!-- Branded Google Sign-In Button Container -->
-          <div id="google-btn" class="flex justify-center min-h-[44px]"></div>
-          
-          <p class="text-[10px] text-zinc-600 uppercase tracking-widest pt-2 italic">
-            Wholesale access requires verified sales tax account.
-          </p>
-        </div>
+          <div class="flex flex-col items-center space-y-4">
+            <!-- Branded Google Sign-In Button Container -->
+            <div id="google-btn" class="flex justify-center min-h-[44px]"></div>
+            
+            <div class="bg-primary/5 border border-primary/20 p-4 rounded text-left w-full">
+              <p class="text-[11px] font-semibold text-primary uppercase tracking-wider mb-1">Retail Member Benefits:</p>
+              <p class="text-xs text-zinc-400 leading-relaxed">Use coupon code <span class="text-white font-mono font-bold bg-zinc-900 px-1 py-0.5 rounded border border-white/5">WELCOME10</span> during checkout for 10% off your first purchase.</p>
+            </div>
+          </div>
+        {:else}
+          <div class="bg-primary/5 border border-primary/20 p-4 rounded text-left w-full mt-4">
+            <p class="text-[11px] font-semibold text-primary uppercase tracking-wider mb-1">Wholesale Pricing Active:</p>
+            <p class="text-xs text-zinc-400 leading-relaxed">Wholesale accounts receive 30% off retail listings, plus custom contractor prices and bulk tax-exempt shipping.</p>
+          </div>
+        {/if}
       {/if}
     </div>
 
     <!-- Links -->
     <div class="mt-8 flex flex-col items-center gap-3">
-      <a href="/register" class="text-xs font-semibold text-zinc-400 hover:text-white transition-lux border-b border-white/10 pb-1 uppercase tracking-widest">
-        Register for Wholesale Account
-      </a>
+      {#if activeTab === 'retail'}
+        <a href="/register" class="text-xs font-semibold text-zinc-400 hover:text-white transition-lux border-b border-white/10 pb-1 uppercase tracking-widest">
+          Register for a Customer Account
+        </a>
+      {:else}
+        <a href="/register?type=wholesale" class="text-xs font-semibold text-zinc-400 hover:text-white transition-lux border-b border-white/10 pb-1 uppercase tracking-widest">
+          Register for a Wholesale Account
+        </a>
+      {/if}
       <a href="/contact" class="text-xs font-semibold text-zinc-500 hover:text-white transition-lux uppercase tracking-widest">
         Contact Support
       </a>

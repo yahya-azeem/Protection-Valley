@@ -102,8 +102,9 @@
         </div>
 
         <div class="flex items-center gap-5 border-l border-white/10 pl-8">
-          <button onclick={() => searchOpen.set(true)} class="text-zinc-400 hover:text-primary transition-lux" aria-label="Search">
+          <button onclick={() => searchOpen.set(true)} class="flex items-center gap-1.5 text-zinc-400 hover:text-primary transition-lux" aria-label="Search">
             <Search class="w-[18px] h-[18px]" />
+            <span class="text-xs font-semibold uppercase tracking-[0.1em]">Search</span>
           </button>
           
           {#if $currentUser}
@@ -139,8 +140,9 @@
               </button>
             </div>
           {:else}
-            <a href="/login" class="text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
+            <a href="/login" class="flex items-center gap-1.5 text-zinc-400 hover:text-primary transition-lux" aria-label="Account">
               <User class="w-[18px] h-[18px]" />
+              <span class="text-xs font-semibold uppercase tracking-[0.1em]">Sign In</span>
             </a>
           {/if}
 

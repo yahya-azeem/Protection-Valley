@@ -18,6 +18,7 @@
     const token = $page.url.searchParams.get('token');
     const wholesale = $page.url.searchParams.get('wholesale');
     const checkout = $page.url.searchParams.get('checkout');
+    const sessionId = $page.url.searchParams.get('session_id');
 
     if (token && typeof localStorage !== 'undefined') {
       localStorage.setItem('authToken', token);
@@ -32,20 +33,52 @@
     if (checkout === 'success') {
       cart.clear();
       showToast('Checkout complete. Thank you for your order.');
+      if (sessionId) {
+        confirmCheckout(sessionId);
+      }
     }
 
     if (checkout === 'cancel') {
       showToast('Checkout canceled. Your cart is still available.');
     }
 
-    if (token || wholesale || checkout) {
+    if (token || wholesale || checkout || sessionId) {
       const url = new URL(window.location.href);
       url.searchParams.delete('token');
       url.searchParams.delete('wholesale');
       url.searchParams.delete('checkout');
+      url.searchParams.delete('session_id');
       window.history.replaceState({}, '', url);
     }
   });
+
+  async function confirmCheckout(sessionId: string) {
+    try {
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const { API_CONFIG } = await import('$lib/config');
+      const res = await fetch(`${API_CONFIG.baseUrl}/checkout/confirm`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ session_id: sessionId })
+      });
+      if (res.ok) {
+        const order = await res.json();
+        showToast(`Order ${order.id} confirmed successfully!`);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        showToast(errData.error || 'Failed to confirm order with backend');
+      }
+    } catch (e) {
+      console.error('Error confirming order:', e);
+      showToast('Connection error during order confirmation');
+    }
+  }
 </script>
 
 <Navbar />

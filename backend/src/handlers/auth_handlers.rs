@@ -287,7 +287,16 @@ pub async fn complete_profile(auth_header: Option<&str>, req: CompleteProfileReq
     };
 
     let service = AuthService::new();
-    match service.complete_profile(claims.user_id, &req.company, &req.sales_tax_id, &req.sales_tax_proof_name, &req.sales_tax_proof_data).await {
+    match service.complete_profile(
+        claims.user_id, 
+        &req.company, 
+        &req.sales_tax_id, 
+        &req.sales_tax_proof_name, 
+        &req.sales_tax_proof_data,
+        req.phone.as_deref(),
+        req.business_type.as_deref(),
+        req.website.as_deref(),
+    ).await {
         Ok(user) => {
             // Generate updated JWT with role = "wholesale"
             match crate::auth::generate_jwt(user.id, &user.email, "wholesale") {

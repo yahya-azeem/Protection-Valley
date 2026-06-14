@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award } from 'lucide-svelte';
+  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, RefreshCw } from 'lucide-svelte';
   import { currentUser, products, showToast, loadProducts } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import type { Product, ProductVariant } from '$lib/types';
@@ -21,9 +21,48 @@
     custom_price: number;
   }
 
-  let activeTab = $state<'users' | 'prices'>('users');
+  interface Order {
+    id: string;
+    customer_id: number;
+    customer_name: string;
+    customer_email: string;
+    items: {
+      product_id: string;
+      product_name: string;
+      quantity: number;
+      unit_price: number;
+      total_price: number;
+    }[];
+    subtotal: number;
+    shipping_cost: number;
+    total: number;
+    status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled';
+    shipping_address: {
+      first_name: string;
+      last_name: string;
+      address_line1: string;
+      address_line2?: string;
+      city: string;
+      state: string;
+      zip: string;
+      country: string;
+    };
+    payment_method: string;
+    carrier?: string;
+    tracking_number?: string;
+    shipping_label_url?: string;
+    created_at: string;
+    updated_at: string;
+  }
+
+  let activeTab = $state<'users' | 'prices' | 'orders' | 'notifications'>('users');
   let users = $state<WholesaleUser[]>([]);
   let loadingUsers = $state(true);
+
+  // Orders State
+  let orders = $state<Order[]>([]);
+  let loadingOrders = $state(false);
+  let syncingInventory = $state(false);
 
   // Edit Discount State
   let editingUser = $state<WholesaleUser | null>(null);
@@ -43,8 +82,114 @@
     if ($currentUser && $currentUser.role === 'admin') {
       await loadProducts();
       await fetchUsers();
+      await fetchOrders();
     }
   });
+
+  function formatTimeAgo(date: Date): string {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    if (seconds < 60) return 'Just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  }
+
+  let activities = $derived.by(() => {
+    const list: { type: 'order' | 'user'; title: string; subtitle: string; time: string; date: Date }[] = [];
+    
+    // Add user registrations
+    for (const u of users) {
+      list.push({
+        type: 'user',
+        title: `New customer registration: ${u.name}`,
+        subtitle: `${u.email} • Role: ${u.sales_tax_id ? 'Wholesale' : 'Retail'}`,
+        time: u.id ? 'Recently' : 'Recently', // Placeholder helper
+        date: new Date() // Normally parsed from created_at
+      });
+    }
+
+    // Add orders
+    for (const o of orders) {
+      list.push({
+        type: 'order',
+        title: `New order ${o.id} placed by ${o.customer_name}`,
+        subtitle: `Total: $${o.total.toFixed(2)} • Items: ${o.items.length} item(s) • Status: ${o.status}`,
+        time: o.created_at ? formatTimeAgo(new Date(o.created_at)) : 'Recently',
+        date: o.created_at ? new Date(o.created_at) : new Date()
+      });
+    }
+
+    return list; // Sorting can be done or default order
+  });
+
+  async function fetchOrders() {
+    loadingOrders = true;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        orders = await res.json();
+      } else {
+        showToast('Failed to load orders');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error fetching orders');
+    } finally {
+      loadingOrders = false;
+    }
+  }
+
+  async function updateOrderStatus(orderId: string, status: string) {
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(status)
+      });
+      if (res.ok) {
+        showToast(`Order status updated to ${status}`);
+        await fetchOrders();
+      } else {
+        showToast('Failed to update order status');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error updating order status');
+    }
+  }
+
+  async function triggerEbaySync() {
+    syncingInventory = true;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/ebay/sync`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(`Inventory Sync Successful! Synced ${data.synced} items.`);
+        await loadProducts();
+      } else {
+        showToast('Failed to sync inventory with eBay');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error syncing with eBay');
+    } finally {
+      syncingInventory = false;
+    }
+  }
 
   async function fetchUsers() {
     loadingUsers = true;
@@ -219,7 +364,7 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex gap-4 border-b border-white/5 mb-8">
+      <div class="flex flex-wrap gap-4 border-b border-white/5 mb-8">
         <button
           onclick={() => activeTab = 'users'}
           class="pb-4 text-xs font-semibold uppercase tracking-[0.15em] border-b-2 transition-lux flex items-center gap-2
@@ -233,6 +378,27 @@
             {activeTab === 'prices' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
         >
           <DollarSign class="w-3.5 h-3.5" /> Customer Specific Prices
+        </button>
+        <button
+          onclick={() => activeTab = 'orders'}
+          class="pb-4 text-xs font-semibold uppercase tracking-[0.15em] border-b-2 transition-lux flex items-center gap-2
+            {activeTab === 'orders' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
+        >
+          <ShoppingBag class="w-3.5 h-3.5" /> Orders
+        </button>
+        <button
+          onclick={() => activeTab = 'notifications'}
+          class="pb-4 text-xs font-semibold uppercase tracking-[0.15em] border-b-2 transition-lux flex items-center gap-2
+            {activeTab === 'notifications' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
+        >
+          <Bell class="w-3.5 h-3.5" /> Activity Log
+        </button>
+        <button
+          onclick={triggerEbaySync}
+          disabled={syncingInventory}
+          class="ml-auto pb-4 text-xs font-semibold uppercase tracking-[0.15em] text-zinc-400 hover:text-white flex items-center gap-2 transition-lux disabled:opacity-50"
+        >
+          <RefreshCw class="w-3.5 h-3.5 {syncingInventory ? 'animate-spin' : ''}" /> Sync eBay Listings
         </button>
       </div>
 
@@ -282,7 +448,7 @@
             </table>
           </div>
         {/if}
-      {:else}
+      {:else if activeTab === 'prices'}
         <!-- Custom Prices Tab -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -412,6 +578,163 @@
               </div>
             {/if}
           </div>
+        </div>
+      {:else if activeTab === 'orders'}
+        <!-- Orders Tab -->
+        {#if loadingOrders}
+          <div class="py-20 text-center text-zinc-500 text-xs uppercase tracking-widest font-bold">
+            Loading orders...
+          </div>
+        {:else if orders.length === 0}
+          <div class="border border-dashed border-white/10 rounded-lg p-20 text-center text-zinc-500 text-xs uppercase tracking-widest">
+            No orders have been placed yet.
+          </div>
+        {:else}
+          <div class="space-y-6">
+            {#each orders as order}
+              <div class="border border-white/5 rounded bg-[#0A0A0A] p-6 space-y-4">
+                <div class="flex flex-wrap justify-between items-start border-b border-white/5 pb-4 gap-4">
+                  <div>
+                    <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wide">{order.id}</h3>
+                    <p class="text-[10px] text-zinc-500">Placed on {new Date(order.created_at).toLocaleString()}</p>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded bg-white/5 text-zinc-300">
+                      Status: {order.status}
+                    </span>
+                    <select
+                      value={order.status}
+                      onchange={(e) => updateOrderStatus(order.id, e.currentTarget.value)}
+                      class="bg-black border border-white/10 rounded px-2.5 py-1 text-xs text-white focus:border-primary focus:outline-none font-semibold uppercase tracking-wider"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <!-- Customer & Delivery -->
+                  <div class="space-y-2">
+                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Customer Info</h4>
+                    <p class="text-xs text-white font-medium">{order.customer_name}</p>
+                    <p class="text-xs text-zinc-400">{order.customer_email || 'No email registered'}</p>
+                    <p class="text-xs text-zinc-400 font-semibold">Payment: <span class="font-mono uppercase tracking-wider text-[10px] text-primary">{order.payment_method}</span></p>
+                  </div>
+
+                  <!-- Shipping Address -->
+                  <div class="space-y-2">
+                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Shipping Address</h4>
+                    <p class="text-xs text-zinc-300 leading-relaxed">
+                      {order.shipping_address.address_line1}<br />
+                      {#if order.shipping_address.address_line2}
+                        {order.shipping_address.address_line2}<br />
+                      {/if}
+                      {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}<br />
+                      {order.shipping_address.country}
+                    </p>
+                  </div>
+
+                  <!-- Order Summary & Shipping Details -->
+                  <div class="space-y-2">
+                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Order Summary</h4>
+                    <div class="text-xs space-y-1 font-mono">
+                      <div class="flex justify-between">
+                        <span class="text-zinc-500">Subtotal:</span>
+                        <span>${order.subtotal.toFixed(2)}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-zinc-500">Shipping:</span>
+                        <span>${order.shipping_cost.toFixed(2)}</span>
+                      </div>
+                      <div class="flex justify-between text-white font-bold border-t border-white/5 pt-1 mt-1">
+                        <span>Total:</span>
+                        <span class="text-primary">${order.total.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <!-- EasyPost Labels if present -->
+                    {#if order.carrier && order.tracking_number}
+                      <div class="border-t border-white/5 pt-3 mt-3 space-y-1.5">
+                        <p class="text-[10px] text-zinc-400 flex items-center gap-1.5">
+                          <Truck class="w-3.5 h-3.5 text-emerald-400" />
+                          <span>{order.carrier} Tracking: {order.tracking_number}</span>
+                        </p>
+                        {#if order.shipping_label_url}
+                          <a
+                            href={order.shipping_label_url}
+                            target="_blank"
+                            class="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-bold uppercase tracking-wider"
+                          >
+                            <ExternalLink class="w-3 h-3" /> PRINT SHIPPING LABEL
+                          </a>
+                        {/if}
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+
+                <!-- Items list -->
+                <div class="border-t border-white/5 pt-4">
+                  <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Items Ordered</h4>
+                  <div class="divide-y divide-white/5">
+                    {#each order.items as item}
+                      <div class="flex justify-between py-2.5 text-xs">
+                        <div class="text-zinc-300">
+                          {item.product_name} <span class="text-zinc-500 font-mono text-[10px] font-bold">x{item.quantity}</span>
+                        </div>
+                        <div class="font-mono text-white">
+                          ${(item.unit_price * item.quantity).toFixed(2)}
+                        </div>
+                      </div>
+                    {/each}
+                  </div>
+                </div>
+              </div>
+            {/each}
+          </div>
+        {/if}
+      {:else if activeTab === 'notifications'}
+        <!-- Activity Log / Notifications Tab -->
+        <div class="border border-white/5 rounded bg-[#0A0A0A] p-6 space-y-6">
+          <div class="flex justify-between items-center border-b border-white/5 pb-4">
+            <h3 class="text-sm font-serif text-white uppercase tracking-wider">Activity Feed</h3>
+            <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-mono">Real-Time Events</span>
+          </div>
+
+          {#if activities.length === 0}
+            <p class="text-xs text-zinc-500 py-4 text-center">No recent activity detected.</p>
+          {:else}
+            <div class="space-y-4">
+              {#each activities as activity}
+                <div class="flex gap-4 p-4 border border-white/2 bg-black/45 rounded-sm hover:border-white/10 transition-lux">
+                  <div class="flex-shrink-0 mt-0.5">
+                    {#if activity.type === 'order'}
+                      <div class="p-2 bg-emerald-500/10 rounded">
+                        <ShoppingBag class="w-4 h-4 text-emerald-400" />
+                      </div>
+                    {:else}
+                      <div class="p-2 bg-blue-500/10 rounded">
+                        <Users class="w-4 h-4 text-blue-400" />
+                      </div>
+                    {/if}
+                  </div>
+                  <div class="flex-grow space-y-1">
+                    <p class="text-xs font-bold text-white uppercase tracking-wide">{activity.title}</p>
+                    <p class="text-xs text-zinc-400">{activity.subtitle}</p>
+                  </div>
+                  <div class="flex-shrink-0 text-right">
+                    <span class="text-[10px] text-zinc-500 font-mono flex items-center gap-1">
+                      <Clock class="w-3 h-3" /> {activity.time}
+                    </span>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {/if}
         </div>
       {/if}
 

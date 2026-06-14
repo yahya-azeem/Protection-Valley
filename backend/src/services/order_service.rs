@@ -47,7 +47,7 @@ impl OrderService {
     }
 
     pub async fn get_all_orders(&self) -> Result<Vec<Order>, String> {
-        let url = format!("{}/rest/v1/orders?select=*,order_items(*)", self.supabase_url);
+        let url = format!("{}/rest/v1/orders?select=*&order=created_at.desc", self.supabase_url);
         
         let response = self.client
             .get(&url)
@@ -69,7 +69,7 @@ impl OrderService {
     }
 
     pub async fn get_order_by_id(&self, id: &str) -> Result<Option<Order>, String> {
-        let url = format!("{}/rest/v1/orders?id=eq.{}&select=*,order_items(*)", self.supabase_url, id);
+        let url = format!("{}/rest/v1/orders?id=eq.{}&select=*", self.supabase_url, id);
         
         let response = self.client
             .get(&url)
@@ -166,6 +166,34 @@ impl OrderService {
             .send()
             .await
             .map_err(|e| format!("Failed to create order: {}", e))?;
+
+        // 1b. Decrement local stock and sync to eBay
+        let ebay_service = crate::services::ebay_service::EbayService::new();
+        for item in &order.items {
+            if let Ok(p_id) = item.product_id.parse::<i64>() {
+                if let Ok(Some(product)) = product_service.get_product_by_id(p_id).await {
+                if let Some(ref variants) = product.variants {
+                    for v in variants {
+                        let name_with_variant = format!("{} - {}", product.name, v.original_name);
+                        if name_with_variant == item.product_name {
+                            let new_stock = (v.stock - item.quantity).max(0);
+                            
+                            // Update database stock
+                            if let Err(e) = product_service.update_variant_stock(v.id, new_stock).await {
+                                eprintln!("[order_service] Failed to update local stock for variant {}: {e}", v.id);
+                            }
+                            
+                            // Sync with eBay
+                            let identifier_to_update = v.ebay_item_id.as_ref().unwrap_or(&v.sku);
+                            if let Err(e) = ebay_service.update_ebay_item_quantity(identifier_to_update, new_stock).await {
+                                eprintln!("[order_service] Failed to update eBay quantity: {e}");
+                            }
+                        }
+                    }
+                }
+            }
+          }
+        }
 
         // 2. Generate Shipping Label via EasyPost
         let shipping_service = ShippingService::new();
