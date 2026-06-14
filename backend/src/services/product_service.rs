@@ -206,4 +206,27 @@ impl ProductService {
 
         Ok(true)
     }
+
+    pub async fn update_variant_stock(&self, variant_id: i64, new_stock: i32) -> Result<bool, String> {
+        let url = format!("{}/rest/v1/product_variants?id=eq.{}", self.supabase_url, variant_id);
+        
+        let response = self.client
+            .patch(&url)
+            .headers(self.headers())
+            .json(&serde_json::json!({
+                "stock": new_stock,
+                "in_stock": new_stock > 0,
+                "updated_at": chrono::Utc::now()
+            }))
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        Ok(true)
+    }
 }

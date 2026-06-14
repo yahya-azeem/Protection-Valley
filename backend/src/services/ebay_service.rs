@@ -1,4 +1,5 @@
 use crate::models::{Product, ProductVariant, SyncResponse};
+use crate::services::product_service::ProductService;
 use chrono::Utc;
 
 pub struct EbayService {
@@ -175,16 +176,130 @@ impl EbayService {
         (model, color, size, texture)
     }
 
-    /// Sync eBay inventory status (placeholder for real DB logic).
+    /// Sync eBay inventory status by fetching eBay listings and updating local DB.
     pub async fn sync_inventory(&self) -> Result<SyncResponse, String> {
         let products = self.get_ebay_products().await?;
-
+        let product_service = ProductService::new();
+        
+        let mut updated = 0;
+        let mut synced = 0;
+        let mut errors = Vec::new();
+        
+        if let Ok(local_products) = product_service.get_all_products().await {
+            for ebay_prod in &products {
+                if let Some(ref ebay_variants) = ebay_prod.variants {
+                    for ev in ebay_variants {
+                        for lp in &local_products {
+                            if let Some(ref l_variants) = lp.variants {
+                                for lv in l_variants {
+                                    if lv.sku == ev.sku || (lv.ebay_item_id.is_some() && lv.ebay_item_id == ev.ebay_item_id) {
+                                        match product_service.update_variant_stock(lv.id, ev.stock).await {
+                                            Ok(_) => {
+                                                updated += 1;
+                                                synced += 1;
+                                            }
+                                            Err(e) => {
+                                                errors.push(format!("Failed to update stock for variant ID {}: {}", lv.id, e));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         Ok(SyncResponse {
-            synced: products.len() as i32,
+            synced,
             created: 0,
-            updated: products.len() as i32,
-            errors: Vec::new(),
+            updated,
+            errors,
         })
+    }
+
+    /// Update variant quantity on eBay.
+    /// If the SKU is purely numeric, we treat it as an eBay Item ID (Trading API).
+    /// If it is a string, we treat it as an eBay SKU (Inventory API).
+    pub async fn update_ebay_item_quantity(&self, sku: &str, new_quantity: i32) -> Result<(), String> {
+        if let (Some(ref _app_id), Some(ref token)) = (&self.app_id, &self.oauth_token) {
+            let client = reqwest::Client::new();
+            
+            // Check if SKU is purely numeric (Item ID)
+            let is_numeric = sku.chars().all(|c| c.is_ascii_digit());
+            
+            if is_numeric {
+                // Trading API - ReviseInventoryStatus (XML)
+                let url = "https://api.ebay.com/ws/api.dll";
+                let xml_body = format!(
+                    r#"<?xml version="1.0" encoding="utf-8"?>
+                    <ReviseInventoryStatusRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                      <RequesterCredentials>
+                        <eBayAuthToken>{}</eBayAuthToken>
+                      </RequesterCredentials>
+                      <InventoryStatus>
+                        <ItemID>{}</ItemID>
+                        <Quantity>{}</Quantity>
+                      </InventoryStatus>
+                    </ReviseInventoryStatusRequest>"#,
+                    token, sku, new_quantity
+                );
+                
+                match client.post(url)
+                    .header("X-EBAY-API-COMPATIBILITY-LEVEL", "967")
+                    .header("X-EBAY-API-CALL-NAME", "ReviseInventoryStatus")
+                    .header("X-EBAY-API-SITEID", "0")
+                    .header("Content-Type", "text/xml")
+                    .body(xml_body)
+                    .send()
+                    .await
+                {
+                    Ok(resp) => {
+                        let status = resp.status();
+                        if status.is_success() {
+                            log::info!("Successfully updated quantity for Item ID {sku} to {new_quantity} on eBay via Trading API");
+                            return Ok(());
+                        } else {
+                            let text = resp.text().await.unwrap_or_default();
+                            return Err(format!("eBay Trading API returned status {status}: {text}"));
+                        }
+                    }
+                    Err(e) => return Err(format!("Failed to connect to eBay Trading API: {e}")),
+                }
+            } else {
+                // Inventory API - update price/quantity (JSON)
+                let url = format!("https://api.ebay.com/sell/inventory/v1/inventory_item/{}/update_price_quantity", sku);
+                let payload = serde_json::json!({
+                    "shipToLocationAvailability": {
+                        "quantity": new_quantity
+                    }
+                });
+                
+                match client.post(&url)
+                    .header("Authorization", format!("Bearer {token}"))
+                    .header("Content-Type", "application/json")
+                    .json(&payload)
+                    .send()
+                    .await
+                {
+                    Ok(resp) => {
+                        let status = resp.status();
+                        if status.is_success() {
+                            log::info!("Successfully updated quantity for SKU {sku} to {new_quantity} on eBay via Inventory API");
+                            return Ok(());
+                        } else {
+                            let text = resp.text().await.unwrap_or_default();
+                            return Err(format!("eBay Inventory API returned status {status}: {text}"));
+                        }
+                    }
+                    Err(e) => return Err(format!("Failed to connect to eBay Inventory API: {e}")),
+                }
+            }
+        }
+        
+        log::warn!("eBay credentials not set. Simulated stock update for SKU/ID {sku} to {new_quantity}");
+        Ok(())
     }
 
     /// Push a local product to eBay as a listing.

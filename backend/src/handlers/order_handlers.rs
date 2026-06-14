@@ -3,7 +3,14 @@ use http::StatusCode;
 use crate::models::{CreateOrderRequest, OrderStatus};
 use crate::services::order_service::OrderService;
 
-pub async fn get_orders() -> Result<Response<String>, Error> {
+pub async fn get_orders(auth_header: Option<&str>) -> Result<Response<String>, Error> {
+    if let Err(err) = crate::handlers::admin_handlers::verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
     let service = OrderService::new();
     match service.get_all_orders().await {
         Ok(orders) => Ok(Response::builder()

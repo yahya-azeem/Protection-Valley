@@ -6,7 +6,7 @@ use crate::services::product_service::ProductService;
 use crate::auth::{decode_jwt, extract_token};
 
 /// Utility function to check if the caller is an admin
-fn verify_admin(auth_header: Option<&str>) -> Result<i64, String> {
+pub fn verify_admin(auth_header: Option<&str>) -> Result<i64, String> {
     let token = extract_token(auth_header).ok_or("Authentication token missing")?;
     let claims = decode_jwt(token).map_err(|e| format!("Invalid token: {}", e))?;
     if claims.role != "admin" {

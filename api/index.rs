@@ -94,7 +94,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         }
         "/api/v1/orders" => {
             match method.as_str() {
-                "GET" => wrap(order_handlers::get_orders().await),
+                "GET" => {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(order_handlers::get_orders(auth_header.as_deref()).await)
+                }
                 "POST" => {
                     let bytes = read_body(&mut req).await?;
                     let body: models::CreateOrderRequest = serde_json::from_slice(&bytes)?;
@@ -221,6 +224,16 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 let bytes = read_body(&mut req).await?;
                 let body: models::CreateCheckoutSessionRequest = serde_json::from_slice(&bytes)?;
                 wrap(checkout_handlers::create_checkout_session(auth_header.as_deref(), body).await)
+            } else {
+                method_not_allowed()
+            }
+        }
+        "/api/v1/checkout/confirm" => {
+            if method == "POST" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                let bytes = read_body(&mut req).await?;
+                let body: models::ConfirmCheckoutSessionRequest = serde_json::from_slice(&bytes)?;
+                wrap(checkout_handlers::confirm_checkout_session(auth_header.as_deref(), body).await)
             } else {
                 method_not_allowed()
             }

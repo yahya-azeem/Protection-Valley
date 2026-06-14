@@ -9,6 +9,7 @@
     sizeFilter,
     colorFilter,
     textureFilter,
+    brandFilter,
     products
   } from '$lib/stores';
   import { CATEGORIES, PRICE_RANGES, SIZES } from '$lib/constants';
@@ -55,7 +56,7 @@
     sizeFilter.set('');
     colorFilter.set('');
     textureFilter.set('');
-
+    brandFilter.set('');
   }
 
   let sortedProducts = $derived.by(() => {
@@ -104,6 +105,23 @@
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
               >
                 {cat}
+              </button>
+            {/each}
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 mb-4">Brands</h3>
+          <div class="space-y-1">
+            {#each ['All Brands', 'Leather Gold', 'Western Heritage'] as brand}
+              <button
+                onclick={() => brandFilter.set(brand === 'All Brands' ? '' : brand)}
+                class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
+                  {($brandFilter === (brand === 'All Brands' ? '' : brand))
+                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
+              >
+                {brand}
               </button>
             {/each}
           </div>
@@ -204,6 +222,24 @@
                       {$currentCategory === cat ? 'bg-primary/10 text-primary font-semibold' : 'text-zinc-400'}"
                   >
                     {cat}
+                  </button>
+                {/each}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-zinc-400 mb-3">Brands</h3>
+              <div class="space-y-1">
+                {#each ['All Brands', 'Leather Gold', 'Western Heritage'] as brand}
+                  <button
+                    onclick={() => {
+                      brandFilter.set(brand === 'All Brands' ? '' : brand);
+                      showMobileFilters = false;
+                    }}
+                    class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
+                      {($brandFilter === (brand === 'All Brands' ? '' : brand)) ? 'bg-primary/10 text-primary font-semibold' : 'text-zinc-400'}"
+                  >
+                    {brand}
                   </button>
                 {/each}
               </div>

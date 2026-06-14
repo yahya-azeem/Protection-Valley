@@ -5,7 +5,6 @@ TRUNCATE products RESTART IDENTITY CASCADE;
 INSERT INTO products (id, name, description, category, image_url, model_number) VALUES
 (1, 'Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders', 'Premium handcrafted workgear.', 'Leather Gold', '/images/products/PV_1000.webp', 'PV-1000'),
 (2, 'Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle', 'Premium handcrafted workgear.', 'Leather Gold', '/images/products/PV_1001.webp', 'PV-1001'),
-(3, 'placeholder free', 'Premium handcrafted workgear.', 'Leather Gold', '/images/logo.png', 'PV-1002'),
 (4, '12 Par Pack Brown Jersey Industrial And  Work Safety Gloves (PPE) size L', 'Premium handcrafted workgear.', 'Work Gloves', '/images/products/111998124733.jpg', '111998124733'),
 (5, '14" High Voltage Protector Glove With A grade Cow Leather Size 10', 'Premium handcrafted workgear.', 'Work Gloves', '/images/products/112023917471.jpg', '112023917471'),
 (6, '10 Dozen Pr Pack Cow Hide Grain Leather Drivers  golve Natural Color   Large (L)', 'Premium handcrafted workgear.', 'Work Gloves', '/images/products/112055927137.jpg', '112055927137'),
@@ -173,7 +172,6 @@ INSERT INTO products (id, name, description, category, image_url, model_number) 
 INSERT INTO product_variants (id, product_id, sku, original_name, price, stock, image_url, in_stock) VALUES
 (1, 1, 'PV-1000', 'Leather Gold SUPREME ,Ten Pocket, Oil Tanned, Tool Pouch, With, Hammer Holders', 19.99, 10, '/images/products/PV_1000.webp', true),
 (2, 2, 'PV-1001', 'Leather Chaps, Apron, Orange Color for Work, Sports, Horse/Bike Gear, Saddle', 35, 10, '/images/products/PV_1001.webp', true),
-(3, 3, 'PV-1002', 'placeholder free', 1, 10, '/images/logo.png', true),
 (4, 4, '111998124733', '12 Par Pack Brown Jersey Industrial And  Work Safety Gloves (PPE) size L', 6, 179, '/images/products/111998124733.jpg', true),
 (5, 5, '112023917471', '14" High Voltage Protector Glove With A grade Cow Leather Size 10', 10, 222, '/images/products/112023917471.jpg', true),
 (6, 6, '112055927137', '10 Dozen Pr Pack Cow Hide Grain Leather Drivers  golve Natural Color   Large (L)', 310, 10, '/images/products/112055927137.jpg', true),

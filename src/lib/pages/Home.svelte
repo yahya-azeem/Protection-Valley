@@ -2,8 +2,13 @@
   import { base } from '$app/paths';
   import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-svelte';
   import ProductCard from '$lib/components/ProductCard.svelte';
-  import { products } from '$lib/stores';
+  import { products, brandFilter } from '$lib/stores';
   import { goto } from '$app/navigation';
+
+  function selectBrand(brand: string) {
+    brandFilter.set(brand);
+    goto('/catalog');
+  }
 
   // Duplicate for seamless looping: [Original, Original, Original]
   // We use 3x to ensure there's always content to the left/right during jumps
@@ -63,7 +68,7 @@
   <section class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
       <img 
-        src="{base}/images/hero-bg.jpg" 
+        src="{base}/images/products/112195634614.jpg" 
         alt="Protection Valley" 
         class="w-full h-full object-cover opacity-60 grayscale-[10%] scale-110 animate-fade-in" 
       />
@@ -146,6 +151,67 @@
             <ProductCard {product} />
           </div>
         {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop by Brand Section -->
+  <section class="py-24 bg-black border-t border-white/5 relative">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16 space-y-3">
+        <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em]">CRAFTED LEGACY</span>
+        <h2 class="text-5xl font-serif tracking-tight">Shop by Brand</h2>
+        <p class="text-zinc-500 max-w-md mx-auto text-sm">Explore our curated collections from trusted industry names.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Leather Gold -->
+        <button 
+          onclick={() => selectBrand('Leather Gold')}
+          class="relative h-[350px] w-full group overflow-hidden rounded border border-white/10 text-left cursor-pointer transition-all duration-500 hover:border-primary/50"
+        >
+          <div class="absolute inset-0 z-0">
+            <img 
+              src="{base}/images/products/PV_1000.webp" 
+              alt="Leather Gold Collection" 
+              class="w-full h-full object-cover opacity-50 group-hover:scale-110 group-hover:opacity-70 transition-all duration-700" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+          </div>
+          
+          <div class="absolute inset-0 z-10 p-8 flex flex-col justify-end">
+            <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em] mb-2">PREMIUM QUALITY</span>
+            <h3 class="text-3xl font-serif text-white mb-2 group-hover:text-primary transition-colors">Leather Gold</h3>
+            <p class="text-zinc-400 text-sm max-w-sm mb-6">Heavy duty tools pouches, chaps, and rugged leather gear built to withstand the elements.</p>
+            <span class="text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-white">
+              EXPLORE COLLECTION <ArrowRight class="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+            </span>
+          </div>
+        </button>
+
+        <!-- Western Heritage -->
+        <button 
+          onclick={() => selectBrand('Western Heritage')}
+          class="relative h-[350px] w-full group overflow-hidden rounded border border-white/10 text-left cursor-pointer transition-all duration-500 hover:border-primary/50"
+        >
+          <div class="absolute inset-0 z-0">
+            <img 
+              src="{base}/images/products/s-l1600-582.jpg" 
+              alt="Western Heritage Collection" 
+              class="w-full h-full object-cover opacity-50 group-hover:scale-110 group-hover:opacity-70 transition-all duration-700" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+          </div>
+          
+          <div class="absolute inset-0 z-10 p-8 flex flex-col justify-end">
+            <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em] mb-2">TRADITIONAL CRAFT</span>
+            <h3 class="text-3xl font-serif text-white mb-2 group-hover:text-primary transition-colors">Western Heritage</h3>
+            <p class="text-zinc-400 text-sm max-w-sm mb-6">Handcrafted, classic style carpenter bags, belts, and accessories built for trade professionals.</p>
+            <span class="text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-white">
+              EXPLORE COLLECTION <ArrowRight class="w-4 h-4 group-hover:translate-x-2 transition-transform" />
+            </span>
+          </div>
+        </button>
       </div>
     </div>
   </section>

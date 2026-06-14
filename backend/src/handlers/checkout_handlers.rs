@@ -1,17 +1,12 @@
 use vercel_runtime::{Response, Error};
 use http::StatusCode;
-use crate::models::CreateCheckoutSessionRequest;
+use crate::models::{CreateCheckoutSessionRequest, ConfirmCheckoutSessionRequest, CreateOrderRequest, Address, OrderItemRequest};
 use crate::services::product_service::ProductService;
+use crate::services::order_service::OrderService;
 use crate::auth::{decode_jwt, extract_token};
 use std::env;
 
 pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheckoutSessionRequest) -> Result<Response<String>, Error> {
-    let CreateCheckoutSessionRequest {
-        items,
-        success_url,
-        cancel_url,
-    } = req;
-
     let frontend_url = match env::var("FRONTEND_URL") {
         Ok(url) => url.trim().to_string(),
         Err(_) => {
@@ -77,7 +72,7 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
 
     let mut line_items = Vec::new();
 
-    for item in items {
+    for item in &req.items {
         if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
             // Find specific variant or default to first
             let variant = if let Some(ref vid_str) = item.variant_id {
@@ -155,9 +150,9 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     }
 
     let allowed_origin = frontend_url.trim_end_matches('/').to_string();
-    let success_url = success_url.trim();
-    let cancel_url = cancel_url.trim();
-    if !is_allowed_redirect(success_url, &allowed_origin) || !is_allowed_redirect(cancel_url, &allowed_origin) {
+    let success_url_trimmed = req.success_url.trim();
+    let cancel_url_trimmed = req.cancel_url.trim();
+    if !is_allowed_redirect(success_url_trimmed, &allowed_origin) || !is_allowed_redirect(cancel_url_trimmed, &allowed_origin) {
         return Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .header("Content-Type", "application/json")
@@ -166,11 +161,18 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
             }).to_string())?);
     }
 
+    let customer_id_str = claims.as_ref().map(|c| c.user_id.to_string()).unwrap_or_else(|| "0".to_string());
+    let mut metadata = std::collections::HashMap::new();
+    metadata.insert("items".to_string(), serde_json::to_string(&req.items).unwrap_or_default());
+    metadata.insert("customer_id".to_string(), customer_id_str);
+
     let params = stripe::CreateCheckoutSession {
         mode: Some(stripe::CheckoutSessionMode::Payment),
         line_items: Some(line_items),
-        success_url: Some(success_url),
-        cancel_url: Some(cancel_url),
+        success_url: Some(success_url_trimmed),
+        cancel_url: Some(cancel_url_trimmed),
+        allow_promotion_codes: Some(true),
+        metadata: Some(metadata),
         ..Default::default()
     };
 
@@ -207,5 +209,142 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
         return true;
     }
     candidate == allowed_origin || candidate.starts_with(&format!("{allowed_origin}/"))
+}
+
+pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCheckoutSessionRequest) -> Result<Response<String>, Error> {
+    let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
+        Ok(key) => {
+            let trimmed = key.trim().to_string();
+            if trimmed.is_empty() || trimmed.starts_with("sk_test_mock") {
+                return create_mock_order_for_confirmation();
+            }
+            trimmed
+        }
+        Err(_) => {
+            return create_mock_order_for_confirmation();
+        }
+    };
+
+    let client = stripe::Client::new(stripe_secret_key);
+    
+    // Retrieve checkout session from Stripe
+    let parsed_session_id = match req.session_id.parse::<stripe::CheckoutSessionId>() {
+        Ok(id) => id,
+        Err(e) => {
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": format!("Invalid session ID format: {e}") }).to_string())?);
+        }
+    };
+
+    let session = match stripe::CheckoutSession::retrieve(&client, &parsed_session_id, &[]).await {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("[checkout confirm] Stripe retrieve error: {e}");
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": format!("Invalid checkout session: {e}") }).to_string())?);
+        }
+    };
+
+    // Extract customer_id and items from metadata
+    let metadata = match session.metadata {
+        Some(m) => m,
+        None => {
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": "Missing metadata in Stripe session" }).to_string())?);
+        }
+    };
+
+    let items_raw = metadata.get("items").cloned().unwrap_or_default();
+    let customer_id_raw = metadata.get("customer_id").cloned().unwrap_or_default();
+
+    let items: Vec<OrderItemRequest> = match serde_json::from_str(&items_raw) {
+        Ok(i) => i,
+        Err(_) => {
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": "Malformed items metadata" }).to_string())?);
+        }
+    };
+
+    let customer_id = customer_id_raw.parse::<i64>().unwrap_or(0);
+
+    // Extract shipping address
+    let shipping_details = session.shipping_details;
+
+    let shipping_address = match shipping_details {
+        Some(sd) => {
+            let address = sd.address.unwrap_or_default();
+            let name = sd.name.unwrap_or_default();
+            let name_parts: Vec<&str> = name.split_whitespace().collect();
+            let first_name = name_parts.first().cloned().unwrap_or("Guest").to_string();
+            let last_name = if name_parts.len() > 1 { name_parts[1..].join(" ") } else { "Customer".to_string() };
+
+            Address {
+                first_name,
+                last_name,
+                address_line1: address.line1.unwrap_or_default(),
+                address_line2: address.line2,
+                city: address.city.unwrap_or_default(),
+                state: address.state.unwrap_or_default(),
+                zip: address.postal_code.unwrap_or_default(),
+                country: address.country.unwrap_or_default(),
+                phone: None,
+            }
+        }
+        None => {
+            Address {
+                first_name: "Guest".to_string(),
+                last_name: "Customer".to_string(),
+                address_line1: "123 Main St".to_string(),
+                address_line2: None,
+                city: "Dallas".to_string(),
+                state: "TX".to_string(),
+                zip: "75201".to_string(),
+                country: "US".to_string(),
+                phone: None,
+            }
+        }
+    };
+
+    let order_req = CreateOrderRequest {
+        customer_id,
+        items,
+        shipping_address,
+        payment_method: "Stripe".to_string(),
+    };
+
+    let order_service = OrderService::new();
+    match order_service.create_order(order_req).await {
+        Ok(order) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&order)?)?),
+        Err(e) => {
+            eprintln!("[checkout confirm] Order creation error: {e}");
+            Ok(Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": format!("Failed to create order: {e}") }).to_string())?)
+        }
+    }
+}
+
+fn create_mock_order_for_confirmation() -> Result<Response<String>, Error> {
+    let mock_order = serde_json::json!({
+        "id": format!("ORD-MOCK-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase()),
+        "status": "processing",
+        "total": 120.00
+    });
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "application/json")
+        .body(mock_order.to_string())?)
 }
 

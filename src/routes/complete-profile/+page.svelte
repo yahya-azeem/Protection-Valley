@@ -4,6 +4,9 @@
   import { currentUser, showToast } from '$lib/stores';
 
   let company = $state('');
+  let businessType = $state('');
+  let phone = $state('');
+  let website = $state('');
   let salesTaxId = $state('');
   let proofName = $state('');
   let proofData = $state('');
@@ -62,7 +65,10 @@
           company,
           sales_tax_id: salesTaxId,
           sales_tax_proof_name: proofName,
-          sales_tax_proof_data: proofData
+          sales_tax_proof_data: proofData,
+          phone,
+          business_type: businessType,
+          website: website || undefined
         })
       });
 
@@ -109,7 +115,7 @@
         Complete Wholesale Profile
       </h1>
       <p class="text-xs text-zinc-500 uppercase tracking-widest leading-relaxed">
-        Submit tax details to activate your wholesale access.
+        Submit business details to activate your wholesale access.
       </p>
     </div>
 
@@ -130,49 +136,94 @@
             </div>
           {/if}
 
-          <div>
-            <label for="complete-company" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Company Name</label>
-            <input 
-              id="complete-company"
-              type="text" 
-              bind:value={company}
-              required
-              placeholder="Gear Pro LLC" 
-              class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
-            />
-          </div>
-
-          <div>
-            <label for="complete-tax-id" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Sales Tax ID / Permit Number</label>
-            <input 
-              id="complete-tax-id"
-              type="text" 
-              bind:value={salesTaxId}
-              required
-              placeholder="TX-123456789-0" 
-              class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
-            />
-          </div>
-
-          <div>
-            <label class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Proof of Sales Tax (Certificate / Document)</label>
-            <label class="flex flex-col items-center justify-center border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#141414] hover:bg-[#1a1a1a] transition-lux rounded p-6 cursor-pointer text-center group">
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label for="complete-company" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Company Name</label>
               <input 
-                type="file" 
-                accept="image/*,application/pdf"
-                onchange={handleFileChange}
-                class="hidden"
+                id="complete-company"
+                type="text" 
+                bind:value={company}
+                required
+                placeholder="Gear Pro LLC" 
+                class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
               />
-              {#if proofName}
-                <FileText class="w-8 h-8 text-primary mb-2" />
-                <span class="text-xs text-white max-w-xs truncate font-medium">{proofName}</span>
-                <span class="text-[9px] text-zinc-500 mt-1 uppercase tracking-wider">Click to replace file</span>
-              {:else}
-                <Upload class="w-8 h-8 text-zinc-500 group-hover:text-primary transition-lux mb-2" />
-                <span class="text-xs text-zinc-400 group-hover:text-zinc-200 transition-lux font-medium">Upload PDF or Image certificate</span>
-                <span class="text-[9px] text-zinc-500 mt-1 uppercase tracking-wider">Max size 5MB</span>
-              {/if}
-            </label>
+            </div>
+
+            <div>
+              <label for="complete-business-type" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Business Type</label>
+              <select 
+                id="complete-business-type"
+                bind:value={businessType}
+                required
+                class="w-full bg-[#141414] border border-white/10 text-zinc-300 rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
+              >
+                <option value="" disabled selected>Select Business Type</option>
+                <option value="Contractor">Contractor / Builder</option>
+                <option value="Retailer">Retailer / Shop Owner</option>
+                <option value="Distributor">Wholesaler / Distributor</option>
+                <option value="Other">Other Professional</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label for="complete-phone" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Phone Number</label>
+              <input 
+                id="complete-phone"
+                type="tel" 
+                bind:value={phone}
+                required
+                placeholder="+1 (469) 555-0199" 
+                class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
+              />
+            </div>
+
+            <div>
+              <label for="complete-website" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Website (Optional)</label>
+              <input 
+                id="complete-website"
+                type="url" 
+                bind:value={website}
+                placeholder="www.company.com" 
+                class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
+              />
+            </div>
+          </div>
+
+          <div class="border-t border-white/5 pt-4">
+            <div>
+              <label for="complete-tax-id" class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Sales Tax ID / Permit Number</label>
+              <input 
+                id="complete-tax-id"
+                type="text" 
+                bind:value={salesTaxId}
+                required
+                placeholder="TX-123456789-0" 
+                class="w-full bg-[#141414] border border-white/10 text-white rounded p-3 text-sm focus:outline-none focus:border-primary/50 transition-lux"
+              />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Proof of Sales Tax (Certificate / Document)</label>
+              <label class="flex flex-col items-center justify-center border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#141414] hover:bg-[#1a1a1a] transition-lux rounded p-6 cursor-pointer text-center group">
+                <input 
+                  type="file" 
+                  accept="image/*,application/pdf"
+                  onchange={handleFileChange}
+                  class="hidden"
+                />
+                {#if proofName}
+                  <FileText class="w-8 h-8 text-primary mb-2" />
+                  <span class="text-xs text-white max-w-xs truncate font-medium">{proofName}</span>
+                  <span class="text-[9px] text-zinc-500 mt-1 uppercase tracking-wider">Click to replace file</span>
+                {:else}
+                  <Upload class="w-8 h-8 text-zinc-500 group-hover:text-primary transition-lux mb-2" />
+                  <span class="text-xs text-zinc-400 group-hover:text-zinc-200 transition-lux font-medium">Upload PDF or Image certificate</span>
+                  <span class="text-[9px] text-zinc-500 mt-1 uppercase tracking-wider">Max size 5MB</span>
+                {/if}
+              </label>
+            </div>
           </div>
 
           <button 

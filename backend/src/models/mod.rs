@@ -159,6 +159,9 @@ pub struct User {
     pub google_id: Option<String>,
     pub reset_token: Option<String>,
     pub reset_token_expires_at: Option<DateTime<Utc>>,
+    pub phone: Option<String>,
+    pub business_type: Option<String>,
+    pub website: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 
@@ -194,6 +197,9 @@ pub struct RegisterRequest {
     pub sales_tax_id: Option<String>,
     pub sales_tax_proof_name: Option<String>,
     pub sales_tax_proof_data: Option<String>,
+    pub phone: Option<String>,
+    pub business_type: Option<String>,
+    pub website: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -213,6 +219,9 @@ pub struct CompleteProfileRequest {
     pub sales_tax_id: String,
     pub sales_tax_proof_name: String,
     pub sales_tax_proof_data: String,
+    pub phone: Option<String>,
+    pub business_type: Option<String>,
+    pub website: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -269,5 +278,10 @@ pub struct UpsertCustomerPriceRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateUserDiscountRequest {
     pub wholesale_discount: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ConfirmCheckoutSessionRequest {
+    pub session_id: String,
 }
 
