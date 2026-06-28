@@ -120,6 +120,7 @@ export const currentPage = writable<string>('home');
 export const previousPage = writable<string>('home');
 export const cartOpen = writable<boolean>(false);
 export const searchOpen = writable<boolean>(false);
+export const checkoutOpen = writable<boolean>(false);
 export const toastMessage = writable<string>('');
 export const toastVisible = writable<boolean>(false);
 

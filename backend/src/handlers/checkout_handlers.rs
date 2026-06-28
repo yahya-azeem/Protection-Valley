@@ -209,19 +209,23 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
         return true;
     }
     candidate == allowed_origin || candidate.starts_with(&format!("{allowed_origin}/"))
-}
-
-pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCheckoutSessionRequest) -> Result<Response<String>, Error> {
+}pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCheckoutSessionRequest) -> Result<Response<String>, Error> {
     let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
         Ok(key) => {
             let trimmed = key.trim().to_string();
             if trimmed.is_empty() || trimmed.starts_with("sk_test_mock") {
-                return create_mock_order_for_confirmation();
+                return Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": "Checkout is not configured (Stripe key is missing or mock)" }).to_string())?);
             }
             trimmed
         }
         Err(_) => {
-            return create_mock_order_for_confirmation();
+            return Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": "Checkout is not configured (Stripe key is missing)" }).to_string())?);
         }
     };
 
@@ -299,25 +303,22 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
             }
         }
         None => {
-            Address {
-                first_name: "Guest".to_string(),
-                last_name: "Customer".to_string(),
-                address_line1: "123 Main St".to_string(),
-                address_line2: None,
-                city: "Dallas".to_string(),
-                state: "TX".to_string(),
-                zip: "75201".to_string(),
-                country: "US".to_string(),
-                phone: None,
-            }
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": "Shipping details are missing from checkout session" }).to_string())?);
         }
     };
+
+    let customer_email = session.customer_details.as_ref().and_then(|cd| cd.email.clone());
 
     let order_req = CreateOrderRequest {
         customer_id,
         items,
         shipping_address,
         payment_method: "Stripe".to_string(),
+        id: Some(session.id.to_string()),
+        customer_email,
     };
 
     let order_service = OrderService::new();
@@ -335,16 +336,3 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
         }
     }
 }
-
-fn create_mock_order_for_confirmation() -> Result<Response<String>, Error> {
-    let mock_order = serde_json::json!({
-        "id": format!("ORD-MOCK-{}", uuid::Uuid::new_v4().to_string()[..8].to_uppercase()),
-        "status": "processing",
-        "total": 120.00
-    });
-    Ok(Response::builder()
-        .status(StatusCode::OK)
-        .header("Content-Type", "application/json")
-        .body(mock_order.to_string())?)
-}
-

@@ -1,4 +1,4 @@
-use crate::models::{CreateOrderRequest, Order, OrderItem, OrderStatus};
+use crate::models::{CreateOrderRequest, Order, OrderItem, OrderStatus, Address};
 use crate::services::product_service::ProductService;
 use crate::services::shipping_service::ShippingService;
 use crate::services::email_service::EmailService;
@@ -47,23 +47,136 @@ impl OrderService {
     }
 
     pub async fn get_all_orders(&self) -> Result<Vec<Order>, String> {
-        let url = format!("{}/rest/v1/orders?select=*&order=created_at.desc", self.supabase_url);
-        
-        let response = self.client
+        let stripe_secret_key = env::var("STRIPE_SECRET_KEY").unwrap_or_default();
+        let stripe_sessions = if !stripe_secret_key.is_empty() {
+            let url = "https://api.stripe.com/v1/checkout/sessions?limit=100&expand[]=data.line_items";
+            match self.client
+                .get(url)
+                .bearer_auth(&stripe_secret_key)
+                .send()
+                .await {
+                    Ok(resp) => {
+                        if resp.status().is_success() {
+                            let json: serde_json::Value = resp.json().await.unwrap_or_default();
+                            json["data"].as_array().cloned().unwrap_or_default()
+                        } else {
+                            eprintln!("[order_service] Stripe error: {}", resp.text().await.unwrap_or_default());
+                            Vec::new()
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("[order_service] Stripe request failed: {e}");
+                        Vec::new()
+                    }
+                }
+        } else {
+            Vec::new()
+        };
+
+        let url = format!("{}/rest/v1/orders?select=*", self.supabase_url);
+        let supabase_orders: Vec<Order> = match self.client
             .get(&url)
             .headers(self.headers())
             .send()
-            .await
-            .map_err(|e| format!("Request failed: {}", e))?;
+            .await {
+                Ok(resp) => {
+                    if resp.status().is_success() {
+                        resp.json().await.unwrap_or_default()
+                    } else {
+                        Vec::new()
+                    }
+                }
+                Err(_) => Vec::new()
+            };
 
-        if !response.status().is_success() {
-            let error = response.text().await.unwrap_or_default();
-            return Err(format!("Supabase error: {}", error));
+        let mut supabase_map: std::collections::HashMap<String, Order> = supabase_orders
+            .into_iter()
+            .map(|o| (o.id.clone(), o))
+            .collect();
+
+        let mut orders = Vec::new();
+        for session in stripe_sessions {
+            if session["payment_status"].as_str() != Some("paid") {
+                continue;
+            }
+
+            let session_id = session["id"].as_str().unwrap_or_default().to_string();
+            if session_id.is_empty() {
+                continue;
+            }
+
+            if let Some(db_order) = supabase_map.remove(&session_id) {
+                orders.push(db_order);
+                continue;
+            }
+
+            let customer_details = &session["customer_details"];
+            let customer_name = customer_details["name"].as_str().unwrap_or("Guest").to_string();
+            let customer_email = customer_details["email"].as_str().unwrap_or("").to_string();
+            
+            let amount_total = session["amount_total"].as_f64().unwrap_or(0.0) / 100.0;
+            let amount_subtotal = session["amount_subtotal"].as_f64().unwrap_or(0.0) / 100.0;
+            let shipping_cost = (amount_total - amount_subtotal).max(0.0);
+
+            let mut items = Vec::new();
+            if let Some(lines) = session["line_items"]["data"].as_array() {
+                for line in lines {
+                    let desc = line["description"].as_str().unwrap_or("Product").to_string();
+                    let qty = line["quantity"].as_i64().unwrap_or(1) as i32;
+                    let price = line["price"]["unit_amount"].as_f64().unwrap_or(0.0) / 100.0;
+                    items.push(OrderItem {
+                        product_id: "stripe_item".to_string(),
+                        product_name: desc,
+                        quantity: qty,
+                        unit_price: price,
+                        total_price: price * qty as f64,
+                    });
+                }
+            }
+
+            let shipping = &session["shipping_details"];
+            let address_val = &shipping["address"];
+            let shipping_address = Address {
+                first_name: shipping["name"].as_str().unwrap_or("Guest").to_string(),
+                last_name: String::new(),
+                address_line1: address_val["line1"].as_str().unwrap_or("").to_string(),
+                address_line2: address_val["line2"].as_str().map(|s| s.to_string()),
+                city: address_val["city"].as_str().unwrap_or("").to_string(),
+                state: address_val["state"].as_str().unwrap_or("").to_string(),
+                zip: address_val["postal_code"].as_str().unwrap_or("").to_string(),
+                country: address_val["country"].as_str().unwrap_or("US").to_string(),
+                phone: None,
+            };
+
+            let created_epoch = session["created"].as_i64().unwrap_or(0);
+            let created_at = chrono::DateTime::<chrono::Utc>::from_timestamp(created_epoch, 0)
+                .unwrap_or_else(|| Utc::now());
+
+            orders.push(Order {
+                id: session_id,
+                customer_id: 0,
+                customer_name,
+                customer_email,
+                items,
+                subtotal: amount_subtotal,
+                shipping_cost,
+                total: amount_total,
+                status: OrderStatus::Pending,
+                shipping_address,
+                payment_method: "Stripe".to_string(),
+                carrier: None,
+                tracking_number: None,
+                shipping_label_url: None,
+                created_at,
+                updated_at: created_at,
+            });
         }
 
-        let orders: Vec<Order> = response.json()
-            .await
-            .map_err(|e| format!("Failed to parse orders: {}", e))?;
+        for (_, db_order) in supabase_map {
+            orders.push(db_order);
+        }
+
+        orders.sort_by(|a, b| b.created_at.cmp(&a.created_at));
 
         Ok(orders)
     }
@@ -91,6 +204,8 @@ impl OrderService {
             items: request_items,
             shipping_address,
             payment_method,
+            id: request_id,
+            customer_email: request_email,
         } = req;
 
         let product_service = ProductService::new();
@@ -138,11 +253,13 @@ impl OrderService {
         let total = subtotal + shipping_cost;
         let customer_name = format!("{} {}", shipping_address.first_name, shipping_address.last_name).trim().to_string();
 
+        let order_id = request_id.unwrap_or_else(|| format!("ORD-{}", Uuid::new_v4().to_string()[..8].to_uppercase()));
+
         let mut order = Order {
-            id: format!("ORD-{}", Uuid::new_v4().to_string()[..8].to_uppercase()),
+            id: order_id,
             customer_id,
             customer_name,
-            customer_email: String::new(), // In production, this should be looked up from user profile
+            customer_email: request_email.unwrap_or_default(),
             items,
             subtotal,
             shipping_cost,
@@ -195,39 +312,47 @@ impl OrderService {
           }
         }
 
-        // 2. Generate Shipping Label via EasyPost
-        let shipping_service = ShippingService::new();
-        match shipping_service.create_cheapest_label(shipping_address, total_weight_oz).await {
-            Ok(label) => {
-                order.carrier = Some(label.carrier);
-                order.tracking_number = Some(label.tracking_number);
-                order.shipping_label_url = Some(label.label_url);
-                order.status = OrderStatus::Processing;
-                
-                // Update order in Supabase with label info
-                let update_url = format!("{}/rest/v1/orders?id=eq.{}", self.supabase_url, order.id);
-                let _ = self.client
-                    .patch(&update_url)
-                    .headers(self.headers())
-                    .json(&serde_json::json!({
-                        "carrier": order.carrier,
-                        "tracking_number": order.tracking_number,
-                        "shipping_label_url": order.shipping_label_url,
-                        "status": order.status,
-                        "updated_at": Utc::now()
-                    }))
-                    .send()
-                    .await;
+        // 2. Generate Shipping Label via EasyPost (Stripe only)
+        if order.payment_method == "Stripe" {
+            let shipping_service = ShippingService::new();
+            match shipping_service.create_cheapest_label(shipping_address, total_weight_oz).await {
+                Ok(label) => {
+                    order.carrier = Some(label.carrier);
+                    order.tracking_number = Some(label.tracking_number);
+                    order.shipping_label_url = Some(label.label_url);
+                    order.status = OrderStatus::Processing;
+                    
+                    // Update order in Supabase with label info
+                    let update_url = format!("{}/rest/v1/orders?id=eq.{}", self.supabase_url, order.id);
+                    let _ = self.client
+                        .patch(&update_url)
+                        .headers(self.headers())
+                        .json(&serde_json::json!({
+                            "carrier": order.carrier,
+                            "tracking_number": order.tracking_number,
+                            "shipping_label_url": order.shipping_label_url,
+                            "status": order.status,
+                            "updated_at": Utc::now()
+                        }))
+                        .send()
+                        .await;
 
-                // 3. Send Email Notification via SendGrid
-                let email_service = EmailService::new();
-                if let Err(e) = email_service.send_order_notification(&order).await {
-                    eprintln!("[order_service] Failed to send email alert: {e}");
+                    // 3. Send Email Notification via SendGrid
+                    let email_service = EmailService::new();
+                    if let Err(e) = email_service.send_order_notification(&order).await {
+                        eprintln!("[order_service] Failed to send email alert: {e}");
+                    }
+                }
+                Err(e) => {
+                    eprintln!("[order_service] Shipping Label Generation Failed: {e}");
+                    // Non-fatal error; fulfillment can be handled manually later
                 }
             }
-            Err(e) => {
-                eprintln!("[order_service] Shipping Label Generation Failed: {e}");
-                // Non-fatal error; fulfillment can be handled manually later
+        } else {
+            // For Zelle: notify admin of the pending payment order
+            let email_service = EmailService::new();
+            if let Err(e) = email_service.send_order_notification(&order).await {
+                eprintln!("[order_service] Failed to send email alert for Zelle order: {e}");
             }
         }
 
@@ -247,5 +372,54 @@ impl OrderService {
             .await;
             
         self.get_order_by_id(id).await
+    }
+
+    pub async fn generate_shipping_label(&self, id: &str) -> Result<Order, String> {
+        let order = self.get_order_by_id(id).await?
+            .ok_or_else(|| "Order not found".to_string())?;
+
+        if order.carrier.is_some() && order.tracking_number.is_some() {
+            return Ok(order);
+        }
+
+        let shipping_service = ShippingService::new();
+        let total_weight_oz: f64 = order.items.iter().map(|i| 16.0 * i.quantity as f64).sum();
+
+        let label = shipping_service.create_cheapest_label(order.shipping_address.clone(), total_weight_oz)
+            .await
+            .map_err(|e| format!("EasyPost error: {e}"))?;
+
+        let update_url = format!("{}/rest/v1/orders?id=eq.{}", self.supabase_url, id);
+        let response = self.client
+            .patch(&update_url)
+            .headers(self.headers())
+            .json(&serde_json::json!({
+                "carrier": label.carrier,
+                "tracking_number": label.tracking_number,
+                "shipping_label_url": label.label_url,
+                "status": OrderStatus::Processing,
+                "updated_at": Utc::now()
+            }))
+            .send()
+            .await
+            .map_err(|e| format!("Database request failed: {e}"))?;
+
+        if !response.status().is_success() {
+            let err = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {err}"));
+        }
+
+        let mut updated_order = order;
+        updated_order.carrier = Some(label.carrier);
+        updated_order.tracking_number = Some(label.tracking_number);
+        updated_order.shipping_label_url = Some(label.label_url);
+        updated_order.status = OrderStatus::Processing;
+
+        let email_service = EmailService::new();
+        if let Err(e) = email_service.send_order_notification(&updated_order).await {
+            eprintln!("[order_service] Failed to send email alert: {e}");
+        }
+
+        Ok(updated_order)
     }
 }

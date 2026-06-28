@@ -5,6 +5,7 @@
   import { isWholesale, showPage, showToast, loadProducts, cart, currentUser } from '$lib/stores';
   import Navbar from '$lib/components/Navbar.svelte';
   import CartSidebar from '$lib/components/CartSidebar.svelte';
+  import CheckoutModal from '$lib/components/CheckoutModal.svelte';
   import SearchOverlay from '$lib/components/SearchOverlay.svelte';
   import Toast from '$lib/components/Toast.svelte';
   import Footer from '$lib/components/Footer.svelte';
@@ -87,5 +88,6 @@
 {@render children()}
 
 <CartSidebar />
+<CheckoutModal />
 <Toast />
 <Footer />

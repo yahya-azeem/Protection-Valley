@@ -63,6 +63,7 @@
   let orders = $state<Order[]>([]);
   let loadingOrders = $state(false);
   let syncingInventory = $state(false);
+  let generatingLabel = $state<Record<string, boolean>>({});
 
   // Edit Discount State
   let editingUser = $state<WholesaleUser | null>(null);
@@ -165,6 +166,32 @@
     } catch (e) {
       console.error(e);
       showToast('Error updating order status');
+    }
+  }
+
+  async function generateShippingLabel(orderId: string) {
+    if (generatingLabel[orderId]) return;
+    generatingLabel[orderId] = true;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/orders/${orderId}/shipment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        showToast('Shipping label generated successfully');
+        await fetchOrders();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error || 'Failed to generate shipping label');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error generating shipping label');
+    } finally {
+      generatingLabel[orderId] = false;
     }
   }
 
@@ -672,6 +699,22 @@
                             <ExternalLink class="w-3 h-3" /> PRINT SHIPPING LABEL
                           </a>
                         {/if}
+                      </div>
+                    {:else if order.status !== 'cancelled'}
+                      <div class="border-t border-white/5 pt-3 mt-3">
+                        <button
+                          onclick={() => generateShippingLabel(order.id)}
+                          disabled={generatingLabel[order.id]}
+                          class="w-full text-center py-2 px-3 bg-primary/10 border border-primary/20 hover:border-primary text-primary hover:text-white transition-lux text-[10px] font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {#if generatingLabel[order.id]}
+                            <span class="w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                            GENERATING SHIPPING LABEL...
+                          {:else}
+                            <Truck class="w-3.5 h-3.5" />
+                            GENERATE EASYPOST SHIPPING LABEL
+                          {/if}
+                        </button>
                       </div>
                     {/if}
                   </div>
