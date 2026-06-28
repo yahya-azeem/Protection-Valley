@@ -215,9 +215,20 @@
               <span class="text-[10px] text-zinc-500 uppercase tracking-widest block">Total due</span>
               <span class="text-xl font-serif text-primary font-bold">${$cartTotal.toFixed(2)}</span>
             </div>
-            <button onclick={handleMethodNext} class="btn-primary py-3 px-6 text-xs tracking-wider">
-              CONTINUE TO SHIPPING
-            </button>
+            {#if paymentMethod === 'stripe'}
+              <button onclick={proceedToStripe} disabled={loading} class="btn-primary py-3 px-6 text-xs tracking-wider flex items-center gap-2">
+                {#if loading}
+                  <span class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                  REDIRECTING...
+                {:else}
+                  PROCEED TO CARD PAYMENT
+                {/if}
+              </button>
+            {:else}
+              <button onclick={handleMethodNext} class="btn-primary py-3 px-6 text-xs tracking-wider">
+                CONTINUE TO SHIPPING
+              </button>
+            {/if}
           </div>
 
         {:else if step === 'address'}
@@ -279,8 +290,6 @@
                 {#if loading}
                   <span class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
                   PROCESSING...
-                {:else if paymentMethod === 'stripe'}
-                  PROCEED TO CARD PAYMENT
                 {:else}
                   PROCEED TO ZELLE DETAILS
                 {/if}
