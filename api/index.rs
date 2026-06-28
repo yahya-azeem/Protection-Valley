@@ -116,6 +116,14 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 } else {
                     method_not_allowed()
                 }
+            } else if p.ends_with("/shipment") {
+                let id_str = &p["/api/v1/orders/".len()..p.len() - "/shipment".len()];
+                if method == "POST" {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(order_handlers::create_order_shipment(auth_header.as_deref(), id_str.to_string()).await)
+                } else {
+                    method_not_allowed()
+                }
             } else {
                 let id_str = &p["/api/v1/orders/".len()..];
                 if method == "GET" {

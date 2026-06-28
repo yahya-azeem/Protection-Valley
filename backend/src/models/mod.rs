@@ -126,6 +126,10 @@ pub struct CreateOrderRequest {
     pub items: Vec<OrderItemRequest>,
     pub shipping_address: Address,
     pub payment_method: String,
+    #[serde(default)]
+    pub id: Option<String>,
+    #[serde(default)]
+    pub customer_email: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

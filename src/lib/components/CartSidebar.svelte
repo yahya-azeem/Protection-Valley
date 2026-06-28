@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ShoppingBag, X, Trash2 } from 'lucide-svelte';
-  import { cart, cartOpen, cartTotal, showToast, isWholesale, currentUser } from '$lib/stores';
+  import { cart, cartOpen, cartTotal, showToast, isWholesale, currentUser, checkoutOpen } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import { goto } from '$app/navigation';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
@@ -15,50 +15,13 @@
     return item ?? null;
   });
 
-  async function handleCheckout() {
+  function handleCheckout() {
     if ($cart.length === 0) {
       showToast('Your cart is empty.');
       return;
     }
-
-    try {
-      showToast('Preparing checkout...');
-      const response = await fetch(API_CONFIG.baseUrl + API_CONFIG.endpoints.create_checkout_session, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${$currentUser?.token || ''}`
-        },
-        body: JSON.stringify({
-          items: $cart.map((item) => ({
-            product_id: item.id.toString(),
-            variant_id: item.variant_id?.toString(),
-            quantity: item.quantity
-          })),
-          success_url: `${window.location.origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}/?checkout=cancel`
-        })
-      });
-
-      if (response.ok) {
-        const payload = await response.json();
-        if (payload?.url) {
-          window.location.href = payload.url;
-          return;
-        }
-        showToast('Checkout started but no redirect URL was returned.');
-        return;
-      }
-
-      const err = await response.json().catch(() => ({ error: 'Unknown error' }));
-      if (response.status === 503) {
-        showToast('Checkout is currently unavailable.');
-      } else {
-        showToast(err.error || 'Failed to start checkout session.');
-      }
-    } catch {
-      showToast('Unable to reach checkout service. Please try again later.');
-    }
+    close();
+    checkoutOpen.set(true);
   }
 </script>
 

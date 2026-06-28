@@ -88,3 +88,27 @@ pub async fn update_order_status(id: String, status: OrderStatus) -> Result<Resp
         }
     }
 }
+
+pub async fn create_order_shipment(auth_header: Option<&str>, id: String) -> Result<Response<String>, Error> {
+    if let Err(err) = crate::handlers::admin_handlers::verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
+    let service = OrderService::new();
+    match service.generate_shipping_label(&id).await {
+        Ok(order) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&order)?)?),
+        Err(e) => {
+            eprintln!("[create_order_shipment] shipping label error: {e}");
+            Ok(Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": e }).to_string())?)
+        }
+    }
+}
