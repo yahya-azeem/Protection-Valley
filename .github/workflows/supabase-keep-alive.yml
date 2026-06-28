@@ -12,6 +12,6 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         run: |
-          curl -f -s -X GET "https://fnirqccmtjzibjhgzyay.supabase.co/rest/v1/" \
+          curl -f -s -X GET "https://fnirqccmtjzibjhgzyay.supabase.co/rest/v1/products?limit=1" \
             -H "apikey: ***REMOVED-LEAKED-KEY***" \
             -H "Authorization: Bearer ***REMOVED-LEAKED-KEY***"
