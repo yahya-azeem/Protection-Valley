@@ -1,8 +1,6 @@
 <script lang="ts">
   import { ShoppingBag, X, Trash2 } from 'lucide-svelte';
-  import { cart, cartOpen, cartTotal, showToast, isWholesale, currentUser, checkoutOpen } from '$lib/stores';
-  import { API_CONFIG } from '$lib/config';
-  import { goto } from '$app/navigation';
+  import { cart, cartOpen, cartTotal, showToast, isWholesale, checkoutOpen } from '$lib/stores';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
 
   function close() {
