@@ -14,12 +14,12 @@
   let addressLine1 = $state('');
   let addressLine2 = $state('');
   let city = $state('');
-  let state = $state('');
+  let shippingState = $state('');
   let zip = $state('');
   let country = $state('US');
 
   let loading = $state(false);
-  let createdOrder = $state<any>(null);
+  let createdOrder = $state(null) as any;
 
   function close() {
     checkoutOpen.set(false);
@@ -42,7 +42,7 @@
 
   async function handleAddressSubmit(e: SubmitEvent) {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !addressLine1 || !city || !state || !zip) {
+    if (!firstName || !lastName || !email || !addressLine1 || !city || !shippingState || !zip) {
       showToast('Please fill in all required fields.');
       return;
     }
@@ -109,7 +109,7 @@
           address_line1: addressLine1,
           address_line2: addressLine2 || null,
           city,
-          state,
+          state: shippingState,
           zip,
           country,
           phone: phone || null
@@ -273,7 +273,7 @@
               </div>
               <div class="space-y-1 text-left">
                 <label for="state" class="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">State *</label>
-                <input id="state" type="text" required bind:value={state} class="w-full bg-black border border-white/10 rounded px-4 py-2.5 text-xs text-white focus:border-primary focus:outline-none" />
+                <input id="state" type="text" required bind:value={shippingState} class="w-full bg-black border border-white/10 rounded px-4 py-2.5 text-xs text-white focus:border-primary focus:outline-none" />
               </div>
               <div class="space-y-1 text-left">
                 <label for="zip" class="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">Zip Code *</label>
