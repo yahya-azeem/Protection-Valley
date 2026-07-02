@@ -3,7 +3,7 @@
   import { cart, cartTotal, checkoutOpen, showToast, currentUser } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
 
-  let step = $state<'method' | 'address' | 'zelle' | 'success'>('method');
+  let step = $state<'method' | 'address' | 'review' | 'zelle' | 'success'>('method');
   let paymentMethod = $state<'stripe' | 'zelle'>('stripe');
 
   // Shipping Address Form State
@@ -18,12 +18,17 @@
   let zip = $state('');
   let country = $state('US');
 
+  // Calculated Totals State
+  let subtotal = $state(0);
+  let shippingCost = $state(0);
+  let salesTax = $state(0);
+  let total = $state(0);
+
   let loading = $state(false);
   let createdOrder = $state(null) as any;
 
   function close() {
     checkoutOpen.set(false);
-    // Reset state
     step = 'method';
     createdOrder = null;
   }
@@ -31,13 +36,63 @@
   function handleBack() {
     if (step === 'address') {
       step = 'method';
-    } else if (step === 'zelle') {
+    } else if (step === 'review') {
       step = 'address';
+    } else if (step === 'zelle') {
+      step = 'review';
     }
   }
 
   function handleMethodNext() {
     step = 'address';
+  }
+
+  async function calculateShippingAndTax() {
+    loading = true;
+    try {
+      showToast('Calculating live shipping rates and tax...');
+      const res = await fetch(API_CONFIG.baseUrl + '/checkout/calculate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${$currentUser?.token || ''}`
+        },
+        body: JSON.stringify({
+          items: $cart.map(item => ({
+            product_id: item.id.toString(),
+            variant_id: item.variant_id?.toString(),
+            quantity: item.quantity
+          })),
+          shipping_address: {
+            first_name: firstName,
+            last_name: lastName,
+            address_line1: addressLine1,
+            address_line2: addressLine2 || null,
+            city,
+            state: shippingState,
+            zip,
+            country,
+            phone: phone || null
+          }
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        subtotal = data.subtotal;
+        shippingCost = data.shipping_cost;
+        salesTax = data.sales_tax;
+        total = data.total;
+        step = 'review';
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error || 'Failed to calculate shipping and tax.');
+      }
+    } catch {
+      showToast('Network error while calculating shipping.');
+    } finally {
+      loading = false;
+    }
   }
 
   async function handleAddressSubmit(e: SubmitEvent) {
@@ -47,11 +102,7 @@
       return;
     }
 
-    if (paymentMethod === 'stripe') {
-      await proceedToStripe();
-    } else {
-      step = 'zelle';
-    }
+    await calculateShippingAndTax();
   }
 
   async function proceedToStripe() {
@@ -71,7 +122,20 @@
             quantity: item.quantity
           })),
           success_url: `${window.location.origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${window.location.origin}/?checkout=cancel`
+          cancel_url: `${window.location.origin}/?checkout=cancel`,
+          shipping_address: {
+            first_name: firstName,
+            last_name: lastName,
+            address_line1: addressLine1,
+            address_line2: addressLine2 || null,
+            city,
+            state: shippingState,
+            zip,
+            country,
+            phone: phone || null
+          },
+          shipping_cost: shippingCost,
+          sales_tax: salesTax
         })
       });
 
@@ -114,7 +178,9 @@
           country,
           phone: phone || null
         },
-        payment_method: 'Zelle'
+        payment_method: 'Zelle',
+        shipping_cost: shippingCost,
+        sales_tax: salesTax
       };
 
       const res = await fetch(`${API_CONFIG.baseUrl}/orders`, {
@@ -215,20 +281,9 @@
               <span class="text-[10px] text-zinc-500 uppercase tracking-widest block">Total due</span>
               <span class="text-xl font-serif text-primary font-bold">${$cartTotal.toFixed(2)}</span>
             </div>
-            {#if paymentMethod === 'stripe'}
-              <button onclick={proceedToStripe} disabled={loading} class="btn-primary py-3 px-6 text-xs tracking-wider flex items-center gap-2">
-                {#if loading}
-                  <span class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                  REDIRECTING...
-                {:else}
-                  PROCEED TO CARD PAYMENT
-                {/if}
-              </button>
-            {:else}
-              <button onclick={handleMethodNext} class="btn-primary py-3 px-6 text-xs tracking-wider">
-                CONTINUE TO SHIPPING
-              </button>
-            {/if}
+            <button onclick={handleMethodNext} class="btn-primary py-3 px-6 text-xs tracking-wider">
+              CONTINUE TO SHIPPING
+            </button>
           </div>
 
         {:else if step === 'address'}
@@ -289,13 +344,71 @@
               <button type="submit" disabled={loading} class="btn-primary py-3 px-8 text-xs tracking-wider flex items-center gap-2">
                 {#if loading}
                   <span class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                  PROCESSING...
+                  CALCULATING...
                 {:else}
-                  PROCEED TO ZELLE DETAILS
+                  CALCULATE SHIPPING & TAX
                 {/if}
               </button>
             </div>
           </form>
+
+        {:else if step === 'review'}
+          <!-- Step 2.5: Review Order -->
+          <div class="space-y-6 text-left">
+            <p class="text-xs text-zinc-400">Please review your order details and totals before continuing.</p>
+
+            <div class="border border-white/10 bg-black/40 rounded p-4 space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-primary">Shipping Address</h4>
+              <p class="text-xs text-zinc-300 font-sans">
+                {firstName} {lastName}<br />
+                {addressLine1}{addressLine2 ? ', ' + addressLine2 : ''}<br />
+                {city}, {shippingState} {zip}<br />
+                {country}
+                {#if phone}<br />Phone: {phone}{/if}
+              </p>
+            </div>
+
+            <div class="border border-white/10 bg-black/40 rounded p-4 space-y-2 text-xs font-mono">
+              <h4 class="font-sans text-xs font-bold uppercase tracking-wider text-primary mb-2 font-mono-none">Order Summary</h4>
+              <div class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-zinc-500">Subtotal:</span>
+                <span class="text-white">${subtotal.toFixed(2)}</span>
+              </div>
+              <div class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-zinc-500">Shipping (EasyPost Cheapest):</span>
+                <span class="text-white">{shippingCost === 0 ? 'FREE' : '$' + shippingCost.toFixed(2)}</span>
+              </div>
+              <div class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-zinc-500">Sales Tax:</span>
+                <span class="text-white">${salesTax.toFixed(2)}</span>
+              </div>
+              <div class="flex justify-between pt-1 text-sm font-bold">
+                <span class="text-zinc-400">Total:</span>
+                <span class="text-primary">${total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-6 flex justify-between items-center bg-black/20 p-4 rounded">
+              <div class="text-left">
+                <span class="text-[10px] text-zinc-500 uppercase tracking-widest block">Total due</span>
+                <span class="text-xl font-serif text-primary font-bold">${total.toFixed(2)}</span>
+              </div>
+              {#if paymentMethod === 'stripe'}
+                <button onclick={proceedToStripe} disabled={loading} class="btn-primary py-3 px-6 text-xs tracking-wider flex items-center gap-2">
+                  {#if loading}
+                    <span class="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                    REDIRECTING...
+                  {:else}
+                    PROCEED TO CARD PAYMENT
+                  {/if}
+                </button>
+              {:else}
+                <button onclick={() => step = 'zelle'} class="btn-primary py-3 px-6 text-xs tracking-wider">
+                  CONTINUE TO PAYMENT INSTRUCTIONS
+                </button>
+              {/if}
+            </div>
+          </div>
 
         {:else if step === 'zelle'}
           <!-- Step 3: Zelle Payment Details -->
@@ -319,7 +432,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-zinc-500">Exact Amount:</span>
-                <span class="text-emerald-400 font-bold">${$cartTotal.toFixed(2)}</span>
+                <span class="text-emerald-400 font-bold">${total.toFixed(2)}</span>
               </div>
             </div>
 

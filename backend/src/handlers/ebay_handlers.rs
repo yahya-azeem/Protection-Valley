@@ -2,7 +2,14 @@ use vercel_runtime::{Response, Error};
 use http::StatusCode;
 use crate::services::ebay_service::EbayService;
 
-pub async fn sync_inventory() -> Result<Response<String>, Error> {
+pub async fn sync_inventory(auth_header: Option<&str>) -> Result<Response<String>, Error> {
+    if let Err(err) = crate::handlers::admin_handlers::verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
     let service = EbayService::new();
     
     match service.sync_inventory().await {
@@ -17,7 +24,14 @@ pub async fn sync_inventory() -> Result<Response<String>, Error> {
     }
 }
 
-pub async fn get_ebay_products() -> Result<Response<String>, Error> {
+pub async fn get_ebay_products(auth_header: Option<&str>) -> Result<Response<String>, Error> {
+    if let Err(err) = crate::handlers::admin_handlers::verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
     let service = EbayService::new();
     
     match service.get_ebay_products().await {

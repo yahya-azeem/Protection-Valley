@@ -82,6 +82,7 @@ pub struct Order {
     pub items: Vec<OrderItem>,
     pub subtotal: f64,
     pub shipping_cost: f64,
+    pub sales_tax: f64,
     pub total: f64,
     pub status: OrderStatus,
     pub shipping_address: Address,
@@ -89,6 +90,8 @@ pub struct Order {
     pub carrier: Option<String>,
     pub tracking_number: Option<String>,
     pub shipping_label_url: Option<String>,
+    pub shipping_label_printed: bool,
+    pub shipping_label_printed_at: Option<DateTime<Utc>>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -130,6 +133,10 @@ pub struct CreateOrderRequest {
     pub id: Option<String>,
     #[serde(default)]
     pub customer_email: Option<String>,
+    #[serde(default)]
+    pub shipping_cost: Option<f64>,
+    #[serde(default)]
+    pub sales_tax: Option<f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -144,6 +151,23 @@ pub struct CreateCheckoutSessionRequest {
     pub items: Vec<OrderItemRequest>,
     pub success_url: String,
     pub cancel_url: String,
+    pub shipping_address: Address,
+    pub shipping_cost: f64,
+    pub sales_tax: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CheckoutCalculateRequest {
+    pub items: Vec<OrderItemRequest>,
+    pub shipping_address: Address,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CheckoutCalculateResponse {
+    pub subtotal: f64,
+    pub shipping_cost: f64,
+    pub sales_tax: f64,
+    pub total: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -287,5 +311,15 @@ pub struct UpdateUserDiscountRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConfirmCheckoutSessionRequest {
     pub session_id: String,
+}
+
+pub fn calculate_sales_tax(state: &str, subtotal: f64) -> f64 {
+    let rate = match state.to_uppercase().as_str() {
+        "TX" | "CA" | "NY" | "IL" => 0.0825,
+        "FL" => 0.07,
+        "OR" | "DE" | "MT" | "NH" | "AK" => 0.0,
+        _ => 0.06,
+    };
+    subtotal * rate
 }
 
