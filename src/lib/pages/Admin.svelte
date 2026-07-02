@@ -35,6 +35,7 @@
     }[];
     subtotal: number;
     shipping_cost: number;
+    sales_tax: number;
     total: number;
     status: 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled';
     shipping_address: {
@@ -51,6 +52,8 @@
     carrier?: string;
     tracking_number?: string;
     shipping_label_url?: string;
+    shipping_label_printed: boolean;
+    shipping_label_printed_at?: string;
     created_at: string;
     updated_at: string;
   }
@@ -64,6 +67,22 @@
   let loadingOrders = $state(false);
   let syncingInventory = $state(false);
   let generatingLabel = $state<Record<string, boolean>>({});
+
+  // Sub-tabs for Orders
+  let ordersSubTab = $state<'awaiting' | 'archived'>('awaiting');
+
+  let awaitingOrders = $derived(
+    orders.filter(o => !o.shipping_label_printed && o.status !== 'cancelled')
+  );
+
+  let archivedOrders = $derived(
+    orders.filter(o => {
+      if (!o.shipping_label_printed) return false;
+      if (!o.shipping_label_printed_at) return true;
+      const printedAt = new Date(o.shipping_label_printed_at).getTime();
+      return (Date.now() - printedAt) <= 14 * 24 * 60 * 60 * 1000;
+    })
+  );
 
   // Edit Discount State
   let editingUser = $state<WholesaleUser | null>(null);
@@ -612,132 +631,181 @@
           <div class="py-20 text-center text-zinc-500 text-xs uppercase tracking-widest font-bold">
             Loading orders...
           </div>
-        {:else if orders.length === 0}
-          <div class="border border-dashed border-white/10 rounded-lg p-20 text-center text-zinc-500 text-xs uppercase tracking-widest">
-            No orders have been placed yet.
-          </div>
         {:else}
-          <div class="space-y-6">
-            {#each orders as order}
-              <div class="border border-white/5 rounded bg-[#0A0A0A] p-6 space-y-4">
-                <div class="flex flex-wrap justify-between items-start border-b border-white/5 pb-4 gap-4">
-                  <div>
-                    <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wide">{order.id}</h3>
-                    <p class="text-[10px] text-zinc-500">Placed on {new Date(order.created_at).toLocaleString()}</p>
-                  </div>
-                  <div class="flex items-center gap-4">
-                    <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded bg-white/5 text-zinc-300">
-                      Status: {order.status}
-                    </span>
-                    <select
-                      value={order.status}
-                      onchange={(e) => updateOrderStatus(order.id, e.currentTarget.value)}
-                      class="bg-black border border-white/10 rounded px-2.5 py-1 text-xs text-white focus:border-primary focus:outline-none font-semibold uppercase tracking-wider"
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="processing">Processing</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </div>
+          {@const activeList = ordersSubTab === 'awaiting' ? awaitingOrders : archivedOrders}
+          <div class="space-y-6 animate-fade-in">
+            <!-- Sub-tab switcher -->
+            <div class="flex gap-4 border-b border-white/5 pb-4">
+              <button
+                onclick={() => ordersSubTab = 'awaiting'}
+                class="px-4 py-2 text-xs uppercase tracking-wider font-bold border-b-2 transition-lux
+                  {ordersSubTab === 'awaiting' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
+              >
+                Awaiting Label ({awaitingOrders.length})
+              </button>
+              <button
+                onclick={() => ordersSubTab = 'archived'}
+                class="px-4 py-2 text-xs uppercase tracking-wider font-bold border-b-2 transition-lux
+                  {ordersSubTab === 'archived' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
+              >
+                Archived ({archivedOrders.length})
+              </button>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <!-- Customer & Delivery -->
-                  <div class="space-y-2">
-                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Customer Info</h4>
-                    <p class="text-xs text-white font-medium">{order.customer_name}</p>
-                    <p class="text-xs text-zinc-400">{order.customer_email || 'No email registered'}</p>
-                    <p class="text-xs text-zinc-400 font-semibold">Payment: <span class="font-mono uppercase tracking-wider text-[10px] text-primary">{order.payment_method}</span></p>
-                  </div>
-
-                  <!-- Shipping Address -->
-                  <div class="space-y-2">
-                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Shipping Address</h4>
-                    <p class="text-xs text-zinc-300 leading-relaxed">
-                      {order.shipping_address.address_line1}<br />
-                      {#if order.shipping_address.address_line2}
-                        {order.shipping_address.address_line2}<br />
-                      {/if}
-                      {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}<br />
-                      {order.shipping_address.country}
-                    </p>
-                  </div>
-
-                  <!-- Order Summary & Shipping Details -->
-                  <div class="space-y-2">
-                    <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Order Summary</h4>
-                    <div class="text-xs space-y-1 font-mono">
-                      <div class="flex justify-between">
-                        <span class="text-zinc-500">Subtotal:</span>
-                        <span>${order.subtotal.toFixed(2)}</span>
+            {#if activeList.length === 0}
+              <div class="border border-dashed border-white/10 rounded-lg p-20 text-center text-zinc-500 text-xs uppercase tracking-widest">
+                {#if ordersSubTab === 'awaiting'}
+                  No orders awaiting shipping labels.
+                {:else}
+                  No archived orders found within the last 14 days.
+                {/if}
+              </div>
+            {:else}
+              <div class="space-y-6">
+                {#each activeList as order}
+                  {@const orderPlacedTime = new Date(order.created_at).getTime()}
+                  {@const isLate = !order.shipping_label_printed && (Date.now() - orderPlacedTime > 24 * 60 * 60 * 1000)}
+                  <div
+                    class="border rounded bg-[#0A0A0A] p-6 space-y-4 transition-lux
+                      {isLate ? 'border-red-500/80 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-white/5'}"
+                  >
+                    <div class="flex flex-wrap justify-between items-start border-b border-white/5 pb-4 gap-4">
+                      <div>
+                        <div class="flex items-center gap-3">
+                          <h3 class="text-sm font-bold text-white font-mono uppercase tracking-wide">{order.id}</h3>
+                          {#if isLate}
+                            <span class="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[9px] uppercase tracking-wider font-bold">
+                              ⚠️ LATE ORDER (Pending label > 24h)
+                            </span>
+                          {/if}
+                        </div>
+                        <p class="text-[10px] text-zinc-500 mt-1">Placed on {new Date(order.created_at).toLocaleString()}</p>
                       </div>
-                      <div class="flex justify-between">
-                        <span class="text-zinc-500">Shipping:</span>
-                        <span>${order.shipping_cost.toFixed(2)}</span>
-                      </div>
-                      <div class="flex justify-between text-white font-bold border-t border-white/5 pt-1 mt-1">
-                        <span>Total:</span>
-                        <span class="text-primary">${order.total.toFixed(2)}</span>
+                      <div class="flex items-center gap-4">
+                        <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded bg-white/5 text-zinc-300">
+                          Status: {order.status}
+                        </span>
+                        <select
+                          value={order.status}
+                          onchange={(e) => updateOrderStatus(order.id, e.currentTarget.value)}
+                          class="bg-black border border-white/10 rounded px-2.5 py-1 text-xs text-white focus:border-primary focus:outline-none font-semibold uppercase tracking-wider"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="completed">Completed</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
                       </div>
                     </div>
 
-                    <!-- EasyPost Labels if present -->
-                    {#if order.carrier && order.tracking_number}
-                      <div class="border-t border-white/5 pt-3 mt-3 space-y-1.5">
-                        <p class="text-[10px] text-zinc-400 flex items-center gap-1.5">
-                          <Truck class="w-3.5 h-3.5 text-emerald-400" />
-                          <span>{order.carrier} Tracking: {order.tracking_number}</span>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <!-- Customer & Delivery -->
+                      <div class="space-y-2">
+                        <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Customer Info</h4>
+                        <p class="text-xs text-white font-medium">{order.customer_name}</p>
+                        <p class="text-xs text-zinc-400">{order.customer_email || 'No email registered'}</p>
+                        <p class="text-xs text-zinc-400 font-semibold">Payment: <span class="font-mono uppercase tracking-wider text-[10px] text-primary">{order.payment_method}</span></p>
+                      </div>
+
+                      <!-- Shipping Address -->
+                      <div class="space-y-2">
+                        <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Shipping Address</h4>
+                        <p class="text-xs text-zinc-300 leading-relaxed font-sans">
+                          {order.shipping_address.address_line1}<br />
+                          {#if order.shipping_address.address_line2}
+                            {order.shipping_address.address_line2}<br />
+                          {/if}
+                          {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}<br />
+                          {order.shipping_address.country}
                         </p>
-                        {#if order.shipping_label_url}
-                          <a
-                            href={order.shipping_label_url}
-                            target="_blank"
-                            class="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-bold uppercase tracking-wider"
-                          >
-                            <ExternalLink class="w-3 h-3" /> PRINT SHIPPING LABEL
-                          </a>
+                      </div>
+
+                      <!-- Order Summary & Shipping Details -->
+                      <div class="space-y-2">
+                        <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">Order Summary</h4>
+                        <div class="text-xs space-y-1 font-mono">
+                          <div class="flex justify-between">
+                            <span class="text-zinc-500">Subtotal:</span>
+                            <span>${order.subtotal.toFixed(2)}</span>
+                          </div>
+                          <div class="flex justify-between">
+                            <span class="text-zinc-500">Shipping:</span>
+                            <span>${order.shipping_cost.toFixed(2)}</span>
+                          </div>
+                          <div class="flex justify-between">
+                            <span class="text-zinc-500">Sales Tax:</span>
+                            <span>${(order.sales_tax || 0.00).toFixed(2)}</span>
+                          </div>
+                          <div class="flex justify-between text-white font-bold border-t border-white/5 pt-1 mt-1">
+                            <span>Total:</span>
+                            <span class="text-primary">${order.total.toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        <!-- EasyPost Labels if present -->
+                        {#if order.shipping_label_printed}
+                          <div class="border-t border-white/5 pt-3 mt-3 space-y-2">
+                            <p class="text-[10px] text-zinc-400 flex items-center gap-1.5">
+                              <Truck class="w-3.5 h-3.5 text-emerald-400" />
+                              <span>{order.carrier || 'Carrier'} Tracking: {order.tracking_number}</span>
+                            </p>
+                            {#if order.shipping_label_url}
+                              <a
+                                href={order.shipping_label_url}
+                                target="_blank"
+                                class="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-bold uppercase tracking-wider"
+                              >
+                                <ExternalLink class="w-3 h-3" /> PRINT SHIPPING LABEL
+                              </a>
+                            {/if}
+                            {#if order.shipping_label_printed_at}
+                              <p class="text-[9px] text-zinc-600 font-sans mt-1">
+                                Archived on: {new Date(order.shipping_label_printed_at).toLocaleDateString()}<br />
+                                Auto-hides on: {new Date(new Date(order.shipping_label_printed_at).getTime() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                              </p>
+                            {/if}
+                          </div>
+                        {:else if order.status !== 'cancelled'}
+                          <div class="border-t border-white/5 pt-3 mt-3">
+                            <button
+                              onclick={() => generateShippingLabel(order.id)}
+                              disabled={generatingLabel[order.id]}
+                              class="w-full text-center py-2 px-3 bg-primary/10 border border-primary/20 hover:border-primary text-primary hover:text-white transition-lux text-[10px] font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {#if generatingLabel[order.id]}
+                                <span class="w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                                GENERATING SHIPPING LABEL...
+                              {:else}
+                                <Truck class="w-3.5 h-3.5" />
+                                GENERATE EASYPOST SHIPPING LABEL
+                              {/if}
+                            </button>
+                          </div>
                         {/if}
                       </div>
-                    {:else if order.status !== 'cancelled'}
-                      <div class="border-t border-white/5 pt-3 mt-3">
-                        <button
-                          onclick={() => generateShippingLabel(order.id)}
-                          disabled={generatingLabel[order.id]}
-                          class="w-full text-center py-2 px-3 bg-primary/10 border border-primary/20 hover:border-primary text-primary hover:text-white transition-lux text-[10px] font-bold uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {#if generatingLabel[order.id]}
-                            <span class="w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-                            GENERATING SHIPPING LABEL...
-                          {:else}
-                            <Truck class="w-3.5 h-3.5" />
-                            GENERATE EASYPOST SHIPPING LABEL
-                          {/if}
-                        </button>
-                      </div>
-                    {/if}
-                  </div>
-                </div>
+                    </div>
 
-                <!-- Items list -->
-                <div class="border-t border-white/5 pt-4">
-                  <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Items Ordered</h4>
-                  <div class="divide-y divide-white/5">
-                    {#each order.items as item}
-                      <div class="flex justify-between py-2.5 text-xs">
-                        <div class="text-zinc-300">
-                          {item.product_name} <span class="text-zinc-500 font-mono text-[10px] font-bold">x{item.quantity}</span>
-                        </div>
-                        <div class="font-mono text-white">
-                          ${(item.unit_price * item.quantity).toFixed(2)}
-                        </div>
+                    <!-- Items list -->
+                    <div class="border-t border-white/5 pt-4">
+                      <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Items Ordered</h4>
+                      <div class="divide-y divide-white/5">
+                        {#each order.items as item}
+                          <div class="flex justify-between py-2.5 text-xs">
+                            <div class="text-zinc-300 font-sans">
+                              {item.product_name} <span class="text-zinc-500 font-mono text-[10px] font-bold">x{item.quantity}</span>
+                            </div>
+                            <div class="font-mono text-white">
+                              ${(item.total_price || (item.unit_price * item.quantity)).toFixed(2)}
+                            </div>
+                          </div>
+                        {/each}
                       </div>
-                    {/each}
+                    </div>
                   </div>
-                </div>
+                {/each}
               </div>
-            {/each}
+            {/if}
           </div>
         {/if}
       {:else if activeTab === 'notifications'}

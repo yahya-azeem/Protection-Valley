@@ -81,6 +81,67 @@ impl ShippingService {
         headers
     }
 
+    pub async fn calculate_shipping_rate(&self, to_address: Address, weight_oz: f64) -> Result<f64> {
+        if self.api_key.is_empty() {
+            return Ok(5.99);
+        }
+
+        let from_address = EasyPostAddress {
+            name: "Protection Valley Warehouse".to_string(),
+            street1: "123 Safety Way".to_string(),
+            street2: None,
+            city: "Los Angeles".to_string(),
+            state: "CA".to_string(),
+            zip: "90001".to_string(),
+            country: "US".to_string(),
+            phone: Some("555-0199".to_string()),
+        };
+
+        let ep_to_address = EasyPostAddress {
+            name: format!("{} {}", to_address.first_name, to_address.last_name),
+            street1: to_address.address_line1,
+            street2: to_address.address_line2,
+            city: to_address.city,
+            state: to_address.state,
+            zip: to_address.zip,
+            country: to_address.country,
+            phone: to_address.phone,
+        };
+
+        let shipment_req = serde_json::json!({
+            "shipment": {
+                "to_address": ep_to_address,
+                "from_address": from_address,
+                "parcel": { "weight": weight_oz }
+            }
+        });
+
+        let response = self.client
+            .post("https://api.easypost.com/v2/shipments")
+            .headers(self.headers())
+            .json(&shipment_req)
+            .send()
+            .await?;
+
+        if !response.status().is_success() {
+            let err = response.text().await?;
+            return Err(anyhow!("EasyPost Rate Calculation Error: {}", err));
+        }
+
+        let shipment: EasyPostShipmentResponse = response.json().await?;
+
+        let cheapest_rate = shipment.rates.iter()
+            .min_by(|a, b| {
+                let a_price: f64 = a.rate.parse().unwrap_or(f64::MAX);
+                let b_price: f64 = b.rate.parse().unwrap_or(f64::MAX);
+                a_price.partial_cmp(&b_price).unwrap()
+            })
+            .ok_or_else(|| anyhow!("No shipping rates available for this destination"))?;
+
+        let rate_value: f64 = cheapest_rate.rate.parse().unwrap_or(0.0);
+        Ok(rate_value)
+    }
+
     pub async fn create_cheapest_label(&self, to_address: Address, weight_oz: f64) -> Result<ShippingLabel> {
         if self.api_key.is_empty() {
             let mock_tracking = format!("940010000000000000{}", uuid::Uuid::new_v4().to_string()[..6].to_uppercase());

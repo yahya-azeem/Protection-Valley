@@ -116,7 +116,8 @@ impl OrderService {
             
             let amount_total = session["amount_total"].as_f64().unwrap_or(0.0) / 100.0;
             let amount_subtotal = session["amount_subtotal"].as_f64().unwrap_or(0.0) / 100.0;
-            let shipping_cost = (amount_total - amount_subtotal).max(0.0);
+            let amount_tax = session["total_details"]["amount_tax"].as_f64().unwrap_or(0.0) / 100.0;
+            let shipping_cost = (amount_total - amount_subtotal - amount_tax).max(0.0);
 
             let mut items = Vec::new();
             if let Some(lines) = session["line_items"]["data"].as_array() {
@@ -160,6 +161,7 @@ impl OrderService {
                 items,
                 subtotal: amount_subtotal,
                 shipping_cost,
+                sales_tax: amount_tax,
                 total: amount_total,
                 status: OrderStatus::Pending,
                 shipping_address,
@@ -167,6 +169,8 @@ impl OrderService {
                 carrier: None,
                 tracking_number: None,
                 shipping_label_url: None,
+                shipping_label_printed: false,
+                shipping_label_printed_at: None,
                 created_at,
                 updated_at: created_at,
             });
@@ -206,11 +210,12 @@ impl OrderService {
             payment_method,
             id: request_id,
             customer_email: request_email,
+            shipping_cost,
+            sales_tax,
         } = req;
 
         let product_service = ProductService::new();
         let mut items: Vec<OrderItem> = Vec::new();
-        let mut total_weight_oz = 0.0;
 
         for item in request_items {
             let product_id = item.product_id;
@@ -238,8 +243,6 @@ impl OrderService {
                         unit_price: v.price,
                         total_price: v.price * quantity as f64,
                     });
-                    // Assuming average product weight if not specified in V2 models yet
-                    total_weight_oz += 16.0 * quantity as f64; 
                 }
             }
         }
@@ -249,20 +252,26 @@ impl OrderService {
         }
 
         let subtotal: f64 = items.iter().map(|i| i.total_price).sum();
-        let shipping_cost = if subtotal >= 100.0 { 0.0 } else { 15.0 };
-        let total = subtotal + shipping_cost;
+        let shipping_cost_val = shipping_cost.unwrap_or_else(|| {
+            if subtotal >= 100.0 { 0.0 } else { 15.0 }
+        });
+        let sales_tax_val = sales_tax.unwrap_or_else(|| {
+            calculate_sales_tax(&shipping_address.state, subtotal)
+        });
+        let total = subtotal + shipping_cost_val + sales_tax_val;
         let customer_name = format!("{} {}", shipping_address.first_name, shipping_address.last_name).trim().to_string();
 
         let order_id = request_id.unwrap_or_else(|| format!("ORD-{}", Uuid::new_v4().to_string()[..8].to_uppercase()));
 
-        let mut order = Order {
+        let order = Order {
             id: order_id,
             customer_id,
             customer_name,
             customer_email: request_email.unwrap_or_default(),
             items,
             subtotal,
-            shipping_cost,
+            shipping_cost: shipping_cost_val,
+            sales_tax: sales_tax_val,
             total,
             status: OrderStatus::Pending,
             shipping_address: shipping_address.clone(),
@@ -270,6 +279,8 @@ impl OrderService {
             carrier: None,
             tracking_number: None,
             shipping_label_url: None,
+            shipping_label_printed: false,
+            shipping_label_printed_at: None,
             created_at: Utc::now(),
             updated_at: Utc::now(),
         };
@@ -289,71 +300,33 @@ impl OrderService {
         for item in &order.items {
             if let Ok(p_id) = item.product_id.parse::<i64>() {
                 if let Ok(Some(product)) = product_service.get_product_by_id(p_id).await {
-                if let Some(ref variants) = product.variants {
-                    for v in variants {
-                        let name_with_variant = format!("{} - {}", product.name, v.original_name);
-                        if name_with_variant == item.product_name {
-                            let new_stock = (v.stock - item.quantity).max(0);
-                            
-                            // Update database stock
-                            if let Err(e) = product_service.update_variant_stock(v.id, new_stock).await {
-                                eprintln!("[order_service] Failed to update local stock for variant {}: {e}", v.id);
-                            }
-                            
-                            // Sync with eBay
-                            let identifier_to_update = v.ebay_item_id.as_ref().unwrap_or(&v.sku);
-                            if let Err(e) = ebay_service.update_ebay_item_quantity(identifier_to_update, new_stock).await {
-                                eprintln!("[order_service] Failed to update eBay quantity: {e}");
+                    if let Some(ref variants) = product.variants {
+                        for v in variants {
+                            let name_with_variant = format!("{} - {}", product.name, v.original_name);
+                            if name_with_variant == item.product_name {
+                                let new_stock = (v.stock - item.quantity).max(0);
+                                
+                                // Update database stock
+                                if let Err(e) = product_service.update_variant_stock(v.id, new_stock).await {
+                                    eprintln!("[order_service] Failed to update local stock for variant {}: {e}", v.id);
+                                }
+                                
+                                // Sync with eBay
+                                let identifier_to_update = v.ebay_item_id.as_ref().unwrap_or(&v.sku);
+                                if let Err(e) = ebay_service.update_ebay_item_quantity(identifier_to_update, new_stock).await {
+                                    eprintln!("[order_service] Failed to update eBay quantity: {e}");
+                                }
                             }
                         }
                     }
                 }
             }
-          }
         }
 
-        // 2. Generate Shipping Label via EasyPost (Stripe only)
-        if order.payment_method == "Stripe" {
-            let shipping_service = ShippingService::new();
-            match shipping_service.create_cheapest_label(shipping_address, total_weight_oz).await {
-                Ok(label) => {
-                    order.carrier = Some(label.carrier);
-                    order.tracking_number = Some(label.tracking_number);
-                    order.shipping_label_url = Some(label.label_url);
-                    order.status = OrderStatus::Processing;
-                    
-                    // Update order in Supabase with label info
-                    let update_url = format!("{}/rest/v1/orders?id=eq.{}", self.supabase_url, order.id);
-                    let _ = self.client
-                        .patch(&update_url)
-                        .headers(self.headers())
-                        .json(&serde_json::json!({
-                            "carrier": order.carrier,
-                            "tracking_number": order.tracking_number,
-                            "shipping_label_url": order.shipping_label_url,
-                            "status": order.status,
-                            "updated_at": Utc::now()
-                        }))
-                        .send()
-                        .await;
-
-                    // 3. Send Email Notification via SendGrid
-                    let email_service = EmailService::new();
-                    if let Err(e) = email_service.send_order_notification(&order).await {
-                        eprintln!("[order_service] Failed to send email alert: {e}");
-                    }
-                }
-                Err(e) => {
-                    eprintln!("[order_service] Shipping Label Generation Failed: {e}");
-                    // Non-fatal error; fulfillment can be handled manually later
-                }
-            }
-        } else {
-            // For Zelle: notify admin of the pending payment order
-            let email_service = EmailService::new();
-            if let Err(e) = email_service.send_order_notification(&order).await {
-                eprintln!("[order_service] Failed to send email alert for Zelle order: {e}");
-            }
+        // Send Email Notification
+        let email_service = EmailService::new();
+        if let Err(e) = email_service.send_order_notification(&order).await {
+            eprintln!("[order_service] Failed to send email alert: {e}");
         }
 
         Ok(order)
@@ -378,7 +351,7 @@ impl OrderService {
         let order = self.get_order_by_id(id).await?
             .ok_or_else(|| "Order not found".to_string())?;
 
-        if order.carrier.is_some() && order.tracking_number.is_some() {
+        if order.shipping_label_printed {
             return Ok(order);
         }
 
@@ -398,6 +371,8 @@ impl OrderService {
                 "tracking_number": label.tracking_number,
                 "shipping_label_url": label.label_url,
                 "status": OrderStatus::Processing,
+                "shipping_label_printed": true,
+                "shipping_label_printed_at": Utc::now(),
                 "updated_at": Utc::now()
             }))
             .send()
@@ -414,6 +389,8 @@ impl OrderService {
         updated_order.tracking_number = Some(label.tracking_number);
         updated_order.shipping_label_url = Some(label.label_url);
         updated_order.status = OrderStatus::Processing;
+        updated_order.shipping_label_printed = true;
+        updated_order.shipping_label_printed_at = Some(Utc::now());
 
         let email_service = EmailService::new();
         if let Err(e) = email_service.send_order_notification(&updated_order).await {
@@ -422,4 +399,14 @@ impl OrderService {
 
         Ok(updated_order)
     }
+}
+
+fn calculate_sales_tax(state: &str, subtotal: f64) -> f64 {
+    let rate = match state.to_uppercase().as_str() {
+        "TX" | "CA" | "NY" | "IL" => 0.0825,
+        "FL" => 0.07,
+        "OR" | "DE" | "MT" | "NH" | "AK" => 0.0,
+        _ => 0.06,
+    };
+    subtotal * rate
 }

@@ -1,8 +1,12 @@
 use vercel_runtime::{Response, Error};
 use http::StatusCode;
-use crate::models::{CreateCheckoutSessionRequest, ConfirmCheckoutSessionRequest, CreateOrderRequest, Address, OrderItemRequest};
+use crate::models::{
+    CreateCheckoutSessionRequest, ConfirmCheckoutSessionRequest, CreateOrderRequest,
+    Address, OrderItemRequest, CheckoutCalculateRequest, CheckoutCalculateResponse
+};
 use crate::services::product_service::ProductService;
 use crate::services::order_service::OrderService;
+use crate::services::shipping_service::ShippingService;
 use crate::auth::{decode_jwt, extract_token};
 use std::env;
 
@@ -149,6 +153,42 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
             }).to_string())?);
     }
 
+    // Add shipping cost if greater than 0
+    if req.shipping_cost > 0.0 {
+        line_items.push(stripe::CreateCheckoutSessionLineItems {
+            quantity: Some(1),
+            price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
+                currency: stripe::Currency::USD,
+                unit_amount: Some((req.shipping_cost * 100.0) as i64),
+                product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
+                    name: "Shipping & Handling".to_string(),
+                    description: Some("Shipping rate calculated via EasyPost".to_string()),
+                    ..Default::default()
+                }),
+                ..Default::default()
+            }),
+            ..Default::default()
+        });
+    }
+
+    // Add sales tax if greater than 0
+    if req.sales_tax > 0.0 {
+        line_items.push(stripe::CreateCheckoutSessionLineItems {
+            quantity: Some(1),
+            price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
+                currency: stripe::Currency::USD,
+                unit_amount: Some((req.sales_tax * 100.0) as i64),
+                product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
+                    name: "Sales Tax".to_string(),
+                    description: Some("Sales tax based on shipping address".to_string()),
+                    ..Default::default()
+                }),
+                ..Default::default()
+            }),
+            ..Default::default()
+        });
+    }
+
     let allowed_origin = frontend_url.trim_end_matches('/').to_string();
     let success_url_trimmed = req.success_url.trim();
     let cancel_url_trimmed = req.cancel_url.trim();
@@ -165,6 +205,9 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     let mut metadata = std::collections::HashMap::new();
     metadata.insert("items".to_string(), serde_json::to_string(&req.items).unwrap_or_default());
     metadata.insert("customer_id".to_string(), customer_id_str);
+    metadata.insert("shipping_cost".to_string(), req.shipping_cost.to_string());
+    metadata.insert("sales_tax".to_string(), req.sales_tax.to_string());
+    metadata.insert("shipping_address".to_string(), serde_json::to_string(&req.shipping_address).unwrap_or_default());
 
     let params = stripe::CreateCheckoutSession {
         mode: Some(stripe::CheckoutSessionMode::Payment),
@@ -282,7 +325,7 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
     // Extract shipping address
     let shipping_details = session.shipping_details;
 
-    let shipping_address = match shipping_details {
+    let shipping_address_fallback = match shipping_details {
         Some(sd) => {
             let address = sd.address.unwrap_or_default();
             let name = sd.name.unwrap_or_default();
@@ -303,12 +346,29 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
             }
         }
         None => {
-            return Ok(Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .header("Content-Type", "application/json")
-                .body(serde_json::json!({ "error": "Shipping details are missing from checkout session" }).to_string())?);
+            Address {
+                first_name: "Guest".to_string(),
+                last_name: "Customer".to_string(),
+                address_line1: String::new(),
+                address_line2: None,
+                city: String::new(),
+                state: String::new(),
+                zip: String::new(),
+                country: "US".to_string(),
+                phone: None,
+            }
         }
     };
+
+    let shipping_address_raw = metadata.get("shipping_address").cloned().unwrap_or_default();
+    let shipping_address: Address = if !shipping_address_raw.is_empty() {
+        serde_json::from_str(&shipping_address_raw).unwrap_or(shipping_address_fallback)
+    } else {
+        shipping_address_fallback
+    };
+
+    let shipping_cost: Option<f64> = metadata.get("shipping_cost").and_then(|s| s.parse().ok());
+    let sales_tax: Option<f64> = metadata.get("sales_tax").and_then(|s| s.parse().ok());
 
     let customer_email = session.customer_details.as_ref().and_then(|cd| cd.email.clone());
 
@@ -319,6 +379,8 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
         payment_method: "Stripe".to_string(),
         id: Some(session.id.to_string()),
         customer_email,
+        shipping_cost,
+        sales_tax,
     };
 
     let order_service = OrderService::new();
@@ -335,4 +397,58 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
                 .body(serde_json::json!({ "error": format!("Failed to create order: {e}") }).to_string())?)
         }
     }
+}
+
+pub async fn calculate_checkout(_auth_header: Option<&str>, req: CheckoutCalculateRequest) -> Result<Response<String>, Error> {
+    let product_service = ProductService::new();
+    let shipping_service = ShippingService::new();
+    
+    let mut subtotal = 0.0;
+    let mut total_weight_oz = 0.0;
+    
+    for item in &req.items {
+        if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
+            let variant = if let Some(ref vid_str) = item.variant_id {
+                if let Ok(vid) = vid_str.parse::<i64>() {
+                    product.variants.as_ref()
+                        .and_then(|vs| vs.iter().find(|v| v.id == vid))
+                        .or_else(|| product.variants.as_ref().and_then(|vs| vs.first()))
+                } else {
+                    product.variants.as_ref().and_then(|vs| vs.first())
+                }
+            } else {
+                product.variants.as_ref().and_then(|vs| vs.first())
+            };
+            
+            if let Some(v) = variant {
+                subtotal += v.price * item.quantity as f64;
+                total_weight_oz += 16.0 * item.quantity as f64;
+            }
+        }
+    }
+    
+    let shipping_cost = match shipping_service.calculate_shipping_rate(req.shipping_address.clone(), total_weight_oz).await {
+        Ok(cost) => {
+            if subtotal >= 100.0 { 0.0 } else { cost }
+        }
+        Err(e) => {
+            eprintln!("[calculate_checkout] EasyPost failed: {e}");
+            if subtotal >= 100.0 { 0.0 } else { 15.0 }
+        }
+    };
+    
+    let sales_tax = crate::models::calculate_sales_tax(&req.shipping_address.state, subtotal);
+    let total = subtotal + shipping_cost + sales_tax;
+    
+    let resp = CheckoutCalculateResponse {
+        subtotal,
+        shipping_cost,
+        sales_tax,
+        total,
+    };
+    
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "application/json")
+        .body(serde_json::to_string(&resp)?)?)
 }

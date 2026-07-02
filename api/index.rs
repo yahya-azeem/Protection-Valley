@@ -56,6 +56,18 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 _ => method_not_allowed(),
             }
         }
+        p if p.starts_with("/api/v1/products/") && p.ends_with("/reviews") => {
+            let id_str = &p["/api/v1/products/".len()..p.len() - "/reviews".len()];
+            if let Ok(id) = id_str.parse::<i64>() {
+                if method == "GET" {
+                    wrap(review_handlers::get_product_reviews(id).await)
+                } else {
+                    method_not_allowed()
+                }
+            } else {
+                not_found()
+            }
+        }
         p if p.starts_with("/api/v1/products/") => {
             let id_str = &p["/api/v1/products/".len()..];
             if let Ok(id) = id_str.parse::<i64>() {
@@ -80,18 +92,6 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 not_found()
             }
         }
-        p if p.starts_with("/api/v1/products/") && p.ends_with("/reviews") => {
-            let id_str = &p["/api/v1/products/".len()..p.len() - "/reviews".len()];
-            if let Ok(id) = id_str.parse::<i64>() {
-                if method == "GET" {
-                    wrap(review_handlers::get_product_reviews(id).await)
-                } else {
-                    method_not_allowed()
-                }
-            } else {
-                not_found()
-            }
-        }
         "/api/v1/orders" => {
             match method.as_str() {
                 "GET" => {
@@ -110,9 +110,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             if p.ends_with("/status") {
                 let id_str = &p["/api/v1/orders/".len()..p.len() - "/status".len()];
                 if method == "PATCH" {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                     let bytes = read_body(&mut req).await?;
                     let body: models::OrderStatus = serde_json::from_slice(&bytes)?;
-                    wrap(order_handlers::update_order_status(id_str.to_string(), body).await)
+                    wrap(order_handlers::update_order_status(auth_header.as_deref(), id_str.to_string(), body).await)
                 } else {
                     method_not_allowed()
                 }
@@ -124,10 +125,19 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 } else {
                     method_not_allowed()
                 }
+            } else if p.ends_with("/shipping-label") {
+                let id_str = &p["/api/v1/orders/".len()..p.len() - "/shipping-label".len()];
+                if method == "POST" {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(order_handlers::create_order_shipment(auth_header.as_deref(), id_str.to_string()).await)
+                } else {
+                    method_not_allowed()
+                }
             } else {
                 let id_str = &p["/api/v1/orders/".len()..];
                 if method == "GET" {
-                    wrap(order_handlers::get_order(id_str.to_string()).await)
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                    wrap(order_handlers::get_order(auth_header.as_deref(), id_str.to_string()).await)
                 } else {
                     method_not_allowed()
                 }
@@ -246,6 +256,16 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 method_not_allowed()
             }
         }
+        "/api/v1/checkout/calculate" => {
+            if method == "POST" {
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                let bytes = read_body(&mut req).await?;
+                let body: models::CheckoutCalculateRequest = serde_json::from_slice(&bytes)?;
+                wrap(checkout_handlers::calculate_checkout(auth_header.as_deref(), body).await)
+            } else {
+                method_not_allowed()
+            }
+        }
         "/api/v1/admin/wholesale-users" => {
             if method == "GET" {
                 let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
@@ -316,14 +336,16 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
         }
         "/api/v1/ebay/sync" => {
             if method == "POST" {
-                wrap(ebay_handlers::sync_inventory().await)
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                wrap(ebay_handlers::sync_inventory(auth_header.as_deref()).await)
             } else {
                 method_not_allowed()
             }
         }
         "/api/v1/ebay/products" => {
             if method == "GET" {
-                wrap(ebay_handlers::get_ebay_products().await)
+                let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                wrap(ebay_handlers::get_ebay_products(auth_header.as_deref()).await)
             } else {
                 method_not_allowed()
             }
