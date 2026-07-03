@@ -168,7 +168,92 @@ pub async fn erp_proxy(
         .headers(req_headers)
         .body(body);
 
-    let resp = req_builder.send().await?;
+    let resp = match req_builder.send().await {
+        Ok(r) => r,
+        Err(e) => {
+            let html_body = format!(r#"<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERPNext Connection Status</title>
+    <style>
+        body {{
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }}
+        .card {{
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: #0A0A0A;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 500px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }}
+        h2 {{
+            color: #d97706;
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }}
+        p {{
+            color: #a1a1aa;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }}
+        .btn {{
+            display: inline-block;
+            background-color: #d97706;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: background-color 0.2s;
+        }}
+        .btn:hover {{
+            background-color: #b45309;
+        }}
+        .tech-info {{
+            margin-top: 24px;
+            font-family: monospace;
+            font-size: 10px;
+            color: #52525b;
+            word-break: break-all;
+        }}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ERPNext Service Offline</h2>
+        <p>Your ERPNext server is currently not configured or cannot be reached. To link your GCP Cloud Run deployment, configure the <strong>ERPNEXT_URL</strong> environment variable in your Vercel Dashboard.</p>
+        <a href="https://vercel.com" target="_blank" class="btn">Configure Vercel Environment</a>
+        <div class="tech-info">Technical details: {}</div>
+    </div>
+</body>
+</html>"#, e);
+            
+            return Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "text/html")
+                .body(vercel_runtime::ResponseBody::from(html_body))?);
+        }
+    };
     
     // 5. Build response back
     let target_status = StatusCode::from_u16(resp.status().as_u16())
