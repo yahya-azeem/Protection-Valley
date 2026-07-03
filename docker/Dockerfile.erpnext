@@ -1,0 +1,44 @@
+FROM debian:bookworm-slim
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    libmariadb-dev \
+    nodejs \
+    npm \
+    git \
+    curl \
+    cron \
+    mariadb-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Frappe Bench
+RUN pip3 install --break-system-packages frappe-bench
+
+# Create frappe user
+RUN useradd -ms /bin/bash frappe
+USER frappe
+WORKDIR /home/frappe
+
+# Initialize bench
+RUN bench init --skip-redis-bootstrap-connection --skip-assets-build bench-dir
+
+WORKDIR /home/frappe/bench-dir
+
+# Get apps
+RUN bench get-app erpnext
+
+# Build assets
+RUN bench build
+
+# Expose Cloud Run default port
+EXPOSE 8080
+
+# Run Web Server
+CMD ["bench", "start"]
