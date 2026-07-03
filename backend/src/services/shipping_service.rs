@@ -23,6 +23,7 @@ struct EasyPostAddress {
     pub zip: String,
     pub country: String,
     pub phone: Option<String>,
+    pub email: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -87,14 +88,15 @@ impl ShippingService {
         }
 
         let from_address = EasyPostAddress {
-            name: "Protection Valley Warehouse".to_string(),
-            street1: "123 Safety Way".to_string(),
-            street2: None,
-            city: "Los Angeles".to_string(),
-            state: "CA".to_string(),
-            zip: "90001".to_string(),
+            name: "Protection Valley".to_string(),
+            street1: "11456 Harry Hines Blvd".to_string(),
+            street2: Some("#103".to_string()),
+            city: "Dallas".to_string(),
+            state: "TX".to_string(),
+            zip: "75229".to_string(),
             country: "US".to_string(),
-            phone: Some("555-0199".to_string()),
+            phone: Some("+1 469 955 3584".to_string()),
+            email: Some("azeem@protectionvalley.com".to_string()),
         };
 
         let ep_to_address = EasyPostAddress {
@@ -106,6 +108,7 @@ impl ShippingService {
             zip: to_address.zip,
             country: to_address.country,
             phone: to_address.phone,
+            email: None,
         };
 
         let shipment_req = serde_json::json!({
@@ -155,14 +158,15 @@ impl ShippingService {
 
         // 1. Define From Address (Your Warehouse)
         let from_address = EasyPostAddress {
-            name: "Protection Valley Warehouse".to_string(),
-            street1: "123 Safety Way".to_string(),
-            street2: None,
-            city: "Los Angeles".to_string(),
-            state: "CA".to_string(),
-            zip: "90001".to_string(),
+            name: "Protection Valley".to_string(),
+            street1: "11456 Harry Hines Blvd".to_string(),
+            street2: Some("#103".to_string()),
+            city: "Dallas".to_string(),
+            state: "TX".to_string(),
+            zip: "75229".to_string(),
             country: "US".to_string(),
-            phone: Some("555-0199".to_string()),
+            phone: Some("+1 469 955 3584".to_string()),
+            email: Some("azeem@protectionvalley.com".to_string()),
         };
 
         let ep_to_address = EasyPostAddress {
@@ -174,6 +178,7 @@ impl ShippingService {
             zip: to_address.zip,
             country: to_address.country,
             phone: to_address.phone,
+            email: None,
         };
 
         // 2. Create Shipment to get Rates
