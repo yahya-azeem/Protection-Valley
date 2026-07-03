@@ -1,0 +1,9 @@
+# Ignore local build artifacts and dependencies from Cloud Build upload
+node_modules/
+target/
+.git/
+.svelte-kit/
+.vercel/
+dist/
+.gemini/
+zap_report.json
