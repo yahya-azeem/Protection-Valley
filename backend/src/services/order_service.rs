@@ -311,6 +311,12 @@ impl OrderService {
                                     eprintln!("[order_service] Failed to update local stock for variant {}: {e}", v.id);
                                 }
                                 
+                                // Sync with ERPNext
+                                let erp_service = crate::services::erpnext_service::ErpNextService::new();
+                                if let Err(e) = erp_service.sync_item_stock(&v.sku, new_stock).await {
+                                    eprintln!("[erpnext] Failed to sync item stock for SKU {}: {e}", v.sku);
+                                }
+                                
                                 // Sync with eBay
                                 let identifier_to_update = v.ebay_item_id.as_ref().unwrap_or(&v.sku);
                                 if let Err(e) = ebay_service.update_ebay_item_quantity(identifier_to_update, new_stock).await {
@@ -327,6 +333,12 @@ impl OrderService {
         let email_service = EmailService::new();
         if let Err(e) = email_service.send_order_notification(&order).await {
             eprintln!("[order_service] Failed to send email alert: {e}");
+        }
+
+        // Sync Sales Order to ERPNext
+        let erp_service = crate::services::erpnext_service::ErpNextService::new();
+        if let Err(e) = erp_service.sync_sales_order(&order).await {
+            eprintln!("[erpnext] Failed to sync order to ERPNext: {e}");
         }
 
         Ok(order)

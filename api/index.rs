@@ -378,6 +378,23 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 method_not_allowed()
             }
         }
+        p if p.starts_with("/api/v1/admin/erp") => {
+            let mut auth_val = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+            
+            // Extract token from query parameters as fallback (useful for iframe loads)
+            let query = req.uri().query().unwrap_or("").to_string();
+            if auth_val.is_none() && !query.is_empty() {
+                if let Some(token_param) = query.split('&').find(|s| s.starts_with("token=")).and_then(|s| s.split('=').nth(1)) {
+                    auth_val = Some(format!("Bearer {}", token_param));
+                }
+            }
+
+            let sub_path = &p["/api/v1/admin/erp".len()..];
+            let method = req.method().clone();
+            let headers = req.headers().clone();
+            let bytes = read_body(&mut req).await?;
+            admin_handlers::erp_proxy(auth_val.as_deref(), method, sub_path, query, headers, bytes).await
+        }
         _ => not_found(),
     }
 }

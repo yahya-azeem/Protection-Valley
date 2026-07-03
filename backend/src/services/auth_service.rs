@@ -247,6 +247,12 @@ impl AuthService {
             UserRole::Admin => "admin",
         };
 
+        // Sync customer registration to ERPNext
+        let erp_service = crate::services::erpnext_service::ErpNextService::new();
+        if let Err(e) = erp_service.sync_customer(&created_user.email, &created_user.name, created_user.phone.as_deref()).await {
+            eprintln!("[erpnext] Failed to sync customer registration: {e}");
+        }
+
         let token = generate_jwt(created_user.id, &created_user.email, role_str).map_err(|e| e.to_string())?;
         Ok(AuthResponse { token, user: created_user })
     }

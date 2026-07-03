@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, RefreshCw } from 'lucide-svelte';
+  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, RefreshCw, Database } from 'lucide-svelte';
   import { currentUser, products, showToast, loadProducts } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import type { Product, ProductVariant } from '$lib/types';
@@ -58,7 +58,8 @@
     updated_at: string;
   }
 
-  let activeTab = $state<'users' | 'prices' | 'orders' | 'notifications'>('users');
+  let activeTab = $state<'users' | 'prices' | 'orders' | 'notifications' | 'erp'>('users');
+  let token = $state<string | null>(null);
   let users = $state<WholesaleUser[]>([]);
   let loadingUsers = $state(true);
 
@@ -99,6 +100,7 @@
   let customPriceVal = $state(0);
 
   onMount(async () => {
+    token = localStorage.getItem('authToken');
     if ($currentUser && $currentUser.role === 'admin') {
       await loadProducts();
       await fetchUsers();
@@ -438,6 +440,13 @@
             {activeTab === 'notifications' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
         >
           <Bell class="w-3.5 h-3.5" /> Activity Log
+        </button>
+        <button
+          onclick={() => activeTab = 'erp'}
+          class="pb-4 text-xs font-semibold uppercase tracking-[0.15em] border-b-2 transition-lux flex items-center gap-2
+            {activeTab === 'erp' ? 'border-primary text-primary' : 'border-transparent text-zinc-400 hover:text-white'}"
+        >
+          <Database class="w-3.5 h-3.5" /> ERPNext
         </button>
         <button
           onclick={triggerEbaySync}
@@ -844,6 +853,22 @@
                   </div>
                 </div>
               {/each}
+            </div>
+          {/if}
+        </div>
+      {:else if activeTab === 'erp'}
+        <!-- ERPNext Panel -->
+        <div class="border border-white/5 rounded bg-[#0A0A0A] p-0 overflow-hidden shadow-2xl relative" style="height: 800px;">
+          {#if token}
+            <iframe
+              src="/api/v1/admin/erp/desk?token={token}"
+              title="ERPNext Desk"
+              class="w-full h-full border-none bg-black"
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+            ></iframe>
+          {:else}
+            <div class="py-20 text-center text-zinc-500 text-xs uppercase tracking-widest font-bold">
+              Authenticating with ERPNext...
             </div>
           {/if}
         </div>
