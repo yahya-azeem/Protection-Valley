@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     cron \
     mariadb-client \
+    postgresql-client \
     redis-server \
     redis-tools \
     pkg-config \
@@ -29,10 +30,6 @@ RUN pip3 install --break-system-packages frappe-bench
 # Create frappe user
 RUN useradd -ms /bin/bash frappe
 
-# Setup entrypoint script
-COPY docker/entrypoint.sh /home/frappe/entrypoint.sh
-RUN chmod +x /home/frappe/entrypoint.sh && chown frappe:frappe /home/frappe/entrypoint.sh
-
 USER frappe
 WORKDIR /home/frappe
 
@@ -44,8 +41,27 @@ WORKDIR /home/frappe/bench-dir
 # Get stable version-15 of ERPNext
 RUN bench get-app --branch version-15 erpnext
 
+# Patch Frappe database connection to use db_user from site_config.json if specified
+RUN sed -i 's/user=local.conf.db_name or db_name/user=local.conf.get("db_user") or local.conf.db_name or db_name/g' /home/frappe/bench-dir/apps/frappe/frappe/__init__.py
+
+# Patch to add custom get_admin_session endpoint for proxy login bypass
+RUN printf '\n@frappe.whitelist(allow_guest=True)\ndef get_admin_session():\n    import os\n    import frappe\n    proxy_secret = frappe.get_request_header("X-Proxy-Secret")\n    expected_secret = os.environ.get("ERP_PROXY_SECRET", "pv-erp-proxy-secret-2026")\n    if not proxy_secret or proxy_secret != expected_secret:\n        frappe.local.response["http_status_code"] = 403\n        return {"error": "Unauthorized"}\n    from frappe.auth import LoginManager\n    frappe.local.login_manager = LoginManager()\n    frappe.local.login_manager.user = "Administrator"\n    frappe.local.login_manager.post_login()\n    return {"sid": frappe.session.sid}\n' >> /home/frappe/bench-dir/apps/frappe/frappe/auth.py
+
+# Patch CookieManager to use SameSite=None and Secure=True for cross-origin iframe support
+RUN sed -i 's/secure=False,/secure=True,/g' /home/frappe/bench-dir/apps/frappe/frappe/auth.py && \
+    sed -i 's/samesite="Lax",/samesite="None",/g' /home/frappe/bench-dir/apps/frappe/frappe/auth.py
+
 # Build assets
 RUN bench build
+
+# Setup entrypoint and init scripts (placed at the end to maximize Docker caching)
+USER root
+COPY docker/entrypoint.sh /home/frappe/entrypoint.sh
+COPY docker/init_site.py /home/frappe/init_site.py
+COPY docker/wsgi.py /home/frappe/bench-dir/wsgi.py
+RUN chmod +x /home/frappe/entrypoint.sh && chown frappe:frappe /home/frappe/entrypoint.sh /home/frappe/init_site.py /home/frappe/bench-dir/wsgi.py
+
+USER frappe
 
 # Expose Cloud Run default port
 EXPOSE 8080

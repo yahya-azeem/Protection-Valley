@@ -11,15 +11,25 @@ until redis-cli ping | grep -q PONG; do
 done
 echo "Redis is ready!"
 
-cd /home/frappe/bench-dir
+# Run config writer in the foreground (takes 0.1s)
+echo "Writing site configurations..."
+/home/frappe/bench-dir/env/bin/python -u /home/frappe/init_site.py --config-only
 
-# Start Frappe background worker processes
-./env/bin/bench worker --queue default &
-./env/bin/bench worker --queue short &
-./env/bin/bench worker --queue long &
-
-# Start Frappe schedule worker
-./env/bin/bench schedule &
+# Start migrations and background workers in the background
+(
+  echo "Running background migrations..."
+  /home/frappe/bench-dir/env/bin/python -u /home/frappe/init_site.py --migrate-only
+  echo "Migrations completed/skipped. Starting background workers..."
+  cd /home/frappe/bench-dir
+  /usr/local/bin/bench worker --queue default 2>&1 &
+  /usr/local/bin/bench worker --queue short 2>&1 &
+  /usr/local/bin/bench worker --queue long 2>&1 &
+  /usr/local/bin/bench schedule 2>&1 &
+) &
 
 # Start Gunicorn web server in the foreground, bound to the Cloud Run PORT
-exec ./env/bin/gunicorn -b 0.0.0.0:${PORT:-8080} frappe.app:application --workers 1 --threads 2 --timeout 120
+cd /home/frappe/bench-dir/sites
+export SITES_PATH=.
+export PYTHONPATH=..
+echo "Starting Gunicorn..."
+exec ../env/bin/gunicorn -b 0.0.0.0:${PORT:-8080} wsgi:application --workers 1 --threads 2 --timeout 120
