@@ -1,0 +1,9 @@
+# Ignore heavy root-level build and dependency directories
+target/
+.vercel/
+node_modules/
+.svelte-kit/
+.git/
+dist/
+tmp/
+*.dump

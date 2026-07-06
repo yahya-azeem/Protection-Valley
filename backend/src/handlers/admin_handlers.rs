@@ -139,6 +139,32 @@ pub async fn erp_proxy(
     let erp_url = std::env::var("ERPNEXT_URL")
         .unwrap_or_else(|_| "http://localhost:8080".to_string());
 
+    // Check if the user is loading the desk page (which is the entry point of the iframe)
+    let clean_sub_path = sub_path.trim_start_matches('/');
+    if clean_sub_path == "desk" {
+        let proxy_secret = std::env::var("ERP_PROXY_SECRET")
+            .unwrap_or_else(|_| "pv-erp-proxy-secret-2026".to_string());
+
+        let client = reqwest::Client::new();
+        let session_url = format!("{}/api/method/frappe.auth.get_admin_session", erp_url.trim_end_matches('/'));
+        
+        if let Ok(resp) = client.post(&session_url)
+            .header("X-Proxy-Secret", &proxy_secret)
+            .send()
+            .await 
+        {
+            if let Ok(json_body) = resp.json::<serde_json::Value>().await {
+                if let Some(sid) = json_body.get("message").and_then(|m| m.get("sid")).and_then(|s| s.as_str()) {
+                    let redirect_url = format!("{}/app?sid={}", erp_url.trim_end_matches('/'), sid);
+                    return Ok(Response::builder()
+                        .status(StatusCode::FOUND)
+                        .header("Location", redirect_url)
+                        .body(vercel_runtime::ResponseBody::from(Vec::new()))?);
+                }
+            }
+        }
+    }
+
     // 3. Build target URL
     let mut target_url = format!("{}/{}", erp_url.trim_end_matches('/'), sub_path.trim_start_matches('/'));
     if !query.is_empty() {
