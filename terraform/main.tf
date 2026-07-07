@@ -97,6 +97,8 @@ resource "google_cloud_run_service" "erpnext" {
       annotations = {
         "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.connector.id
         "run.googleapis.com/vpc-access-egress"    = "all-traffic"
+        "autoscaling.knative.dev/maxScale"        = "3"
+        "autoscaling.knative.dev/minScale"        = "0"
       }
     }
   }

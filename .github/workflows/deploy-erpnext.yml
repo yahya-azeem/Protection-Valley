@@ -50,7 +50,7 @@ jobs:
           --region=us-central1 \
           --allow-unauthenticated \
           --min-instances=0 \
-          --max-instances=1 \
+          --max-instances=3 \
           --cpu-throttling \
           --memory=2Gi \
           --cpu=1 \
