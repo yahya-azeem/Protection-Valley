@@ -248,6 +248,11 @@ if not table_exists:
     except Exception as e:
         print(f"[INIT] ERROR during site initialization: {e}")
         traceback.print_exc()
+        try:
+            with open("/tmp/erpnext_status.txt", "w") as f:
+                f.write("error")
+        except Exception:
+            pass
         sys.exit(1)
 else:
     print("Database tables found. Restoring site configuration...")
@@ -329,9 +334,18 @@ else:
         
     print("Running migrations...")
     try:
-        subprocess.run([
-            "/usr/local/bin/bench", "--site", "site1.local", "migrate"
-        ], check=True)
+        try:
+            subprocess.run([
+                "/usr/local/bin/bench", "--site", "site1.local", "migrate"
+            ], check=True)
+        except Exception as e:
+            print(f"Migration failed: {e}")
+            try:
+                with open("/tmp/erpnext_status.txt", "w") as f:
+                    f.write("error")
+            except Exception:
+                pass
+            raise e
     finally:
         if db_lock_conn:
             try:
@@ -345,3 +359,8 @@ else:
                 print(f"Warning during lock release: {e}")
 
 print("Site initialization completed successfully!")
+try:
+    with open("/tmp/erpnext_status.txt", "w") as f:
+        f.write("ready")
+except Exception:
+    pass

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Initialize setup status file
+echo "initializing" > /tmp/erpnext_status.txt
+
 # Start local Redis in the background
 redis-server --daemonize yes
 
