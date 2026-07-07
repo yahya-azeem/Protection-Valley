@@ -1,8 +1,13 @@
 import os
-from frappe.app import application as frappe_app, application_with_statics
 
-# Wrap the application with static asset serving middleware (SharedDataMiddleware & StaticDataMiddleware)
-base_application = application_with_statics()
+base_application = None
+
+def get_base_application():
+    global base_application
+    if base_application is None:
+        from frappe.app import application as frappe_app, application_with_statics
+        base_application = application_with_statics()
+    return base_application
 
 def application(environ, start_response):
     status_file = "/tmp/erpnext_status.txt"
@@ -139,4 +144,4 @@ def application(environ, start_response):
         return [html.encode("utf-8")]
 
     environ['HTTP_X_FRAPPE_SITE_NAME'] = 'site1.local'
-    return base_application(environ, start_response)
+    return get_base_application()(environ, start_response)
