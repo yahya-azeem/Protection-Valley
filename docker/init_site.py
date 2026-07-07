@@ -4,6 +4,24 @@ import json
 import psycopg2
 import subprocess
 import traceback
+import atexit
+
+db_lock_conn = None
+
+def release_lock():
+    global db_lock_conn
+    if db_lock_conn:
+        try:
+            cur = db_lock_conn.cursor()
+            cur.execute("SELECT pg_advisory_unlock(123456);")
+            cur.close()
+            db_lock_conn.close()
+            print("Released global setup/migration advisory lock.")
+        except Exception as e:
+            print(f"Warning during lock release: {e}")
+        db_lock_conn = None
+
+atexit.register(release_lock)
 
 # Force unbuffered output so prints show immediately in Cloud Run logs
 print = lambda *args, **kwargs: __builtins__.__dict__['print'](*args, **kwargs, flush=True)
@@ -17,7 +35,78 @@ db_name = os.environ.get("DB_NAME", "postgres")
 db_user = os.environ.get("DB_USER", "erpnext_user")
 db_password = os.environ.get("DB_PASSWORD", "PV-erpnext-pass-2026")
 
-print("Checking database tables...")
+# Acquire global advisory lock to prevent concurrent setup/migrations
+locked = False
+try:
+    print("Connecting to database to acquire global setup/migration lock...")
+    db_lock_conn = psycopg2.connect(
+        host=db_host,
+        port=db_port,
+        database=db_name,
+        user=db_user,
+        password=db_password
+    )
+    db_lock_conn.autocommit = True
+    cur = db_lock_conn.cursor()
+    cur.execute("SELECT pg_try_advisory_lock(123456);")
+    locked = cur.fetchone()[0]
+    cur.close()
+except Exception as e:
+    print(f"Warning: Database lock connection failed: {e}")
+
+if not locked:
+    print("Another instance is already running database setup or migration. Entering wait loop...")
+    if db_lock_conn:
+        try:
+            db_lock_conn.close()
+        except Exception:
+            pass
+        db_lock_conn = None
+    
+    # Wait loop
+    import time
+    for i in range(36): # 36 * 10 seconds = 6 minutes max
+        time.sleep(10)
+        try:
+            conn = psycopg2.connect(
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
+            )
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT COUNT(*) 
+                FROM information_schema.tables 
+                WHERE table_schema = 'erpnext' 
+                AND table_type = 'BASE TABLE';
+            """)
+            table_count = cur.fetchone()[0]
+            cur.close()
+            conn.close()
+            print(f"[WAIT LOOP] Table count: {table_count}")
+            if table_count > 100:
+                print("[WAIT LOOP] Database is ready! Updating status and exiting.")
+                try:
+                    with open("/tmp/erpnext_status.txt", "w") as f:
+                        f.write("ready")
+                except Exception:
+                    pass
+                sys.exit(0)
+        except Exception as e:
+            print(f"[WAIT LOOP] Error checking DB status: {e}")
+            
+    print("[WAIT LOOP] Timeout waiting for database initialization. Exiting with error.")
+    try:
+        with open("/tmp/erpnext_status.txt", "w") as f:
+            f.write("error")
+    except Exception:
+        pass
+    sys.exit(1)
+
+print("Acquired global setup/migration lock. Checking database tables...")
+table_exists = False
 try:
     conn = psycopg2.connect(
         host=db_host,
@@ -27,7 +116,6 @@ try:
         password=db_password
     )
     cur = conn.cursor()
-    # Check if database is already fully populated (has > 100 tables)
     cur.execute("""
         SELECT COUNT(*) 
         FROM information_schema.tables 
@@ -290,73 +378,35 @@ else:
         f.write("site1.local")
     print("common_site_config.json updated.")
     
-    # Terminate other active DB connections to release locks (mutually excluded via pg_try_advisory_lock)
-    db_lock_conn = None
-    try:
-        import psycopg2
-        print("Acquiring migration advisory lock...")
-        db_lock_conn = psycopg2.connect(
-            dbname=db_name,
-            user=db_user,
-            password=db_password,
-            host=db_host,
-            port=db_port
-        )
-        db_lock_conn.autocommit = True
-        cur = db_lock_conn.cursor()
-        cur.execute("SELECT pg_try_advisory_lock(123456);")
-        locked = cur.fetchone()[0]
-        if not locked:
-            print("Another instance is already running migrations. Skipping...")
-            db_lock_conn.close()
-            # Wait for the other instance to finish migrating (typically ~60-90s)
-            import time
-            time.sleep(60)
-            sys.exit(0)
-            
-        print("Acquired migration lock. Terminating other active DB connections...")
-        cur.execute("""
-            SELECT pg_terminate_backend(pid) 
-            FROM pg_stat_activity 
-            WHERE usename = %s 
-              AND pid != pg_backend_pid();
-        """, (db_user,))
-        cur.close()
-        print("Connections terminated successfully.")
-    except Exception as e:
-        print(f"Warning: Could not coordinate migration locks: {e}")
-        if db_lock_conn:
-            try:
-                db_lock_conn.close()
-            except Exception:
-                pass
-            db_lock_conn = None
+    # Terminate other active DB connections using the global lock connection
+    if db_lock_conn:
+        try:
+            print("Terminating other active DB connections...")
+            cur = db_lock_conn.cursor()
+            cur.execute("""
+                SELECT pg_terminate_backend(pid) 
+                FROM pg_stat_activity 
+                WHERE usename = %s 
+                  AND pid != pg_backend_pid();
+            """, (db_user,))
+            cur.close()
+            print("Connections terminated successfully.")
+        except Exception as e:
+            print(f"Warning: Could not terminate other connections: {e}")
         
     print("Running migrations...")
     try:
+        subprocess.run([
+            "/usr/local/bin/bench", "--site", "site1.local", "migrate"
+        ], check=True)
+    except Exception as e:
+        print(f"Migration failed: {e}")
         try:
-            subprocess.run([
-                "/usr/local/bin/bench", "--site", "site1.local", "migrate"
-            ], check=True)
-        except Exception as e:
-            print(f"Migration failed: {e}")
-            try:
-                with open("/tmp/erpnext_status.txt", "w") as f:
-                    f.write("error")
-            except Exception:
-                pass
-            raise e
-    finally:
-        if db_lock_conn:
-            try:
-                # Release the advisory lock
-                cur = db_lock_conn.cursor()
-                cur.execute("SELECT pg_advisory_unlock(123456);")
-                cur.close()
-                db_lock_conn.close()
-                print("Released migration advisory lock.")
-            except Exception as e:
-                print(f"Warning during lock release: {e}")
+            with open("/tmp/erpnext_status.txt", "w") as f:
+                f.write("error")
+        except Exception:
+            pass
+        raise e
 
 print("Site initialization completed successfully!")
 try:
