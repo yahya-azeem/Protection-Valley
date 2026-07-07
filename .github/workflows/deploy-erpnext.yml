@@ -2,6 +2,7 @@ name: Deploy ERPNext to GCP Cloud Run
 
 on:
   push:
+    branches: [main]
     paths:
       - 'docker/**'
       - '.github/workflows/deploy-erpnext.yml'
@@ -50,6 +51,7 @@ jobs:
           --allow-unauthenticated \
           --min-instances=0 \
           --max-instances=1 \
+          --cpu-throttling \
           --memory=2Gi \
           --cpu=1 \
           --project=${{ secrets.GCP_PROJECT_ID }}
