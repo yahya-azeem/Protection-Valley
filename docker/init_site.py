@@ -75,27 +75,27 @@ if not locked:
                 user=db_user,
                 password=db_password
             )
+            conn.autocommit = True
             cur = conn.cursor()
-            cur.execute("""
-                SELECT COUNT(*) 
-                FROM information_schema.tables 
-                WHERE table_schema = 'erpnext' 
-                AND table_type = 'BASE TABLE';
-            """)
-            table_count = cur.fetchone()[0]
-            cur.close()
-            conn.close()
-            print(f"[WAIT LOOP] Table count: {table_count}")
-            if table_count > 100:
-                print("[WAIT LOOP] Database is ready! Updating status and exiting.")
+            # Try to acquire the lock to see if the migration instance is finished
+            cur.execute("SELECT pg_try_advisory_lock(123456);")
+            acquired = cur.fetchone()[0]
+            if acquired:
+                cur.execute("SELECT pg_advisory_unlock(123456);")
+                cur.close()
+                conn.close()
+                print("[WAIT LOOP] Lock is free! Database is ready. Updating status and exiting.")
                 try:
                     with open("/tmp/erpnext_status.txt", "w") as f:
                         f.write("ready")
                 except Exception:
                     pass
                 sys.exit(0)
+            cur.close()
+            conn.close()
+            print(f"[WAIT LOOP] Lock is still held by another instance. Waiting...")
         except Exception as e:
-            print(f"[WAIT LOOP] Error checking DB status: {e}")
+            print(f"[WAIT LOOP] Error checking lock status: {e}")
             
     print("[WAIT LOOP] Timeout waiting for database initialization. Exiting with error.")
     try:
@@ -105,8 +105,11 @@ if not locked:
         pass
     sys.exit(1)
 
-print("Acquired global setup/migration lock. Checking database tables...")
+print("Acquired global setup/migration lock. Checking database status...")
 table_exists = False
+needs_migration = True
+current_revision = os.environ.get("K_REVISION", "local")
+
 try:
     conn = psycopg2.connect(
         host=db_host,
@@ -115,7 +118,10 @@ try:
         user=db_user,
         password=db_password
     )
+    conn.autocommit = True
     cur = conn.cursor()
+    
+    # Check table count
     cur.execute("""
         SELECT COUNT(*) 
         FROM information_schema.tables 
@@ -124,12 +130,36 @@ try:
     """)
     table_count = cur.fetchone()[0]
     table_exists = table_count > 100
+    
+    if table_exists:
+        # Create revision tracking table if not exists
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS erpnext.current_revision (
+                revision_name VARCHAR(255) PRIMARY KEY,
+                migrated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        # Check if current revision is already migrated
+        cur.execute("SELECT COUNT(*) FROM erpnext.current_revision WHERE revision_name = %s;", (current_revision,))
+        revision_migrated = cur.fetchone()[0] > 0
+        needs_migration = not revision_migrated
+        
     cur.close()
     conn.close()
-    print(f"Database check complete. Tables exist: {table_exists}")
+    print(f"Database check: tables exist = {table_exists}, needs migration = {needs_migration} (revision: {current_revision})")
 except Exception as e:
     print(f"Warning: Database check failed: {e}")
     table_exists = False
+    needs_migration = True
+
+if table_exists and not needs_migration:
+    print("Database is already populated and migrated for this revision. Skipping migrations.")
+    try:
+        with open("/tmp/erpnext_status.txt", "w") as f:
+            f.write("ready")
+    except Exception:
+        pass
+    sys.exit(0)
 
 if "--config-only" in sys.argv:
     print("[INIT] Config-only mode. Writing site configurations...")
@@ -407,6 +437,32 @@ else:
         except Exception:
             pass
         raise e
+
+# Log that this revision has completed its setup/migration successfully
+current_revision = os.environ.get("K_REVISION", "local")
+try:
+    print(f"Logging successful migration for revision {current_revision} in database...")
+    conn = psycopg2.connect(
+        host=db_host,
+        port=db_port,
+        database=db_name,
+        user=db_user,
+        password=db_password
+    )
+    conn.autocommit = True
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS erpnext.current_revision (
+            revision_name VARCHAR(255) PRIMARY KEY,
+            migrated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    cur.execute("INSERT INTO erpnext.current_revision (revision_name) VALUES (%s) ON CONFLICT DO NOTHING;", (current_revision,))
+    cur.close()
+    conn.close()
+    print(f"Logged current revision {current_revision} in database.")
+except Exception as e:
+    print(f"Warning: Could not log revision in database: {e}")
 
 print("Site initialization completed successfully!")
 try:
