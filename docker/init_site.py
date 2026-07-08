@@ -35,6 +35,40 @@ db_name = os.environ.get("DB_NAME", "postgres")
 db_user = os.environ.get("DB_USER", "erpnext_user")
 db_password = os.environ.get("DB_PASSWORD", "PV-erpnext-pass-2026")
 
+if "--config-only" in sys.argv:
+    print("[INIT] Config-only mode. Writing site configurations...")
+    os.makedirs("sites/site1.local", exist_ok=True)
+    os.makedirs("sites/site1.local/logs", exist_ok=True)
+    os.makedirs("/home/frappe/logs", exist_ok=True)
+    site_config = {
+        "db_name": db_name,
+        "db_password": db_password,
+        "db_type": "postgres",
+        "db_host": db_host,
+        "db_port": db_port,
+        "db_user": db_user,
+        "db_schema": "erpnext",
+        "encryption_key": "pv_erpnext_encryption_key_2026",
+        "default_site": "site1.local"
+    }
+    with open("sites/site1.local/site_config.json", "w") as f:
+        json.dump(site_config, f, indent=4)
+        
+    common_config_path = "sites/common_site_config.json"
+    common_config = {
+        "default_site": "site1.local",
+        "redis_cache": "redis://127.0.0.1:6379",
+        "redis_queue": "redis://127.0.0.1:6379",
+        "redis_socketio": "redis://127.0.0.1:6379",
+        "dns_multitenant": False
+    }
+    with open(common_config_path, "w") as f:
+        json.dump(common_config, f, indent=4)
+    with open("sites/currentsite.txt", "w") as f:
+        f.write("site1.local")
+    print("[INIT] Site configurations written successfully.")
+    sys.exit(0)
+
 # Acquire global advisory lock to prevent concurrent setup/migrations
 locked = False
 try:
@@ -161,39 +195,6 @@ if table_exists and not needs_migration:
         pass
     sys.exit(0)
 
-if "--config-only" in sys.argv:
-    print("[INIT] Config-only mode. Writing site configurations...")
-    os.makedirs("sites/site1.local", exist_ok=True)
-    os.makedirs("sites/site1.local/logs", exist_ok=True)
-    os.makedirs("/home/frappe/logs", exist_ok=True)
-    site_config = {
-        "db_name": db_name,
-        "db_password": db_password,
-        "db_type": "postgres",
-        "db_host": db_host,
-        "db_port": db_port,
-        "db_user": db_user,
-        "db_schema": "erpnext",
-        "encryption_key": "pv_erpnext_encryption_key_2026",
-        "default_site": "site1.local"
-    }
-    with open("sites/site1.local/site_config.json", "w") as f:
-        json.dump(site_config, f, indent=4)
-        
-    common_config_path = "sites/common_site_config.json"
-    common_config = {
-        "default_site": "site1.local",
-        "redis_cache": "redis://127.0.0.1:6379",
-        "redis_queue": "redis://127.0.0.1:6379",
-        "redis_socketio": "redis://127.0.0.1:6379",
-        "dns_multitenant": False
-    }
-    with open(common_config_path, "w") as f:
-        json.dump(common_config, f, indent=4)
-    with open("sites/currentsite.txt", "w") as f:
-        f.write("site1.local")
-    print("[INIT] Site configurations written successfully.")
-    sys.exit(0)
 
 # Ensure common_site_config has default site and routes all Redis connections to local port 6379
 os.makedirs("sites", exist_ok=True)
