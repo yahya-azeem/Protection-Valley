@@ -5,7 +5,9 @@ base_application = None
 def get_base_application():
     global base_application
     if base_application is None:
-        from frappe.app import application as frappe_app, application_with_statics
+        import frappe.app
+        frappe.app._sites_path = os.environ.get("SITES_PATH", "sites")
+        from frappe.app import application_with_statics
         base_application = application_with_statics()
     return base_application
 
