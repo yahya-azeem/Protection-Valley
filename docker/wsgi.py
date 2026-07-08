@@ -1,12 +1,16 @@
 import os
 
+# Change working directory to sites directory so relative paths for logging and configuration resolve correctly
+os.chdir('/home/frappe/bench-dir/sites')
+
 base_application = None
 
 def get_base_application():
     global base_application
     if base_application is None:
         import frappe.app
-        frappe.app._sites_path = os.environ.get("SITES_PATH", "sites")
+        # Since cwd is now 'sites', the sites path is the current directory '.'
+        frappe.app._sites_path = '.'
         from frappe.app import application_with_statics
         base_application = application_with_statics()
     return base_application
