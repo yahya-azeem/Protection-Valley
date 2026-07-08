@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Export SITES_PATH globally so all processes (Gunicorn, workers, scheduler, migrations) use it
+export SITES_PATH=sites
+
 # Initialize setup status file
 echo "initializing" > /tmp/erpnext_status.txt
 
@@ -32,6 +35,5 @@ echo "Writing site configurations..."
 
 # Start Gunicorn web server in the foreground, bound to the Cloud Run PORT
 cd /home/frappe/bench-dir
-export SITES_PATH=sites
 echo "Starting Gunicorn..."
 exec env/bin/gunicorn -b 0.0.0.0:${PORT:-8080} wsgi:application --workers 1 --threads 2 --timeout 120
