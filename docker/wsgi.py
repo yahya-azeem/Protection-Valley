@@ -10,6 +10,8 @@ def get_base_application():
     return base_application
 
 def application(environ, start_response):
+    print(f"[WSGI DEBUG] SITES_PATH in os.environ: {os.environ.get('SITES_PATH')}", flush=True)
+    print(f"[WSGI DEBUG] Current working directory: {os.getcwd()}", flush=True)
     status_file = "/tmp/erpnext_status.txt"
     status = "initializing"
     if os.path.exists(status_file):
