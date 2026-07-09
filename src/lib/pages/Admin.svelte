@@ -861,7 +861,7 @@
         <div class="border border-white/5 rounded bg-[#0A0A0A] p-0 overflow-hidden shadow-2xl relative" style="height: 800px;">
           {#if token}
             <iframe
-              src="/api/v1/admin/erp/app?token={token}"
+              src="/api/v1/admin/erp/desk?token={token}"
               title="ERPNext Desk"
               class="w-full h-full border-none bg-black"
               sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
