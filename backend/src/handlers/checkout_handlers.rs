@@ -75,6 +75,8 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     };
 
     let mut line_items = Vec::new();
+    let mut subtotal = 0.0;
+    let mut total_weight_oz = 0.0;
 
     for item in &req.items {
         if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
@@ -125,6 +127,9 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
                     v.price
                 };
 
+                subtotal += unit_price * item.quantity as f64;
+                total_weight_oz += 16.0 * item.quantity as f64;
+
                 line_items.push(stripe::CreateCheckoutSessionLineItems {
                     quantity: Some(item.quantity as u64),
                     price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
@@ -153,13 +158,28 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
             }).to_string())?);
     }
 
+    // Recalculate shipping cost securely on the server
+    let shipping_service = ShippingService::new();
+    let shipping_cost = match shipping_service.calculate_shipping_rate(req.shipping_address.clone(), total_weight_oz).await {
+        Ok(cost) => {
+            if subtotal >= 100.0 { 0.0 } else { cost }
+        }
+        Err(e) => {
+            eprintln!("[create_checkout_session] EasyPost failed: {e}");
+            if subtotal >= 100.0 { 0.0 } else { 15.0 }
+        }
+    };
+
+    // Recalculate sales tax securely on the server
+    let sales_tax = crate::models::calculate_sales_tax(&req.shipping_address.state, subtotal);
+
     // Add shipping cost if greater than 0
-    if req.shipping_cost > 0.0 {
+    if shipping_cost > 0.0 {
         line_items.push(stripe::CreateCheckoutSessionLineItems {
             quantity: Some(1),
             price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
                 currency: stripe::Currency::USD,
-                unit_amount: Some((req.shipping_cost * 100.0) as i64),
+                unit_amount: Some((shipping_cost * 100.0) as i64),
                 product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
                     name: "Shipping & Handling".to_string(),
                     description: Some("Shipping rate calculated via EasyPost".to_string()),
@@ -172,12 +192,12 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     }
 
     // Add sales tax if greater than 0
-    if req.sales_tax > 0.0 {
+    if sales_tax > 0.0 {
         line_items.push(stripe::CreateCheckoutSessionLineItems {
             quantity: Some(1),
             price_data: Some(stripe::CreateCheckoutSessionLineItemsPriceData {
                 currency: stripe::Currency::USD,
-                unit_amount: Some((req.sales_tax * 100.0) as i64),
+                unit_amount: Some((sales_tax * 100.0) as i64),
                 product_data: Some(stripe::CreateCheckoutSessionLineItemsPriceDataProductData {
                     name: "Sales Tax".to_string(),
                     description: Some("Sales tax based on shipping address".to_string()),
@@ -205,8 +225,8 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     let mut metadata = std::collections::HashMap::new();
     metadata.insert("items".to_string(), serde_json::to_string(&req.items).unwrap_or_default());
     metadata.insert("customer_id".to_string(), customer_id_str);
-    metadata.insert("shipping_cost".to_string(), req.shipping_cost.to_string());
-    metadata.insert("sales_tax".to_string(), req.sales_tax.to_string());
+    metadata.insert("shipping_cost".to_string(), shipping_cost.to_string());
+    metadata.insert("sales_tax".to_string(), sales_tax.to_string());
     metadata.insert("shipping_address".to_string(), serde_json::to_string(&req.shipping_address).unwrap_or_default());
 
     let params = stripe::CreateCheckoutSession {
