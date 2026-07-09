@@ -54,4 +54,5 @@ jobs:
           --cpu-throttling \
           --memory=2Gi \
           --cpu=1 \
+          --timeout=600 \
           --project=${{ secrets.GCP_PROJECT_ID }}

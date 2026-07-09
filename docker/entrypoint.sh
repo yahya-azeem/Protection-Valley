@@ -36,4 +36,4 @@ echo "Writing site configurations..."
 # Start Gunicorn web server in the foreground, bound to the Cloud Run PORT
 cd /home/frappe/bench-dir
 echo "Starting Gunicorn..."
-exec env/bin/gunicorn -b 0.0.0.0:${PORT:-8080} wsgi:application --workers 1 --threads 2 --timeout 120
+exec env/bin/gunicorn -b 0.0.0.0:${PORT:-8080} wsgi:application --workers 1 --threads 2 --timeout 600
