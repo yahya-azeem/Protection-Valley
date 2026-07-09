@@ -52,11 +52,7 @@ RUN sed -i 's/secure=False,/secure=True,/g' /home/frappe/bench-dir/apps/frappe/f
     sed -i 's/samesite="Lax",/samesite="None",/g' /home/frappe/bench-dir/apps/frappe/frappe/auth.py
 
 # Patch PostgreSQL database driver to strip out FORCE INDEX hints (MySQL specific)
-RUN python3 -c '\
-path = "/home/frappe/bench-dir/apps/frappe/frappe/database/postgres/database.py"; \
-with open(path, "r") as f: code = f.read(); \
-patched = code.replace("query = replace_locate_with_strpos(query)", "query = replace_locate_with_strpos(query)\\n\\tquery = re.sub(r\"(?i)\\\\bFORCE\\\\s+INDEX\\\\s*\\\\([^)]*\\\\)\", \"\", query)"); \
-with open(path, "w") as f: f.write(patched)'
+RUN python3 -c 'path = "/home/frappe/bench-dir/apps/frappe/frappe/database/postgres/database.py"; with open(path, "r") as f: code = f.read(); patched = code.replace("query = replace_locate_with_strpos(query)", "query = replace_locate_with_strpos(query)\n\tquery = re.sub(r\"(?i)\\bFORCE\\s+INDEX\\s*\\([^)]*\\)\", \"\", query)"); with open(path, "w") as f: f.write(patched)'
 
 # Build assets
 RUN bench build
