@@ -252,12 +252,27 @@ impl OrderService {
         }
 
         let subtotal: f64 = items.iter().map(|i| i.total_price).sum();
-        let shipping_cost_val = shipping_cost.unwrap_or_else(|| {
-            if subtotal >= 100.0 { 0.0 } else { 15.0 }
-        });
-        let sales_tax_val = sales_tax.unwrap_or_else(|| {
-            calculate_sales_tax(&shipping_address.state, subtotal)
-        });
+        
+        let (shipping_cost_val, sales_tax_val) = if payment_method.to_lowercase() == "stripe" {
+            let s_cost = shipping_cost.unwrap_or(0.0);
+            let s_tax = sales_tax.unwrap_or(0.0);
+            (s_cost, s_tax)
+        } else {
+            // Zelle or other manual payment methods - recalculate securely
+            let shipping_service = ShippingService::new();
+            let total_weight_oz = items.iter().map(|i| 16.0 * i.quantity as f64).sum();
+            let s_cost = match shipping_service.calculate_shipping_rate(shipping_address.clone(), total_weight_oz).await {
+                Ok(cost) => {
+                    if subtotal >= 100.0 { 0.0 } else { cost }
+                }
+                Err(e) => {
+                    eprintln!("[create_order] EasyPost failed: {e}");
+                    if subtotal >= 100.0 { 0.0 } else { 15.0 }
+                }
+            };
+            let s_tax = calculate_sales_tax(&shipping_address.state, subtotal);
+            (s_cost, s_tax)
+        };
         let total = subtotal + shipping_cost_val + sales_tax_val;
         let customer_name = format!("{} {}", shipping_address.first_name, shipping_address.last_name).trim().to_string();
 
