@@ -155,6 +155,59 @@ try:
     conn.autocommit = True
     cur = conn.cursor()
     
+    # Ensure erpnext schema exists
+    cur.execute("CREATE SCHEMA IF NOT EXISTS erpnext;")
+    
+    # Create MySQL helper functions if they don't exist
+    cur.execute("""
+        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val anyelement, false_val anyelement)
+        RETURNS anyelement AS $$
+        BEGIN
+            IF condition THEN
+                RETURN true_val;
+            ELSE
+                RETURN false_val;
+            END IF;
+        END;
+        $$ LANGUAGE plpgsql;
+    """)
+    cur.execute("""
+        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val numeric, false_val numeric)
+        RETURNS numeric AS $$
+        BEGIN
+            IF condition THEN
+                RETURN true_val;
+            ELSE
+                RETURN false_val;
+            END IF;
+        END;
+        $$ LANGUAGE plpgsql;
+    """)
+    cur.execute("""
+        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val double precision, false_val double precision)
+        RETURNS double precision AS $$
+        BEGIN
+            IF condition THEN
+                RETURN true_val;
+            ELSE
+                RETURN false_val;
+            END IF;
+        END;
+        $$ LANGUAGE plpgsql;
+    """)
+    cur.execute("""
+        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val text, false_val text)
+        RETURNS text AS $$
+        BEGIN
+            IF condition THEN
+                RETURN true_val;
+            ELSE
+                RETURN false_val;
+            END IF;
+        END;
+        $$ LANGUAGE plpgsql;
+    """)
+    
     # Check table count
     cur.execute("""
         SELECT COUNT(*) 
