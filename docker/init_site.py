@@ -6,6 +6,36 @@ import subprocess
 import traceback
 import atexit
 
+def patch_database_driver():
+    path = "/home/frappe/bench-dir/apps/frappe/frappe/database/postgres/database.py"
+    if not os.path.exists(path):
+        print(f"[PATCH] Database driver path {path} not found. Skipping.")
+        return
+
+    try:
+        with open(path, "r") as f:
+            code = f.read()
+
+        target = "query = replace_locate_with_strpos(query)"
+        replacement = 'query = replace_locate_with_strpos(query)\n\tquery = re.sub(r"(?i)\\bFORCE\\s+INDEX\\s*\\([^)]*\\)", "", query)'
+
+        if replacement in code:
+            print("[PATCH] Database driver already patched.")
+            return
+
+        if target in code:
+            patched = code.replace(target, replacement)
+            with open(path, "w") as f:
+                f.write(patched)
+            print("[PATCH] Successfully patched database driver for FORCE INDEX support!")
+        else:
+            print("[PATCH] Target string not found in database driver. Skipping.")
+    except Exception as e:
+        print(f"[PATCH] Error patching database driver: {e}")
+
+# Apply patches to database driver on boot
+patch_database_driver()
+
 db_lock_conn = None
 
 def release_lock():
