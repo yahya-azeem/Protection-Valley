@@ -33,8 +33,56 @@ def patch_database_driver():
     except Exception as e:
         print(f"[PATCH] Error patching database driver: {e}")
 
-# Apply patches to database driver on boot
+def patch_trends_controller():
+    path = "/home/frappe/bench-dir/apps/erpnext/erpnext/controllers/trends.py"
+    if not os.path.exists(path):
+        print(f"[PATCH] Trends controller {path} not found. Skipping.")
+        return
+
+    try:
+        with open(path, "r") as f:
+            code = f.read()
+
+        # Define replacements for based_on_group_by
+        replacements = [
+            (
+                'based_on_details["based_on_group_by"] = "t2.item_code"',
+                'based_on_details["based_on_group_by"] = "t2.item_code, t2.item_name"'
+            ),
+            (
+                'based_on_details["based_on_group_by"] = "t1.party_name" if trans == "Quotation" else "t1.customer"',
+                'based_on_details["based_on_group_by"] = "t1.party_name, t1.customer_name, t1.territory" if trans == "Quotation" else "t1.customer, t1.customer_name, t1.territory"'
+            ),
+            (
+                'based_on_details["based_on_group_by"] = "t1.supplier"',
+                'based_on_details["based_on_group_by"] = "t1.supplier, t1.supplier_name, t3.supplier_group"'
+            ),
+            # Also add t4.default_currency to group_by
+            (
+                'based_on_details["based_on_select"] += "t4.default_currency as currency,"',
+                'based_on_details["based_on_select"] += "t4.default_currency as currency,"\n\tbased_on_details["based_on_group_by"] += ", t4.default_currency"'
+            )
+        ]
+
+        patched = code
+        modified = False
+        for target, replacement in replacements:
+            if target in patched and replacement not in patched:
+                patched = patched.replace(target, replacement)
+                modified = True
+
+        if modified:
+            with open(path, "w") as f:
+                f.write(patched)
+            print("[PATCH] Successfully patched trends controller for PostgreSQL GROUP BY support!")
+        else:
+            print("[PATCH] Trends controller already patched or target strings not found.")
+    except Exception as e:
+        print(f"[PATCH] Error patching trends controller: {e}")
+
+# Apply patches on boot
 patch_database_driver()
+patch_trends_controller()
 
 db_lock_conn = None
 
