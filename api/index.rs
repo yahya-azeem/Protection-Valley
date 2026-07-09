@@ -379,13 +379,25 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             }
         }
         p if p.starts_with("/api/v1/admin/erp") => {
-            let mut auth_val = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+            let mut auth_val = req.headers().get("Authorization")
+                .or_else(|| req.headers().get("authorization"))
+                .and_then(|h| h.to_str().ok())
+                .map(|s| s.to_string());
             
-            // Extract token from query parameters as fallback (useful for iframe loads)
+            // Extract token from query parameters as fallback (useful for iframe/tab loads)
             let query = req.uri().query().unwrap_or("").to_string();
             if auth_val.is_none() && !query.is_empty() {
                 if let Some(token_param) = query.split('&').find(|s| s.starts_with("token=")).and_then(|s| s.split('=').nth(1)) {
                     auth_val = Some(format!("Bearer {}", token_param));
+                }
+            }
+
+            // Extract token from cookies as secondary fallback (useful for subsequent app/resource loads)
+            if auth_val.is_none() {
+                if let Some(cookie_header) = req.headers().get("cookie").or_else(|| req.headers().get("Cookie")).and_then(|h| h.to_str().ok()) {
+                    if let Some(token_cookie) = cookie_header.split(';').map(|s| s.trim()).find(|s| s.starts_with("authToken=")).and_then(|s| s.split('=').nth(1)) {
+                        auth_val = Some(format!("Bearer {}", token_cookie));
+                    }
                 }
             }
 
