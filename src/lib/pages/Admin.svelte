@@ -857,18 +857,32 @@
           {/if}
         </div>
       {:else if activeTab === 'erp'}
-        <!-- ERPNext Panel -->
-        <div class="border border-white/5 rounded bg-[#0A0A0A] p-0 overflow-hidden shadow-2xl relative" style="height: 800px;">
+        <!-- ERPNext Launch Portal -->
+        <div class="border border-white/5 rounded bg-[#0A0A0A] p-12 overflow-hidden shadow-2xl relative flex flex-col items-center justify-center text-center space-y-6" style="height: 500px;">
+          <div class="p-5 bg-primary/5 rounded-full border border-primary/10 shadow-[0_0_50px_rgba(217,119,6,0.08)]">
+            <Database class="w-12 h-12 text-primary" />
+          </div>
+          
+          <div class="max-w-md space-y-2">
+            <h2 class="text-lg font-serif text-white tracking-wide">ERPNext Management Portal</h2>
+            <p class="text-xs text-zinc-400 leading-relaxed font-sans max-w-sm mx-auto">
+              Access the business operations, accounting, inventory, and purchase order modules in a dedicated browser tab.
+            </p>
+          </div>
+
           {#if token}
-            <iframe
-              src="/api/v1/admin/erp/desk?token={token}"
-              title="ERPNext Desk"
-              class="w-full h-full border-none bg-black"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-            ></iframe>
+            <a
+              href="/api/v1/admin/erp/desk?token={token}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-8 py-3.5 bg-primary/10 border border-primary/20 hover:border-primary text-primary hover:text-white transition-lux text-[10px] font-bold uppercase tracking-widest rounded-sm flex items-center justify-center gap-2 shadow-[0_4px_25px_rgba(217,119,6,0.08)]"
+            >
+              <span>Launch ERPNext</span>
+              <ExternalLink class="w-3.5 h-3.5" />
+            </a>
           {:else}
-            <div class="py-20 text-center text-zinc-500 text-xs uppercase tracking-widest font-bold">
-              Authenticating with ERPNext...
+            <div class="text-zinc-500 text-[10px] uppercase tracking-widest font-bold animate-pulse">
+              Generating secure SSO token...
             </div>
           {/if}
         </div>
