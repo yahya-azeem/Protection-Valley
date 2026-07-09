@@ -155,7 +155,7 @@ pub async fn erp_proxy(
         {
             if let Ok(json_body) = resp.json::<serde_json::Value>().await {
                 if let Some(sid) = json_body.get("message").and_then(|m| m.get("sid")).and_then(|s| s.as_str()) {
-                    let redirect_url = format!("{}/app?sid={}", erp_url.trim_end_matches('/'), sid);
+                    let redirect_url = format!("/api/v1/admin/erp/app?sid={}", sid);
                     return Ok(Response::builder()
                         .status(StatusCode::FOUND)
                         .header("Location", redirect_url)
