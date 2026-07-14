@@ -34,7 +34,7 @@
       tabindex="0"
     ></div>
 
-    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-[#0A0A0A] shadow-2xl flex flex-col border-l border-white/10 animate-slide-in-right">
+    <div class="absolute right-0 top-0 h-full w-full md:max-w-md bg-[#0A0A0A] shadow-2xl flex flex-col border-l border-white/10 animate-slide-in-right">
       <div class="flex items-center justify-between p-6 bg-black border-b border-white/10">
         <div class="flex items-center gap-4">
           <div class="w-10 h-10 bg-primary/10 flex items-center justify-center rounded">
