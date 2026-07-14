@@ -99,32 +99,37 @@
   });
 
   async function initStripe() {
-    if (typeof window === 'undefined' || !(window as any).Stripe) {
-      stripeError = 'Stripe failed to load. Please refresh the page.';
-      return;
-    }
+    try {
+      if (typeof window === 'undefined' || !(window as any).Stripe) {
+        stripeError = 'Stripe failed to load. Please refresh the page.';
+        return;
+      }
 
-    const key = env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
-    stripe = (window as any).Stripe(key);
+      const key = env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
+      stripe = (window as any).Stripe(key);
 
-    elements = stripe.elements({ mode: 'shipping', appearance: getAppearance() });
+      elements = stripe.elements({ mode: 'shipping', appearance: getAppearance() });
 
-    addressElement = elements.create('address', {
-      mode: 'shipping',
-      autocomplete: { mode: 'google_places_api' },
-      fields: { phone: 'always' },
-      validation: { phone: { required: 'always' } },
-      defaultValues: {
-        name: $currentUser?.name || '',
-        address: { country: 'US' },
-        phone: '',
-      },
-    });
+      addressElement = elements.create('address', {
+        mode: 'shipping',
+        autocomplete: { mode: 'google_places_api' },
+        fields: { phone: 'always' },
+        validation: { phone: { required: 'always' } },
+        defaultValues: {
+          name: $currentUser?.name || '',
+          address: { country: 'US' },
+          phone: '',
+        },
+      });
 
-    await tick();
+      await tick();
 
-    if (addressContainer) {
-      addressElement.mount(addressContainer);
+      if (addressContainer) {
+        addressElement.mount(addressContainer);
+      }
+    } catch (err: any) {
+      console.error('Failed to initialize Stripe:', err);
+      stripeError = `Failed to initialize payment system: ${err.message || err}`;
     }
   }
 
@@ -134,19 +139,22 @@
       return;
     }
 
-    if (addressElement) {
-      const addressResult = await addressElement.getValue();
-      if (!addressResult.complete) {
-        showToast('Please complete your shipping address.');
-        return;
-      }
+    if (!stripe || !addressElement) {
+      showToast('Payment system is not fully loaded. Please refresh the page.');
+      return;
     }
 
     loading = true;
     stripeError = null;
 
     try {
-      const addressResult = await addressElement!.getValue();
+      const addressResult = await addressElement.getValue();
+      if (!addressResult.complete) {
+        showToast('Please complete your shipping address.');
+        loading = false;
+        return;
+      }
+
       const addr = addressResult.value;
 
       savedAddress = {
