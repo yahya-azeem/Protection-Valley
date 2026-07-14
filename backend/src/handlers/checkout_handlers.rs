@@ -245,7 +245,11 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
                     .header("Content-Type", "application/json")
                     .body(serde_json::json!({
                         "clientSecret": client_secret,
-                        "paymentIntentId": pi.id.to_string()
+                        "paymentIntentId": pi.id.to_string(),
+                        "subtotal": subtotal,
+                        "shippingCost": shipping_cost,
+                        "salesTax": sales_tax,
+                        "total": total_amount
                     }).to_string())?)
             } else {
                 Ok(Response::builder()
