@@ -101,7 +101,7 @@
                 onclick={() => setCategory(cat)}
                 class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
                   {$currentCategory === cat
-                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
+                    ? 'bg-primary/10 text-primary font-bold'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
               >
                 {cat}
@@ -118,7 +118,7 @@
                 onclick={() => brandFilter.set(brand === 'All Brands' ? '' : brand)}
                 class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
                   {($brandFilter === (brand === 'All Brands' ? '' : brand))
-                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
+                    ? 'bg-primary/10 text-primary font-bold'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
               >
                 {brand}
@@ -136,7 +136,7 @@
                 onclick={() => setPriceRange(range.min, range.max)}
                 class="block w-full text-left px-3 py-2 rounded text-sm transition-lux
                   {$priceRange.min === range.min && $priceRange.max === range.max
-                    ? 'bg-primary/10 text-primary font-semibold border-l-2 border-primary'
+                    ? 'bg-primary/10 text-primary font-bold'
                     : 'text-zinc-400 hover:text-white hover:bg-white/5'}"
               >
                 {range.label}

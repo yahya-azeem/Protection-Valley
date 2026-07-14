@@ -206,7 +206,7 @@
             </div>
 
             <div class="mt-4">
-              <label class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Proof of Sales Tax (Certificate / Document)</label>
+              <span class="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Proof of Sales Tax (Certificate / Document)</span>
               <label class="flex flex-col items-center justify-center border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#141414] hover:bg-[#1a1a1a] transition-lux rounded p-6 cursor-pointer text-center group">
                 <input 
                   type="file" 
