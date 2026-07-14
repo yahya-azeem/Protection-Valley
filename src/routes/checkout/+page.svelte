@@ -108,7 +108,12 @@
       const key = env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
       stripe = (window as any).Stripe(key);
 
-      elements = stripe.elements({ mode: 'shipping', appearance: getAppearance() });
+      elements = stripe.elements({
+        mode: 'payment',
+        amount: Math.max(1, Math.round(($cartTotal || 1) * 100)),
+        currency: 'usd',
+        appearance: getAppearance()
+      });
 
       addressElement = elements.create('address', {
         mode: 'shipping',
