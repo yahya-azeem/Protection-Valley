@@ -7,8 +7,7 @@
   <!-- Header -->
   <section class="pt-32 pb-12">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="space-y-4 mb-8">
-        <span class="text-xs font-semibold uppercase tracking-[0.15em] text-primary">Get In Touch</span>
+      <div class="mb-8">
         <h1 class="text-5xl md:text-6xl font-serif text-white tracking-tight leading-none">
           Visit Our <span class="italic text-primary">Store</span>
         </h1>

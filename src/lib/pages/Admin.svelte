@@ -549,7 +549,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <!-- Select Product -->
                   <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Product</label>
+                    <span class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Product</span>
                     <select
                       bind:value={selectedProduct}
                       class="w-full bg-black border border-white/10 rounded px-4 py-2.5 text-xs text-white focus:border-primary focus:outline-none"
@@ -564,7 +564,7 @@
                   <!-- Select Variant -->
                   {#if selectedProduct && selectedProduct.variants}
                     <div>
-                      <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Variant</label>
+                      <span class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Variant</span>
                       <select
                         bind:value={selectedVariant}
                         class="w-full bg-black border border-white/10 rounded px-4 py-2.5 text-xs text-white focus:border-primary focus:outline-none"
@@ -581,7 +581,7 @@
                 {#if selectedVariant}
                   <div class="flex items-end gap-4 border-t border-white/5 pt-4">
                     <div class="w-1/2">
-                      <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Custom Price ($)</label>
+                      <span class="block text-[10px] uppercase tracking-wider text-zinc-500 font-bold mb-2">Custom Price ($)</span>
                       <div class="relative">
                         <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">$</span>
                         <input
