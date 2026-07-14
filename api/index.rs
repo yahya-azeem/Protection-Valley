@@ -39,6 +39,17 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
     let path = req.uri().path().to_string();
     let method = req.method().as_str().to_string();
 
+    // Handle CORS preflight
+    if method == "OPTIONS" && path.starts_with("/api/") {
+        return Ok(Response::builder()
+            .status(StatusCode::NO_CONTENT)
+            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+            .header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            .header("Access-Control-Max-Age", "86400")
+            .body(ResponseBody::from(""))?);
+    }
+
     // Routing
     match path.as_str() {
         "/api/v1/products" => {

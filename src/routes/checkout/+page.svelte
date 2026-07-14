@@ -199,8 +199,9 @@
         await tick();
         await mountPaymentElement();
       } else {
-        const err = await res.json().catch(() => ({}));
-        stripeError = err.error || 'Failed to create payment session. Please try again.';
+        let errBody;
+        try { errBody = await res.json(); } catch { errBody = {}; }
+        stripeError = errBody.error || `Server error (${res.status}). Please try again.`;
         showToast(stripeError!);
       }
     } catch (e) {
