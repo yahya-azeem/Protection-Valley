@@ -163,7 +163,7 @@
             {sp.name}
           </h1>
           
-          <p class="text-base text-zinc-400 leading-relaxed mb-6 md:mb-8 border-l border-primary/20 pl-4 md:pl-5">
+          <p class="text-base text-zinc-400 leading-relaxed mb-6 md:mb-8">
             {sp.description || 'Premium handcrafted workgear built for the modern professional.'}
           </p>
 
