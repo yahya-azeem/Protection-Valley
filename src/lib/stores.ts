@@ -203,6 +203,7 @@ function createUserStore() {
         if (res.ok) {
           const user = await res.json();
           this.set({
+            id: user.id,
             email: user.email,
             name: user.name,
             picture: user.picture,

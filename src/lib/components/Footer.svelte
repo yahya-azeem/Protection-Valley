@@ -45,7 +45,6 @@
       <h3 class="text-xs font-bold uppercase tracking-[0.15em] text-primary">Company</h3>
       <ul class="space-y-2 text-sm text-zinc-500">
         <li><a href="/contact" class="hover:text-white transition-lux">Support</a></li>
-        <li><a href="/about" class="hover:text-white transition-lux">Our Heritage</a></li>
         <li><a href="/login" class="hover:text-white transition-lux">Wholesale Portal</a></li>
       </ul>
     </div>

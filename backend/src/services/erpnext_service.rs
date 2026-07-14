@@ -77,8 +77,9 @@ impl ErpNextService {
         
         let mut items = Vec::new();
         for item in &order.items {
+            let item_code = item.sku.as_deref().unwrap_or(&item.product_id);
             items.push(json!({
-                "item_code": item.product_id,
+                "item_code": item_code,
                 "qty": item.quantity,
                 "rate": item.unit_price
             }));

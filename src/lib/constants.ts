@@ -46,7 +46,6 @@ export const NAV_ITEMS = [
       { name: 'Safety & Workwear', category: 'Safety & Workwear' },
     ],
   },
-  { name: 'About', id: 'about' },
   { name: 'Contact', id: 'contact' },
 ] as const;
 

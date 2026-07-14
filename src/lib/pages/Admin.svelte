@@ -12,6 +12,7 @@
     company: string | null;
     sales_tax_id: string | null;
     wholesale_discount: number;
+    is_wholesale_approved?: boolean | null;
   }
 
   interface CustomPrice {
@@ -32,6 +33,7 @@
       quantity: number;
       unit_price: number;
       total_price: number;
+      sku?: string;
     }[];
     subtotal: number;
     shipping_cost: number;
@@ -479,7 +481,14 @@
               <tbody class="divide-y divide-white/5">
                 {#each users as user}
                   <tr class="hover:bg-white/1 transition-lux">
-                    <td class="py-4 px-6 font-medium">{user.name}</td>
+                    <td class="py-4 px-6 font-medium">
+                      <div class="flex items-center gap-2">
+                        <span>{user.name}</span>
+                        {#if user.is_wholesale_approved === false}
+                          <span class="px-2 py-0.5 text-[9px] font-sans font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-sm">Pending</span>
+                        {/if}
+                      </div>
+                    </td>
                     <td class="py-4 px-6 text-zinc-400">{user.email}</td>
                     <td class="py-4 px-6 text-zinc-400">{user.company || '—'}</td>
                     <td class="py-4 px-6 text-center font-mono font-bold text-primary">

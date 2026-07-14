@@ -23,6 +23,9 @@ impl Default for OrderService {
 impl OrderService {
     pub fn new() -> Self {
         let supabase_url = env::var("SUPABASE_URL").unwrap_or_else(|_| "https://fnirqccmtjzibjhgzyay.supabase.co".to_string());
+        if env::var("SUPABASE_SERVICE_ROLE_KEY").is_err() {
+            eprintln!("[WARN] SUPABASE_SERVICE_ROLE_KEY is not configured! Database requests may fail due to Row Level Security (RLS) policies.");
+        }
         let supabase_key = env::var("SUPABASE_SERVICE_ROLE_KEY")
             .or_else(|_| env::var("SUPABASE_ANON_KEY"))
             .unwrap_or_default();
@@ -131,6 +134,7 @@ impl OrderService {
                         quantity: qty,
                         unit_price: price,
                         total_price: price * qty as f64,
+                        sku: None,
                     });
                 }
             }
@@ -217,6 +221,25 @@ impl OrderService {
         let product_service = ProductService::new();
         let mut items: Vec<OrderItem> = Vec::new();
 
+        let auth_service = crate::services::auth_service::AuthService::new();
+        let user = if customer_id != 0 {
+            auth_service.get_user_by_id(customer_id).await.ok().flatten()
+        } else {
+            None
+        };
+
+        let is_wholesale = user.as_ref()
+            .map(|u| (u.role == crate::models::UserRole::Wholesale && u.is_wholesale_approved.unwrap_or(false)) || u.role == crate::models::UserRole::Admin)
+            .unwrap_or(false);
+
+        let (wholesale_discount, custom_prices) = if is_wholesale {
+            let discount = user.as_ref().and_then(|u| u.wholesale_discount).unwrap_or(0.30);
+            let prices = product_service.get_customer_specific_prices(customer_id).await.unwrap_or_default();
+            (discount, prices)
+        } else {
+            (0.30, Vec::new())
+        };
+
         for item in request_items {
             let product_id = item.product_id;
             let variant_id = item.variant_id;
@@ -236,12 +259,27 @@ impl OrderService {
                 };
 
                 if let Some(v) = variant {
+                    let unit_price = if is_wholesale {
+                        let custom = custom_prices.iter()
+                            .find(|p| p.variant_id == v.id)
+                            .map(|p| p.custom_price);
+                        
+                        if let Some(price) = custom {
+                            price
+                        } else {
+                            v.price * (1.0 - wholesale_discount)
+                        }
+                    } else {
+                        v.price
+                    };
+
                     items.push(OrderItem {
                         product_id: product_id.clone(),
                         product_name: format!("{} - {}", product.name, v.original_name),
                         quantity,
-                        unit_price: v.price,
-                        total_price: v.price * quantity as f64,
+                        unit_price,
+                        total_price: unit_price * quantity as f64,
+                        sku: Some(v.sku.clone()),
                     });
                 }
             }

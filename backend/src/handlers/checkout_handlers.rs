@@ -57,21 +57,26 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
         .map(|c| c.role == "wholesale" || c.role == "admin")
         .unwrap_or(false);
 
-    let (wholesale_discount, custom_prices) = if is_wholesale {
+    let (wholesale_discount, custom_prices, is_approved_wholesale) = if is_wholesale {
         if let Some(ref c) = claims {
             let auth_service = crate::services::auth_service::AuthService::new();
             let product_service = ProductService::new();
             
             let user = auth_service.get_user_by_id(c.user_id).await.ok().flatten();
-            let discount = user.and_then(|u| u.wholesale_discount).unwrap_or(0.30);
-            let prices = product_service.get_customer_specific_prices(c.user_id).await.unwrap_or_default();
+            let is_approved = user.as_ref().and_then(|u| u.is_wholesale_approved).unwrap_or(false);
             
-            (discount, prices)
+            if is_approved || c.role == "admin" {
+                let discount = user.and_then(|u| u.wholesale_discount).unwrap_or(0.30);
+                let prices = product_service.get_customer_specific_prices(c.user_id).await.unwrap_or_default();
+                (discount, prices, true)
+            } else {
+                (0.30, Vec::new(), false)
+            }
         } else {
-            (0.30, Vec::new())
+            (0.30, Vec::new(), false)
         }
     } else {
-        (0.30, Vec::new())
+        (0.30, Vec::new(), false)
     };
 
     let mut line_items = Vec::new();
@@ -113,7 +118,7 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
                     });
                 let images = image.map(|url| vec![url]);
 
-                let unit_price = if is_wholesale {
+                let unit_price = if is_approved_wholesale {
                     let custom = custom_prices.iter()
                         .find(|p| p.variant_id == v.id)
                         .map(|p| p.custom_price);
@@ -419,10 +424,38 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
     }
 }
 
-pub async fn calculate_checkout(_auth_header: Option<&str>, req: CheckoutCalculateRequest) -> Result<Response<String>, Error> {
+pub async fn calculate_checkout(auth_header: Option<&str>, req: CheckoutCalculateRequest) -> Result<Response<String>, Error> {
     let product_service = ProductService::new();
     let shipping_service = ShippingService::new();
     
+    // Decode claims
+    let claims = extract_token(auth_header)
+        .and_then(|t| decode_jwt(t).ok());
+
+    let is_wholesale = claims.as_ref()
+        .map(|c| c.role == "wholesale" || c.role == "admin")
+        .unwrap_or(false);
+
+    let (wholesale_discount, custom_prices, is_approved_wholesale) = if is_wholesale {
+        if let Some(ref c) = claims {
+            let auth_service = crate::services::auth_service::AuthService::new();
+            let user = auth_service.get_user_by_id(c.user_id).await.ok().flatten();
+            let is_approved = user.as_ref().and_then(|u| u.is_wholesale_approved).unwrap_or(false);
+            
+            if is_approved || c.role == "admin" {
+                let discount = user.and_then(|u| u.wholesale_discount).unwrap_or(0.30);
+                let prices = product_service.get_customer_specific_prices(c.user_id).await.unwrap_or_default();
+                (discount, prices, true)
+            } else {
+                (0.30, Vec::new(), false)
+            }
+        } else {
+            (0.30, Vec::new(), false)
+        }
+    } else {
+        (0.30, Vec::new(), false)
+    };
+
     let mut subtotal = 0.0;
     let mut total_weight_oz = 0.0;
     
@@ -441,7 +474,21 @@ pub async fn calculate_checkout(_auth_header: Option<&str>, req: CheckoutCalcula
             };
             
             if let Some(v) = variant {
-                subtotal += v.price * item.quantity as f64;
+                let unit_price = if is_approved_wholesale {
+                    let custom = custom_prices.iter()
+                        .find(|p| p.variant_id == v.id)
+                        .map(|p| p.custom_price);
+                    
+                    if let Some(price) = custom {
+                        price
+                    } else {
+                        v.price * (1.0 - wholesale_discount)
+                    }
+                } else {
+                    v.price
+                };
+
+                subtotal += unit_price * item.quantity as f64;
                 total_weight_oz += 16.0 * item.quantity as f64;
             }
         }
