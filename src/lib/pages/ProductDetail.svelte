@@ -124,7 +124,7 @@
             <OptimizedImage 
               src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
               alt={sp.name}
-              class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
+              class="w-full h-full object-cover transition-lux duration-700"
               width={800}
               height={800}
               priority={true}

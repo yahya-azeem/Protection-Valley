@@ -20,6 +20,9 @@ impl Default for AuthService {
 impl AuthService {
     pub fn new() -> Self {
         let supabase_url = env::var("SUPABASE_URL").unwrap_or_else(|_| "https://fnirqccmtjzibjhgzyay.supabase.co".to_string());
+        if env::var("SUPABASE_SERVICE_ROLE_KEY").is_err() {
+            eprintln!("[WARN] SUPABASE_SERVICE_ROLE_KEY is not configured! Database requests may fail due to Row Level Security (RLS) policies.");
+        }
         let supabase_key = env::var("SUPABASE_SERVICE_ROLE_KEY")
             .or_else(|_| env::var("SUPABASE_ANON_KEY"))
             .unwrap_or_default();
@@ -108,7 +111,13 @@ impl AuthService {
 
         let role_str = match &user.role {
             UserRole::Retail => "retail",
-            UserRole::Wholesale => "wholesale",
+            UserRole::Wholesale => {
+                if user.is_wholesale_approved.unwrap_or(false) {
+                    "wholesale"
+                } else {
+                    "retail"
+                }
+            }
             UserRole::Admin => "admin",
         };
 
@@ -195,7 +204,7 @@ impl AuthService {
 
         // Create new user account
         let user_id = generate_user_id();
-        let role = if req.sales_tax_id.is_some() { UserRole::Wholesale } else { req.role.unwrap_or(UserRole::Retail) };
+        let role = if req.sales_tax_id.is_some() { UserRole::Wholesale } else { UserRole::Retail };
 
         let user = User {
             id: user_id,
@@ -208,7 +217,7 @@ impl AuthService {
             sales_tax_id: req.sales_tax_id,
             sales_tax_proof_name: req.sales_tax_proof_name,
             sales_tax_proof_data: req.sales_tax_proof_data,
-            is_wholesale_approved: Some(true),
+            is_wholesale_approved: if let UserRole::Wholesale = role { Some(false) } else { Some(true) },
             wholesale_discount: if let UserRole::Wholesale = role { Some(0.30) } else { None },
             google_id: None,
             reset_token: None,
@@ -241,19 +250,24 @@ impl AuthService {
         let created_user = created_users.into_iter().next()
             .ok_or_else(|| "Failed to retrieve created user".to_string())?;
 
-        let role_str = match &created_user.role {
-            UserRole::Retail => "retail",
-            UserRole::Wholesale => "wholesale",
-            UserRole::Admin => "admin",
-        };
-
-        // Sync customer registration to ERPNext
         let erp_service = crate::services::erpnext_service::ErpNextService::new();
         if let Err(e) = erp_service.sync_customer(&created_user.email, &created_user.name, created_user.phone.as_deref()).await {
             eprintln!("[erpnext] Failed to sync customer registration: {e}");
         }
 
-        let token = generate_jwt(created_user.id, &created_user.email, role_str).map_err(|e| e.to_string())?;
+        let role_str_token = match &created_user.role {
+            UserRole::Retail => "retail",
+            UserRole::Wholesale => {
+                if created_user.is_wholesale_approved.unwrap_or(false) {
+                    "wholesale"
+                } else {
+                    "retail"
+                }
+            }
+            UserRole::Admin => "admin",
+        };
+
+        let token = generate_jwt(created_user.id, &created_user.email, role_str_token).map_err(|e| e.to_string())?;
         Ok(AuthResponse { token, user: created_user })
     }
 
@@ -458,7 +472,8 @@ impl AuthService {
             "sales_tax_proof_name": proof_name.trim(),
             "sales_tax_proof_data": proof_data.trim(),
             "role": "wholesale",
-            "is_wholesale_approved": true,
+            "is_wholesale_approved": false,
+            "wholesale_discount": 0.30,
             "updated_at": Utc::now()
         });
 
@@ -527,6 +542,7 @@ impl AuthService {
             .header("Prefer", "return=representation")
             .json(&serde_json::json!({
                 "wholesale_discount": discount,
+                "is_wholesale_approved": true,
                 "updated_at": Utc::now()
             }))
             .send()

@@ -77,6 +77,7 @@
         const user = data.user;
         
         currentUser.set({
+          id: user.id,
           email: user.email,
           name: user.name,
           picture: user.picture,
@@ -84,7 +85,7 @@
           token: data.token
         });
 
-        showToast('Profile completed! Wholesale access active.');
+        showToast('Application submitted! B2B wholesale access pending verification.');
         window.location.href = '/catalog';
       } else {
         const err = await res.json();

@@ -51,6 +51,7 @@
         const data = await res.json();
         const user = data.user;
         currentUser.set({
+          id: user.id,
           email: user.email,
           name: user.name,
           picture: user.picture,
@@ -92,6 +93,7 @@
         const data = await res.json();
         const user = data.user;
         currentUser.set({
+          id: user.id,
           email: user.email,
           name: user.name,
           picture: user.picture,

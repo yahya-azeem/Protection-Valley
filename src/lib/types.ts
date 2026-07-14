@@ -51,6 +51,7 @@ export interface CartItem {
 }
 
 export interface UserData {
+  id?: number;
   name: string;
   email: string;
   role: 'retail' | 'wholesale' | 'admin' | 'Member';

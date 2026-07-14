@@ -71,6 +71,8 @@ pub struct OrderItem {
     pub quantity: i32,
     pub unit_price: f64,
     pub total_price: f64,
+    #[serde(default)]
+    pub sku: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -194,7 +196,7 @@ pub struct User {
 }
 
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum UserRole {
     #[serde(rename = "retail")]
     Retail,

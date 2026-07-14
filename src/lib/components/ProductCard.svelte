@@ -22,7 +22,7 @@
     <OptimizedImage 
       src={image} 
       alt={product.name}
-      class="w-full h-full object-cover transition-lux duration-700 group-hover:scale-105"
+      class="w-full h-full object-cover transition-lux duration-700"
       width={300}
       height={300}
     />

@@ -10,11 +10,8 @@
     goto('/catalog');
   }
 
-  // Duplicate for seamless looping: [Original, Original, Original]
-  // We use 3x to ensure there's always content to the left/right during jumps
-  let featured = $derived([...$products.slice(0, 8), ...$products.slice(0, 8), ...$products.slice(0, 8)]);
+  let featured = $derived($products.slice(0, 8));
   let scrollContainer = $state<HTMLDivElement | null>(null);
-  let isPaused = $state(false);
 
   function startShopping() {
     goto('/catalog');
@@ -28,39 +25,6 @@
       behavior: 'smooth'
     });
   }
-
-  // Handle seamless teleportation
-  function handleScroll() {
-    if (!scrollContainer) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-    const singleSetWidth = (scrollWidth / 3);
-
-    // If we've scrolled past the first two sets, jump back to the middle set
-    if (scrollLeft >= singleSetWidth * 2) {
-      scrollContainer.scrollLeft = scrollLeft - singleSetWidth;
-    } 
-    // If we've scrolled before the second set, jump forward to the middle set
-    else if (scrollLeft <= singleSetWidth - clientWidth) {
-      scrollContainer.scrollLeft = scrollLeft + singleSetWidth;
-    }
-  }
-
-  // Auto-slide logic
-  $effect(() => {
-    const interval = setInterval(() => {
-      if (!isPaused && scrollContainer) {
-        scroll('right');
-      }
-    }, 5000);
-
-    // Initial positioning to the middle set
-    if (scrollContainer && scrollContainer.scrollLeft === 0) {
-      const singleSetWidth = scrollContainer.scrollWidth / 3;
-      scrollContainer.scrollLeft = singleSetWidth;
-    }
-
-    return () => clearInterval(interval);
-  });
 </script>
 
 <div class="bg-black min-h-screen text-white antialiased overflow-x-hidden">
@@ -91,21 +55,17 @@
         >
           VIEW CATALOG
         </button>
-        <a href="/about" class="btn-secondary text-sm tracking-[0.2em]">
-          OUR HERITAGE
-        </a>
       </div>
     </div>
-
   </section>
 
   <!-- Signature Products Carousel -->
   <section class="py-24 bg-[#0A0A0A] border-y border-white/5 relative">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-        <div class="space-y-3">
-          <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em]">ESTABLISHED QUALITY</span>
+        <div class="space-y-2">
           <h2 class="text-5xl font-serif tracking-tight">Signature Products</h2>
+          <p class="text-zinc-500 text-sm">Professional-grade workgear engineered for durability.</p>
         </div>
         
         <div class="flex items-center gap-6">
@@ -139,15 +99,13 @@
       <!-- Carousel Container -->
       <div 
         bind:this={scrollContainer}
-        onmouseenter={() => isPaused = true}
-        onmouseleave={() => isPaused = false}
-        onscroll={handleScroll}
         role="region"
         aria-label="Signature Products Carousel"
-        class="flex gap-4 md:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
+        tabindex="0"
+        class="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 focus-visible:outline-offset-4 rounded-sm"
       >
         {#each featured as product, i}
-          <div class="flex-none w-[70vw] md:w-[calc(33.333%-12px)] lg:w-[calc(16.666%-14px)] snap-start animate-fade-in opacity-0" style="animation-delay: {0.05 * (i % 8)}s; animation-fill-mode: forwards;">
+          <div class="flex-none w-[75vw] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] snap-start animate-fade-in opacity-0" style="animation-delay: {0.05 * i}s; animation-fill-mode: forwards;">
             <ProductCard {product} />
           </div>
         {/each}
@@ -158,8 +116,7 @@
   <!-- Shop by Brand Section -->
   <section class="py-24 bg-black border-t border-white/5 relative">
     <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-16 space-y-3">
-        <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em]">CRAFTED LEGACY</span>
+      <div class="text-center mb-16 space-y-2">
         <h2 class="text-5xl font-serif tracking-tight">Shop by Brand</h2>
         <p class="text-zinc-500 max-w-md mx-auto text-sm">Explore our curated collections from trusted industry names.</p>
       </div>
@@ -174,13 +131,12 @@
             <img 
               src="{base}/images/products/PV_1000.webp" 
               alt="Leather Gold Collection" 
-              class="w-full h-full object-cover opacity-50 group-hover:scale-110 group-hover:opacity-70 transition-all duration-700" 
+              class="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-lux" 
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
           </div>
           
           <div class="absolute inset-0 z-10 p-8 flex flex-col justify-end">
-            <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em] mb-2">PREMIUM QUALITY</span>
             <h3 class="text-3xl font-serif text-white mb-2 group-hover:text-primary transition-colors">Leather Gold</h3>
             <p class="text-zinc-400 text-sm max-w-sm mb-6">Heavy duty tools pouches, chaps, and rugged leather gear built to withstand the elements.</p>
             <span class="text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-white">
@@ -198,13 +154,12 @@
             <img 
               src="{base}/images/products/s-l1600-582.jpg" 
               alt="Western Heritage Collection" 
-              class="w-full h-full object-cover opacity-50 group-hover:scale-110 group-hover:opacity-70 transition-all duration-700" 
+              class="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-lux" 
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
           </div>
           
           <div class="absolute inset-0 z-10 p-8 flex flex-col justify-end">
-            <span class="text-primary text-xs font-semibold uppercase tracking-[0.2em] mb-2">TRADITIONAL CRAFT</span>
             <h3 class="text-3xl font-serif text-white mb-2 group-hover:text-primary transition-colors">Western Heritage</h3>
             <p class="text-zinc-400 text-sm max-w-sm mb-6">Handcrafted, classic style carpenter bags, belts, and accessories built for trade professionals.</p>
             <span class="text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-white">

@@ -17,6 +17,9 @@ impl Default for ProductService {
 impl ProductService {
     pub fn new() -> Self {
         let supabase_url = env::var("SUPABASE_URL").unwrap_or_else(|_| "https://fnirqccmtjzibjhgzyay.supabase.co".to_string());
+        if env::var("SUPABASE_SERVICE_ROLE_KEY").is_err() {
+            eprintln!("[WARN] SUPABASE_SERVICE_ROLE_KEY is not configured! Database requests may fail due to Row Level Security (RLS) policies.");
+        }
         let supabase_key = env::var("SUPABASE_SERVICE_ROLE_KEY")
             .or_else(|_| env::var("SUPABASE_ANON_KEY"))
             .unwrap_or_default();

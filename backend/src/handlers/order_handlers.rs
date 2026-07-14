@@ -66,7 +66,20 @@ pub async fn get_order(auth_header: Option<&str>, id: String) -> Result<Response
     }
 }
 
-pub async fn create_order(req: CreateOrderRequest) -> Result<Response<String>, Error> {
+pub async fn create_order(auth_header: Option<&str>, mut req: CreateOrderRequest) -> Result<Response<String>, Error> {
+    if let Some(token) = auth_header.and_then(|h| {
+        if h.starts_with("Bearer ") {
+            Some(&h[7..])
+        } else {
+            None
+        }
+    }) {
+        if let Ok(claims) = crate::auth::decode_jwt(token) {
+            req.customer_id = claims.user_id;
+            req.customer_email = Some(claims.sub);
+        }
+    }
+
     let service = OrderService::new();
     
     match service.create_order(req).await {
@@ -79,7 +92,7 @@ pub async fn create_order(req: CreateOrderRequest) -> Result<Response<String>, E
             Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")
-            .body(serde_json::json!({ "error": "Failed to create order" }).to_string())?)
+            .body(serde_json::json!({ "error": format!("Failed to create order: {e}") }).to_string())?)
         }
     }
 }

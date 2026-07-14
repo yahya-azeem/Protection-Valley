@@ -160,7 +160,7 @@
     try {
       showToast('Submitting your order...');
       const orderData = {
-        customer_id: 0,
+        customer_id: $currentUser?.id || 0,
         customer_email: email,
         items: $cart.map(item => ({
           product_id: item.id.toString(),

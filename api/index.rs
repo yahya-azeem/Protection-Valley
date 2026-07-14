@@ -99,9 +99,10 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                     wrap(order_handlers::get_orders(auth_header.as_deref()).await)
                 }
                 "POST" => {
+                    let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                     let bytes = read_body(&mut req).await?;
                     let body: models::CreateOrderRequest = serde_json::from_slice(&bytes)?;
-                    wrap(order_handlers::create_order(body).await)
+                    wrap(order_handlers::create_order(auth_header.as_deref(), body).await)
                 }
                 _ => method_not_allowed(),
             }
