@@ -120,3 +120,4 @@ supabase/.temp/
 
 .vercel
 .env*.local
+.env*
