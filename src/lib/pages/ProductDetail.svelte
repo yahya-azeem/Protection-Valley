@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Truck, ShieldCheck, RotateCcw, Package, ShoppingCart, ChevronRight, Boxes, Star, MessageCircle } from 'lucide-svelte';
+  import { Package, ShoppingCart, ChevronRight, Boxes, Star, MessageCircle } from 'lucide-svelte';
   import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, goBack, isWholesale, currentCategory, currentUser } from '$lib/stores';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
   import type { CartItem, Product, Review } from '$lib/types';
@@ -258,45 +258,7 @@
             {/if}
           </div>
 
-          <!-- Technical Details -->
-          <div class="grid grid-cols-2 gap-6 pt-8 border-t border-white/10">
-            <div class="flex items-start gap-3 group">
-              <div class="bg-[#0A0A0A] p-2.5 border border-white/5 rounded">
-                <Truck class="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-lux" />
-              </div>
-              <div>
-                <h4 class="text-xs font-semibold text-white mb-0.5">Free Shipping</h4>
-                <p class="text-xs text-zinc-500">UPS Ground</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 group">
-              <div class="bg-[#0A0A0A] p-2.5 border border-white/5 rounded">
-                <ShieldCheck class="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-lux" />
-              </div>
-              <div>
-                <h4 class="text-xs font-semibold text-white mb-0.5">Warranty</h4>
-                <p class="text-xs text-zinc-500">Lifetime guarantee</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 group">
-              <div class="bg-[#0A0A0A] p-2.5 border border-white/5 rounded">
-                <RotateCcw class="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-lux" />
-              </div>
-              <div>
-                <h4 class="text-xs font-semibold text-white mb-0.5">Returns</h4>
-                <p class="text-xs text-zinc-500">30-day evaluation</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 group">
-              <div class="bg-[#0A0A0A] p-2.5 border border-white/5 rounded">
-                <Package class="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-lux" />
-              </div>
-              <div>
-                <h4 class="text-xs font-semibold text-white mb-0.5">Availability</h4>
-                <p class="text-xs text-zinc-500">{currentVariant?.in_stock ? `${currentVariant.stock} units` : 'Out of Stock'}</p>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
