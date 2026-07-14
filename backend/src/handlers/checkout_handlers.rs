@@ -214,17 +214,7 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
         });
     }
 
-    let allowed_origin = frontend_url.trim_end_matches('/').to_string();
-    let success_url_trimmed = req.success_url.trim();
-    let cancel_url_trimmed = req.cancel_url.trim();
-    if !is_allowed_redirect(success_url_trimmed, &allowed_origin) || !is_allowed_redirect(cancel_url_trimmed, &allowed_origin) {
-        return Ok(Response::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .header("Content-Type", "application/json")
-            .body(serde_json::json!({
-                "error": "Checkout redirect URLs must stay on the configured frontend"
-            }).to_string())?);
-    }
+
 
     let customer_id_str = claims.as_ref().map(|c| c.user_id.to_string()).unwrap_or_else(|| "0".to_string());
     let mut metadata = std::collections::HashMap::new();
@@ -233,51 +223,53 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
     metadata.insert("shipping_cost".to_string(), shipping_cost.to_string());
     metadata.insert("sales_tax".to_string(), sales_tax.to_string());
     metadata.insert("shipping_address".to_string(), serde_json::to_string(&req.shipping_address).unwrap_or_default());
+    if let Some(ref c) = claims {
+        metadata.insert("customer_email".to_string(), c.sub.clone());
+    }
 
-    let params = stripe::CreateCheckoutSession {
-        mode: Some(stripe::CheckoutSessionMode::Payment),
-        line_items: Some(line_items),
-        success_url: Some(success_url_trimmed),
-        cancel_url: Some(cancel_url_trimmed),
-        allow_promotion_codes: Some(true),
-        metadata: Some(metadata),
+    let total_amount = subtotal + shipping_cost + sales_tax;
+    let amount_cents = (total_amount * 100.0).round() as i64;
+
+    let mut params = stripe::CreatePaymentIntent::new(amount_cents, stripe::Currency::USD);
+    params.automatic_payment_methods = Some(stripe::CreatePaymentIntentAutomaticPaymentMethods {
+        enabled: true,
         ..Default::default()
-    };
+    });
+    params.metadata = Some(metadata);
 
-    match stripe::CheckoutSession::create(&client, params).await {
-        Ok(session) => {
-            if let Some(url) = session.url {
+    match stripe::PaymentIntent::create(&client, params).await {
+        Ok(pi) => {
+            if let Some(client_secret) = pi.client_secret {
                 Ok(Response::builder()
                     .status(StatusCode::OK)
                     .header("Content-Type", "application/json")
-                    .body(serde_json::json!({ "url": url }).to_string())?)
+                    .body(serde_json::json!({
+                        "clientSecret": client_secret,
+                        "paymentIntentId": pi.id.to_string()
+                    }).to_string())?)
             } else {
                 Ok(Response::builder()
                     .status(StatusCode::INTERNAL_SERVER_ERROR)
                     .header("Content-Type", "application/json")
                     .body(serde_json::json!({
-                        "error": "Failed to generate checkout URL"
+                        "error": "Failed to generate payment client secret"
                     }).to_string())?)
             }
         }
         Err(e) => {
             eprintln!("[checkout] stripe error: {e}");
             Ok(Response::builder()
-            .status(StatusCode::INTERNAL_SERVER_ERROR)
-            .header("Content-Type", "application/json")
-            .body(serde_json::json!({
-                "error": "Stripe checkout failed"
-            }).to_string())?)
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({
+                    "error": "Stripe payment intent creation failed"
+                }).to_string())?)
         }
     }
 }
 
-fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
-    if candidate.starts_with("http://localhost") || candidate.starts_with("http://127.0.0.1") {
-        return true;
-    }
-    candidate == allowed_origin || candidate.starts_with(&format!("{allowed_origin}/"))
-}pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCheckoutSessionRequest) -> Result<Response<String>, Error> {
+
+pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCheckoutSessionRequest) -> Result<Response<String>, Error> {
     let stripe_secret_key = match env::var("STRIPE_SECRET_KEY") {
         Ok(key) => {
             let trimmed = key.trim().to_string();
@@ -299,78 +291,70 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
 
     let client = stripe::Client::new(stripe_secret_key);
     
-    // Retrieve checkout session from Stripe
-    let parsed_session_id = match req.session_id.parse::<stripe::CheckoutSessionId>() {
-        Ok(id) => id,
-        Err(e) => {
-            return Ok(Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .header("Content-Type", "application/json")
-                .body(serde_json::json!({ "error": format!("Invalid session ID format: {e}") }).to_string())?);
-        }
-    };
+    // Route based on whether ID is a PaymentIntent or CheckoutSession
+    let is_pi = req.session_id.starts_with("pi_");
 
-    let session = match stripe::CheckoutSession::retrieve(&client, &parsed_session_id, &[]).await {
-        Ok(s) => s,
-        Err(e) => {
-            eprintln!("[checkout confirm] Stripe retrieve error: {e}");
-            return Ok(Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .header("Content-Type", "application/json")
-                .body(serde_json::json!({ "error": format!("Invalid checkout session: {e}") }).to_string())?);
-        }
-    };
-
-    // Extract customer_id and items from metadata
-    let metadata = match session.metadata {
-        Some(m) => m,
-        None => {
-            return Ok(Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .header("Content-Type", "application/json")
-                .body(serde_json::json!({ "error": "Missing metadata in Stripe session" }).to_string())?);
-        }
-    };
-
-    let items_raw = metadata.get("items").cloned().unwrap_or_default();
-    let customer_id_raw = metadata.get("customer_id").cloned().unwrap_or_default();
-
-    let items: Vec<OrderItemRequest> = match serde_json::from_str(&items_raw) {
-        Ok(i) => i,
-        Err(_) => {
-            return Ok(Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .header("Content-Type", "application/json")
-                .body(serde_json::json!({ "error": "Malformed items metadata" }).to_string())?);
-        }
-    };
-
-    let customer_id = customer_id_raw.parse::<i64>().unwrap_or(0);
-
-    // Extract shipping address
-    let shipping_details = session.shipping_details;
-
-    let shipping_address_fallback = match shipping_details {
-        Some(sd) => {
-            let address = sd.address.unwrap_or_default();
-            let name = sd.name.unwrap_or_default();
-            let name_parts: Vec<&str> = name.split_whitespace().collect();
-            let first_name = name_parts.first().cloned().unwrap_or("Guest").to_string();
-            let last_name = if name_parts.len() > 1 { name_parts[1..].join(" ") } else { "Customer".to_string() };
-
-            Address {
-                first_name,
-                last_name,
-                address_line1: address.line1.unwrap_or_default(),
-                address_line2: address.line2,
-                city: address.city.unwrap_or_default(),
-                state: address.state.unwrap_or_default(),
-                zip: address.postal_code.unwrap_or_default(),
-                country: address.country.unwrap_or_default(),
-                phone: None,
+    let (items, customer_id, shipping_address, customer_email, shipping_cost, sales_tax, stripe_id) = if is_pi {
+        let parsed_pi_id = match req.session_id.parse::<stripe::PaymentIntentId>() {
+            Ok(id) => id,
+            Err(e) => {
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": format!("Invalid PaymentIntent ID format: {e}") }).to_string())?);
             }
+        };
+
+        let pi = match stripe::PaymentIntent::retrieve(&client, &parsed_pi_id, &[]).await {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("[checkout confirm] Stripe PI retrieve error: {e}");
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": format!("Invalid PaymentIntent: {e}") }).to_string())?);
+            }
+        };
+
+        // Check if succeeded
+        if pi.status != stripe::PaymentIntentStatus::Succeeded {
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header("Content-Type", "application/json")
+                .body(serde_json::json!({ "error": format!("Payment not completed (status: {:?})", pi.status) }).to_string())?);
         }
-        None => {
+
+        let metadata = &pi.metadata;
+
+        let items_raw = metadata.get("items").cloned().unwrap_or_default();
+        let customer_id_raw = metadata.get("customer_id").cloned().unwrap_or_default();
+
+        let items: Vec<OrderItemRequest> = match serde_json::from_str(&items_raw) {
+            Ok(i) => i,
+            Err(_) => {
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": "Malformed items metadata" }).to_string())?);
+            }
+        };
+
+        let customer_id = customer_id_raw.parse::<i64>().unwrap_or(0);
+
+        let shipping_address_raw = metadata.get("shipping_address").cloned().unwrap_or_default();
+        let shipping_address: Address = if !shipping_address_raw.is_empty() {
+            serde_json::from_str(&shipping_address_raw).unwrap_or_else(|_| Address {
+                first_name: "Guest".to_string(),
+                last_name: "Customer".to_string(),
+                address_line1: String::new(),
+                address_line2: None,
+                city: String::new(),
+                state: String::new(),
+                zip: String::new(),
+                country: "US".to_string(),
+                phone: None,
+            })
+        } else {
             Address {
                 first_name: "Guest".to_string(),
                 last_name: "Customer".to_string(),
@@ -382,27 +366,117 @@ fn is_allowed_redirect(candidate: &str, allowed_origin: &str) -> bool {
                 country: "US".to_string(),
                 phone: None,
             }
-        }
-    };
+        };
 
-    let shipping_address_raw = metadata.get("shipping_address").cloned().unwrap_or_default();
-    let shipping_address: Address = if !shipping_address_raw.is_empty() {
-        serde_json::from_str(&shipping_address_raw).unwrap_or(shipping_address_fallback)
+        let shipping_cost: Option<f64> = metadata.get("shipping_cost").and_then(|s| s.parse().ok());
+        let sales_tax: Option<f64> = metadata.get("sales_tax").and_then(|s| s.parse().ok());
+        let customer_email = metadata.get("customer_email").cloned();
+
+        (items, customer_id, shipping_address, customer_email, shipping_cost, sales_tax, pi.id.to_string())
     } else {
-        shipping_address_fallback
+        // Handle standard CheckoutSession ID
+        let parsed_session_id = match req.session_id.parse::<stripe::CheckoutSessionId>() {
+            Ok(id) => id,
+            Err(e) => {
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": format!("Invalid session ID format: {e}") }).to_string())?);
+            }
+        };
+
+        let session = match stripe::CheckoutSession::retrieve(&client, &parsed_session_id, &[]).await {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("[checkout confirm] Stripe retrieve error: {e}");
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": format!("Invalid checkout session: {e}") }).to_string())?);
+            }
+        };
+
+        let metadata = match session.metadata {
+            Some(m) => m,
+            None => {
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": "Missing metadata in Stripe session" }).to_string())?);
+            }
+        };
+
+        let items_raw = metadata.get("items").cloned().unwrap_or_default();
+        let customer_id_raw = metadata.get("customer_id").cloned().unwrap_or_default();
+
+        let items: Vec<OrderItemRequest> = match serde_json::from_str(&items_raw) {
+            Ok(i) => i,
+            Err(_) => {
+                return Ok(Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .header("Content-Type", "application/json")
+                    .body(serde_json::json!({ "error": "Malformed items metadata" }).to_string())?);
+            }
+        };
+
+        let customer_id = customer_id_raw.parse::<i64>().unwrap_or(0);
+
+        let shipping_details = session.shipping_details;
+        let shipping_address_fallback = match shipping_details {
+            Some(sd) => {
+                let address = sd.address.unwrap_or_default();
+                let name = sd.name.unwrap_or_default();
+                let name_parts: Vec<&str> = name.split_whitespace().collect();
+                let first_name = name_parts.first().cloned().unwrap_or("Guest").to_string();
+                let last_name = if name_parts.len() > 1 { name_parts[1..].join(" ") } else { "Customer".to_string() };
+
+                Address {
+                    first_name,
+                    last_name,
+                    address_line1: address.line1.unwrap_or_default(),
+                    address_line2: address.line2,
+                    city: address.city.unwrap_or_default(),
+                    state: address.state.unwrap_or_default(),
+                    zip: address.postal_code.unwrap_or_default(),
+                    country: address.country.unwrap_or_default(),
+                    phone: None,
+                }
+            }
+            None => {
+                Address {
+                    first_name: "Guest".to_string(),
+                    last_name: "Customer".to_string(),
+                    address_line1: String::new(),
+                    address_line2: None,
+                    city: String::new(),
+                    state: String::new(),
+                    zip: String::new(),
+                    country: "US".to_string(),
+                    phone: None,
+                }
+            }
+        };
+
+        let shipping_address_raw = metadata.get("shipping_address").cloned().unwrap_or_default();
+        let shipping_address: Address = if !shipping_address_raw.is_empty() {
+            serde_json::from_str(&shipping_address_raw).unwrap_or(shipping_address_fallback)
+        } else {
+            shipping_address_fallback
+        };
+
+        let shipping_cost: Option<f64> = metadata.get("shipping_cost").and_then(|s| s.parse().ok());
+        let sales_tax: Option<f64> = metadata.get("sales_tax").and_then(|s| s.parse().ok());
+        let customer_email = session.customer_details.as_ref().and_then(|cd| cd.email.clone());
+
+        (items, customer_id, shipping_address, customer_email, shipping_cost, sales_tax, session.id.to_string())
     };
-
-    let shipping_cost: Option<f64> = metadata.get("shipping_cost").and_then(|s| s.parse().ok());
-    let sales_tax: Option<f64> = metadata.get("sales_tax").and_then(|s| s.parse().ok());
-
-    let customer_email = session.customer_details.as_ref().and_then(|cd| cd.email.clone());
 
     let order_req = CreateOrderRequest {
         customer_id,
         items,
         shipping_address,
         payment_method: "Stripe".to_string(),
-        id: Some(session.id.to_string()),
+        id: Some(stripe_id),
         customer_email,
         shipping_cost,
         sales_tax,
