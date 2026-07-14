@@ -151,11 +151,15 @@ pub struct OrderItemRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateCheckoutSessionRequest {
     pub items: Vec<OrderItemRequest>,
-    pub success_url: String,
-    pub cancel_url: String,
+    #[serde(default)]
+    pub success_url: Option<String>,
+    #[serde(default)]
+    pub cancel_url: Option<String>,
     pub shipping_address: Address,
-    pub shipping_cost: f64,
-    pub sales_tax: f64,
+    #[serde(default)]
+    pub shipping_cost: Option<f64>,
+    #[serde(default)]
+    pub sales_tax: Option<f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
