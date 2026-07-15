@@ -9,6 +9,7 @@
   let stripe = $state<any>(null);
   let elements = $state<any>(null);
   let addressElement = $state<any>(null);
+  let addressElementReady = $state(false);
   let paymentElements = $state<any>(null);
   let paymentElement = $state<any>(null);
   let paymentContainer = $state<HTMLDivElement | null>(null);
@@ -126,6 +127,16 @@
         },
       });
 
+      addressElement.on('ready', () => {
+        addressElementReady = true;
+      });
+
+      addressElement.on('loaderror', (event: any) => {
+        addressElementReady = false;
+        console.error('Stripe Address Element loaderror:', event.error);
+        stripeError = `Failed to load address form: ${event.error.message}`;
+      });
+
       await tick();
 
       if (addressContainer) {
@@ -143,8 +154,8 @@
       return;
     }
 
-    if (!stripe || !addressElement) {
-      showToast('Payment system is not fully loaded. Please refresh the page.');
+    if (!stripe || !addressElement || !addressElementReady) {
+      showToast(stripeError || 'Payment system is not fully loaded. Please wait or refresh the page.');
       return;
     }
 
@@ -257,6 +268,11 @@
         applePay: 'auto',
         googlePay: 'auto',
       },
+    });
+
+    paymentElement.on('loaderror', (event: any) => {
+      console.error('Stripe Payment Element loaderror:', event.error);
+      stripeError = `Failed to load payment form: ${event.error.message}`;
     });
 
     await tick();
