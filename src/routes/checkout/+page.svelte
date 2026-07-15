@@ -161,16 +161,24 @@
       }
 
       const addr = addressResult.value;
+      const nameVal = addr.name || '';
+      const line1Val = addr.address?.line1 || '';
+      const line2Val = addr.address?.line2 || null;
+      const cityVal = addr.address?.city || '';
+      const stateVal = addr.address?.state || '';
+      const zipVal = addr.address?.postal_code || '';
+      const countryVal = addr.address?.country || 'US';
+      const phoneVal = addr.phone || null;
 
       savedAddress = {
-        name: addr.name || '',
-        line1: addr.address?.line1 || '',
-        line2: addr.address?.line2 || null,
-        city: addr.address?.city || '',
-        state: addr.address?.state || '',
-        zip: addr.address?.postal_code || '',
-        country: addr.address?.country || 'US',
-        phone: addr.phone || null,
+        name: nameVal,
+        line1: line1Val,
+        line2: line2Val,
+        city: cityVal,
+        state: stateVal,
+        zip: zipVal,
+        country: countryVal,
+        phone: phoneVal,
       };
 
       const res = await fetch('/api/v1/checkout/create-session', {
@@ -186,15 +194,15 @@
             quantity: item.quantity
           })),
           shipping_address: {
-            first_name: savedAddress.name.split(' ')[0] || '',
-            last_name: savedAddress.name.split(' ').slice(1).join(' ') || '',
-            address_line1: savedAddress.line1,
-            address_line2: savedAddress.line2,
-            city: savedAddress.city,
-            state: savedAddress.state,
-            zip: savedAddress.zip,
-            country: savedAddress.country,
-            phone: savedAddress.phone,
+            first_name: nameVal.split(' ')[0] || '',
+            last_name: nameVal.split(' ').slice(1).join(' ') || '',
+            address_line1: line1Val,
+            address_line2: line2Val,
+            city: cityVal,
+            state: stateVal,
+            zip: zipVal,
+            country: countryVal,
+            phone: phoneVal,
           },
         })
       });
@@ -217,9 +225,9 @@
         stripeError = errBody.error || `Server error (${res.status}). Please try again.`;
         showToast(stripeError!);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Checkout error:', e);
-      stripeError = 'Unable to connect to the server. Check your connection and try again.';
+      stripeError = `Checkout error: ${e.message || e}`;
       showToast(stripeError!);
     } finally {
       loading = false;
