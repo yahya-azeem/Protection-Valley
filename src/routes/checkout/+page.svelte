@@ -236,6 +236,15 @@
   async function mountPaymentElement() {
     if (!stripe || !clientSecret || !paymentContainer) return;
 
+    if (paymentElement) {
+      try {
+        paymentElement.destroy();
+      } catch (e) {
+        console.error('Error destroying old payment element:', e);
+      }
+      paymentElement = null;
+    }
+
     paymentElements = stripe.elements({ clientSecret, appearance: getAppearance() });
     paymentElement = paymentElements.create('payment', {
       layout: {
@@ -341,7 +350,7 @@
         <!-- LEFT: Form Column -->
         <div class="lg:col-span-7 order-2 lg:order-1 space-y-6 sm:space-y-8">
 
-          {#if step === 'info'}
+          <div class="space-y-6 sm:space-y-8" class:hidden={step !== 'info'}>
             <!-- Contact -->
             <section>
               <h2 class="text-base sm:text-lg font-serif text-white mb-4 sm:mb-5">Contact</h2>
@@ -388,8 +397,9 @@
                 CONTINUE TO PAYMENT
               {/if}
             </button>
+          </div>
 
-          {:else if step === 'confirm'}
+          <div class="space-y-6 sm:space-y-8" class:hidden={step !== 'confirm'}>
             <!-- Payment Step -->
             <section class="animate-fade-in">
               <div class="flex items-center justify-between mb-5">
@@ -451,7 +461,7 @@
                 </div>
               </div>
             </section>
-          {/if}
+          </div>
         </div>
 
         <!-- RIGHT: Order Summary -->
