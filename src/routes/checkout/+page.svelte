@@ -117,7 +117,6 @@
 
       addressElement = elements.create('address', {
         mode: 'shipping',
-        autocomplete: { mode: 'automatic' },
         fields: { phone: 'always' },
         validation: { phone: { required: 'always' } },
         defaultValues: {
@@ -289,21 +288,16 @@
 
 <svelte:head>
   <title>Checkout — Protection Valley</title>
-  <meta name="description" content="Secure checkout for Protection Valley premium workgear." />
+  <meta name="description" content="Checkout for Protection Valley premium workgear." />
 </svelte:head>
 
 <div class="bg-black min-h-[100dvh]">
-  <!-- Top Bar -->
   <div class="border-b border-white/5 bg-[#0A0A0A]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
       <a href="/catalog" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-lux text-sm">
         <ArrowLeft class="w-4 h-4" />
         <span class="hidden sm:inline">Back to shopping</span>
       </a>
-      <div class="flex items-center gap-2 text-zinc-500 text-xs">
-        <Lock class="w-3.5 h-3.5" />
-        <span>Secure checkout</span>
-      </div>
     </div>
   </div>
 

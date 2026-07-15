@@ -15,9 +15,6 @@
       <div class="space-y-12">
         <div>
           <h1 class="text-5xl font-serif text-white mb-6 tracking-tighter">Support & Inquiries</h1>
-          <p class="text-lg text-zinc-400 leading-relaxed max-w-md">
-            Our team is here to assist with technical gear specifications, wholesale accounts, and order fulfillment.
-          </p>
         </div>
 
         <div class="space-y-8">

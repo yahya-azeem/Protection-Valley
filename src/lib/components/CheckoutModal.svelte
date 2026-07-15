@@ -256,7 +256,7 @@
           {/if}
           <h2 class="text-sm font-serif tracking-widest uppercase text-white font-bold">
             {#if step === 'address'}Shipping Details{/if}
-            {#if step === 'review'}Secure Checkout{/if}
+            {#if step === 'review'}Payment Details{/if}
             {#if step === 'success'}Order Confirmed{/if}
           </h2>
         </div>
