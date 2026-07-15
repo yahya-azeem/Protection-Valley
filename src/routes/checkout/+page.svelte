@@ -6,6 +6,8 @@
   import { onMount, tick } from 'svelte';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
 
+  let { data } = $props<{ data: { stripePublicKey: string } }>();
+
   let stripe = $state<any>(null);
   let elements = $state<any>(null);
   let addressElement = $state<any>(null);
@@ -106,7 +108,7 @@
         return;
       }
 
-      const key = env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
+      const key = data.stripePublicKey || env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
       stripe = (window as any).Stripe(key);
 
       elements = stripe.elements({
