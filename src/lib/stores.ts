@@ -47,6 +47,8 @@ function createCartStore() {
 
   return {
     subscribe,
+    set,
+    update,
     add(item: CartItem) {
       update((cartItems) => {
         const wholesale = get(isWholesale);
@@ -251,4 +253,40 @@ export async function loadProducts() {
     console.error('Error loading products:', err);
     products.set([]);
   }
+}
+
+// Keep cart item prices in sync with wholesale status and products database prices
+if (typeof window !== 'undefined') {
+  derived([isWholesale, products], ([$isWholesale, $products]) => {
+    if (!$products || $products.length === 0) return;
+    
+    // Read current cart items and check if any need update
+    const currentCart = get(cart);
+    let changed = false;
+    
+    const updated = currentCart.map(item => {
+      const product = $products.find(p => p.id.toString() === item.id.toString());
+      const variant = product?.variants?.find(v => v.id.toString() === item.variant_id?.toString());
+      if (variant) {
+        const wholesalePrice = (variant.wholesale_price && variant.wholesale_price > 0)
+          ? variant.wholesale_price
+          : variant.price * (1 - 0.30);
+        const targetPrice = $isWholesale ? wholesalePrice : variant.price;
+        if (item.price !== targetPrice) {
+          changed = true;
+          return { ...item, price: targetPrice };
+        }
+      }
+      return item;
+    });
+    
+    if (changed) {
+      cart.update(() => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('cart', JSON.stringify(updated));
+        }
+        return updated;
+      });
+    }
+  }).subscribe(() => {});
 }
