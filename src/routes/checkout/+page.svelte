@@ -117,7 +117,7 @@
 
       addressElement = elements.create('address', {
         mode: 'shipping',
-        autocomplete: { mode: 'google_places_api' },
+        autocomplete: { mode: 'google_maps_api' },
         fields: { phone: 'always' },
         validation: { phone: { required: 'always' } },
         defaultValues: {
