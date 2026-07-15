@@ -9,7 +9,7 @@
   
   let displayVariant = $derived(product.variants?.[0]);
   let price = $derived(displayVariant?.price || 0);
-  let wholesalePrice = $derived(displayVariant?.wholesale_price ?? price * (1 - WHOLESALE_DISCOUNT));
+  let wholesalePrice = $derived((displayVariant?.wholesale_price && displayVariant.wholesale_price > 0) ? displayVariant.wholesale_price : price * (1 - WHOLESALE_DISCOUNT));
   let image = $derived(product.image_url || displayVariant?.image_url || `${base}/images/logo.png`);
 </script>
 
