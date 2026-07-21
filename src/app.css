@@ -85,6 +85,34 @@
   @apply transition-all duration-700 ease-lux;
 }
 
+@utility transition-admin {
+  @apply transition-all duration-150 ease-lux;
+}
+
+@keyframes fadeInFast {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpFast {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in-fast {
+  animation: fadeInFast 200ms var(--ease-lux) forwards;
+}
+
+@utility animate-slide-up-fast {
+  animation: slideUpFast 250ms var(--ease-lux) forwards;
+}
+
 /* Entrance Animations */
 @utility animate-fade-in {
   animation: fadeIn var(--animation-duration) var(--ease-lux) forwards;
