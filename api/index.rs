@@ -3,7 +3,7 @@ use http::StatusCode;
 use http_body_util::BodyExt;
 use serde_json::json;
 
-use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers, review_handlers, admin_handlers};
+use backend_v2_lib::handlers::{product_handlers, order_handlers, auth_handlers, ebay_handlers, checkout_handlers, review_handlers, admin_handlers, voice_handler};
 use backend_v2_lib::models;
 
 #[tokio::main]
@@ -418,6 +418,21 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             let headers = req.headers().clone();
             let bytes = read_body(&mut req).await?;
             admin_handlers::erp_proxy(auth_val.as_deref(), method, sub_path, query, headers, bytes).await
+        }
+        "/api/v1/voice" => {
+            if method == "POST" {
+                let bytes = read_body(&mut req).await?;
+                let body: serde_json::Value = serde_json::from_slice(&bytes)?;
+                voice_handler::handle_voice_request(body).await.map(|resp| {
+                    let (parts, body) = resp.into_parts();
+                    Response::from_parts(parts, ResponseBody::from(body))
+                })
+            } else {
+                Ok(Response::builder()
+                    .status(StatusCode::METHOD_NOT_ALLOWED)
+                    .header("Content-Type", "application/json")
+                    .body(ResponseBody::from(json!({ "error": "Method Not Allowed" }).to_string()))?)
+            }
         }
         _ => not_found(),
     }

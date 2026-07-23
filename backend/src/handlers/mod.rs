@@ -5,4 +5,5 @@ pub mod ebay_handlers;
 pub mod checkout_handlers;
 pub mod review_handlers;
 pub mod admin_handlers;
+pub mod voice_handler;
 

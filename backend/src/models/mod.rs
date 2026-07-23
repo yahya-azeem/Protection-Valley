@@ -329,3 +329,145 @@ pub fn calculate_sales_tax(state: &str, subtotal: f64) -> f64 {
     subtotal * rate
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PhoneIdentity {
+    pub id: String,
+    pub phone: String,
+    pub wholesale_user_id: i64,
+    pub verified: bool,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PhoneIdentityWithUser {
+    pub id: String,
+    pub phone: String,
+    pub wholesale_user_id: i64,
+    pub verified: bool,
+    pub created_at: DateTime<Utc>,
+    pub wholesale_users: User,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Deal {
+    pub id: String,
+    pub title: String,
+    pub description: String,
+    pub discount_percent: Option<f64>,
+    pub flat_discount: Option<f64>,
+    pub min_purchase: Option<f64>,
+    pub applies_to: String,
+    pub category_slug: Option<String>,
+    pub active: bool,
+    pub starts_at: DateTime<Utc>,
+    pub ends_at: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Appointment {
+    pub id: String,
+    pub caller_name: String,
+    pub caller_phone: Option<String>,
+    pub caller_email: Option<String>,
+    pub reason: Option<String>,
+    pub preferred_date: String,
+    pub preferred_time: String,
+    pub duration_min: i32,
+    pub status: String,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateAppointmentRequest {
+    pub caller_name: String,
+    pub caller_phone: Option<String>,
+    pub caller_email: Option<String>,
+    pub reason: Option<String>,
+    pub preferred_date: String,
+    pub preferred_time: String,
+    pub duration_min: i32,
+    pub status: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VoiceSession {
+    pub id: String,
+    pub caller_phone: String,
+    pub caller_name: Option<String>,
+    pub session_data: serde_json::Value,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreateVoiceSessionRequest {
+    pub caller_phone: String,
+    pub caller_name: Option<String>,
+    pub session_data: serde_json::Value,
+}
+
+/// Vapi tool call request body
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VapiToolCallMessage {
+    pub message: VapiToolCallEnvelope,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VapiToolCallEnvelope {
+    #[serde(rename = "type")]
+    pub msg_type: String,
+    pub toolCallList: Vec<VapiToolCall>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VapiToolCall {
+    pub id: String,
+    pub name: String,
+    pub arguments: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VapiToolResult {
+    pub toolCallId: String,
+    pub result: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VapiToolResponse {
+    pub results: Vec<VapiToolResult>,
+}
+
+/// Voice tool argument payloads
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IdentifyCallerArgs {
+    pub phone: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProductLookupArgs {
+    pub query: String,
+    pub caller_phone: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetDealsArgs {
+    pub caller_phone: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CheckOrderStatusArgs {
+    pub caller_phone: Option<String>,
+    pub email: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BookMeetingArgs {
+    pub caller_name: String,
+    pub caller_phone: Option<String>,
+    pub caller_email: Option<String>,
+    pub date: String,
+    pub time: String,
+    pub reason: Option<String>,
+    pub duration_min: Option<i32>,
+}
+
