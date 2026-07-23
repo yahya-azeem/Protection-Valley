@@ -285,8 +285,13 @@ impl VoiceService {
             .map_err(|e| format!("Appointment creation failed: {}", e))?;
 
         let records: Vec<Value> = resp.json().await.map_err(|e| format!("Parse error: {}", e))?;
-        let appointment_id = records.first()
-            .and_then(|r| r.get("id").and_then(|v| v.as_str()).map(|s| s.to_string()));
+        let appointment_id = records.first().and_then(|r| {
+            r.get("id").and_then(|v| {
+                v.as_str().map(|s| s.to_string())
+                    .or_else(|| v.as_i64().map(|n| n.to_string()))
+                    .or_else(|| v.as_u64().map(|n| n.to_string()))
+            })
+        });
 
         if let Some(ref phone) = args.caller_phone {
             let session = CreateVoiceSessionRequest {
