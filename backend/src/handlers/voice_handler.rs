@@ -56,9 +56,16 @@ pub async fn handle_voice_request(body: serde_json::Value) -> Result<Response<St
     let mut results = Vec::new();
 
     for call in tool_calls {
-        let tool_call_id = call.get("id").and_then(|v| v.as_str()).unwrap_or("").to_string();
-        let name = call.get("name").and_then(|v| v.as_str()).unwrap_or("");
-        let args = call.get("arguments").unwrap_or(&serde_json::Value::Null).clone();
+        let tool_call_id = call.get("toolCallId").or_else(|| call.get("id"))
+            .and_then(|v| v.as_str()).unwrap_or("").to_string();
+        let name = call.get("function")
+            .or_else(|| call.get("toolName"))
+            .or_else(|| call.get("name"))
+            .and_then(|v| v.as_str()).unwrap_or("");
+        let args = call.get("arguments")
+            .or_else(|| call.get("parameters"))
+            .or_else(|| call.get("args"))
+            .unwrap_or(&serde_json::Value::Null).clone();
 
         let result = match name {
             "identify_caller" => handle_identify_caller(&service, args).await,
