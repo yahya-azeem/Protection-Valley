@@ -3,31 +3,31 @@ use http::StatusCode;
 use crate::services::voice_service::VoiceService;
 use crate::models::{IdentifyCallerArgs, ProductLookupArgs, GetDealsArgs, CheckOrderStatusArgs, BookMeetingArgs};
 
-async fn handle_identify_caller(service: &VoiceService, args: serde_json::Value) -> Result<serde_json::Value, String> {
+async fn handle_identify_caller(service: &VoiceService, args: serde_json::Value) -> Result<String, String> {
     let parsed: IdentifyCallerArgs = serde_json::from_value(args)
         .map_err(|e| format!("Invalid identify_caller args: {}", e))?;
     service.identify_caller(parsed).await
 }
 
-async fn handle_product_lookup(service: &VoiceService, args: serde_json::Value) -> Result<serde_json::Value, String> {
+async fn handle_product_lookup(service: &VoiceService, args: serde_json::Value) -> Result<String, String> {
     let parsed: ProductLookupArgs = serde_json::from_value(args)
         .map_err(|e| format!("Invalid product_lookup args: {}", e))?;
     service.product_lookup(parsed).await
 }
 
-async fn handle_get_deals(service: &VoiceService, args: serde_json::Value) -> Result<serde_json::Value, String> {
+async fn handle_get_deals(service: &VoiceService, args: serde_json::Value) -> Result<String, String> {
     let parsed: GetDealsArgs = serde_json::from_value(args)
         .map_err(|e| format!("Invalid get_deals args: {}", e))?;
     service.get_deals(parsed).await
 }
 
-async fn handle_check_order_status(service: &VoiceService, args: serde_json::Value) -> Result<serde_json::Value, String> {
+async fn handle_check_order_status(service: &VoiceService, args: serde_json::Value) -> Result<String, String> {
     let parsed: CheckOrderStatusArgs = serde_json::from_value(args)
         .map_err(|e| format!("Invalid check_order_status args: {}", e))?;
     service.check_order_status(parsed).await
 }
 
-async fn handle_book_meeting(service: &VoiceService, args: serde_json::Value) -> Result<serde_json::Value, String> {
+async fn handle_book_meeting(service: &VoiceService, args: serde_json::Value) -> Result<String, String> {
     let parsed: BookMeetingArgs = serde_json::from_value(args)
         .map_err(|e| format!("Invalid book_meeting args: {}", e))?;
     service.book_meeting(parsed).await
@@ -70,7 +70,7 @@ pub async fn handle_voice_request(body: serde_json::Value) -> Result<Response<St
         };
 
         let result_val = match result {
-            Ok(val) => val,
+            Ok(val) => serde_json::json!(val),
             Err(e) => serde_json::json!({"error": e}),
         };
 
