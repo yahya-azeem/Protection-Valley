@@ -112,7 +112,7 @@ impl VoiceService {
 
         let resp = self.client.get(&url).headers(self.anon_headers()).send().await
             .map_err(|e| format!("Products request failed: {}", e))?;
-        let mut products: Vec<Value> = resp.json().await.map_err(|e| format!("Parse error: {}", e))?;
+        let products: Vec<Value> = resp.json().await.map_err(|e| format!("Parse error: {}", e))?;
 
         let mut discount = 0.0f64;
         let mut cp_map: std::collections::HashMap<i64, f64> = std::collections::HashMap::new();
