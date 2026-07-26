@@ -97,10 +97,25 @@ impl VoiceService {
     }
 
     pub async fn product_lookup(&self, args: ProductLookupArgs) -> Result<Value, String> {
-        let query = urlencoding::encode(&args.query);
+        let words: Vec<&str> = args.query.split_whitespace().filter(|w| !w.is_empty()).collect();
+        let fields = ["name", "description", "category"];
+        let filter = if words.is_empty() {
+            return Ok(json!({"ok": true, "caller_identified": false, "caller_name": null, "caller_role": null, "discount_applied": null, "products": [], "message": "Please provide a search term."}));
+        } else if words.len() == 1 {
+            let encoded = urlencoding::encode(words[0]);
+            let ors: Vec<String> = fields.iter().map(|f| format!("{}.ilike.*{}*", f, encoded)).collect();
+            format!("or=({})", ors.join(","))
+        } else {
+            let word_ors: Vec<String> = words.iter().map(|w| {
+                let encoded = urlencoding::encode(w);
+                let ors: Vec<String> = fields.iter().map(|f| format!("{}.ilike.*{}*", f, encoded)).collect();
+                format!("or({})", ors.join(","))
+            }).collect();
+            format!("and=({})", word_ors.join(","))
+        };
         let url = format!(
-            "{}/rest/v1/products?select=id,name,description,category,model_number&or=(name.ilike.*{}*,description.ilike.*{}*,category.ilike.*{}*)&limit=5",
-            self.supabase_url, query, query, query
+            "{}/rest/v1/products?select=id,name,description,category,model_number&{}&limit=5",
+            self.supabase_url, filter
         );
 
         let resp = self.client.get(&url).headers(self.anon_headers()).send().await
