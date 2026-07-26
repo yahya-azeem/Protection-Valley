@@ -69,14 +69,14 @@ pub async fn handle_voice_request(body: serde_json::Value) -> Result<Response<St
             _ => Err(format!("Unknown tool: {}", name)),
         };
 
-        let result_str = match result {
-            Ok(val) => serde_json::to_string(&val).unwrap_or_else(|_| "{}".to_string()),
-            Err(e) => serde_json::json!({"error": e}).to_string(),
+        let result_val = match result {
+            Ok(val) => val,
+            Err(e) => serde_json::json!({"error": e}),
         };
 
         results.push(serde_json::json!({
             "toolCallId": tool_call_id,
-            "result": result_str,
+            "result": result_val,
         }));
     }
 
