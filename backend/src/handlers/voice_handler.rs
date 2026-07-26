@@ -58,14 +58,30 @@ pub async fn handle_voice_request(body: serde_json::Value) -> Result<Response<St
     for call in tool_calls {
         let tool_call_id = call.get("toolCallId").or_else(|| call.get("id"))
             .and_then(|v| v.as_str()).unwrap_or("").to_string();
-        let name = call.get("function")
-            .or_else(|| call.get("toolName"))
-            .or_else(|| call.get("name"))
-            .and_then(|v| v.as_str()).unwrap_or("");
-        let args = call.get("arguments")
-            .or_else(|| call.get("parameters"))
-            .or_else(|| call.get("args"))
-            .unwrap_or(&serde_json::Value::Null).clone();
+        let name = {
+            let fn_val = call.get("function");
+            fn_val.and_then(|v| v.as_str())  // OpenAI string
+                .or_else(|| fn_val.and_then(|v| v.get("name")).and_then(|n| n.as_str()))  // OpenAI object {name, arguments}
+                .or_else(|| call.get("toolName").and_then(|v| v.as_str()))  // Vapi format
+                .or_else(|| call.get("name").and_then(|v| v.as_str()))  // legacy
+                .unwrap_or("")
+        };
+        let args = {
+            let fn_val = call.get("function");
+            // Try function.arguments (OpenAI JSON string), then function (as object with args), then top-level fields
+            fn_val.and_then(|v| v.get("arguments"))
+                .or_else(|| call.get("arguments"))
+                .or_else(|| call.get("parameters"))
+                .or_else(|| call.get("args"))
+                .map(|v| {
+                    if let Some(s) = v.as_str() {
+                        serde_json::from_str(s).unwrap_or(v.clone())
+                    } else {
+                        v.clone()
+                    }
+                })
+                .unwrap_or(serde_json::Value::Null)
+        };
 
         let result = match name {
             "identify_caller" => handle_identify_caller(&service, args).await,
