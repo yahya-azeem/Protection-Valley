@@ -11,6 +11,7 @@
     src: string;
     alt: string;
     class?: string;
+    imgClass?: string;
     width?: number;
     height?: number;
     loading?: 'lazy' | 'eager';
@@ -22,6 +23,7 @@
     src, 
     alt, 
     class: className = '', 
+    imgClass = '',
     width, 
     height, 
     loading = 'lazy',
@@ -73,7 +75,7 @@
     {sizes}
     loading={priority ? 'eager' : loading}
     decoding={priority ? 'sync' : 'async'}
-    class="w-full h-full object-cover transition-opacity duration-300"
+    class="w-full h-full object-cover transition-opacity duration-300 {imgClass}"
     {width}
     {height}
     onerror={() => hasError = true}

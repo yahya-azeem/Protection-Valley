@@ -2,7 +2,7 @@ use vercel_runtime::{Response, Error};
 use http::StatusCode;
 use crate::models::CreateReviewRequest;
 use crate::services::review_service::ReviewService;
-use crate::auth::decode_jwt;
+use crate::auth::{decode_jwt, extract_token};
 
 pub async fn get_product_reviews(product_id: i64) -> Result<Response<String>, Error> {
     let service = ReviewService::new();
@@ -78,16 +78,6 @@ pub async fn create_review(auth_header: Option<&str>, req: CreateReviewRequest) 
                 .body(serde_json::json!({ "error": e.to_string() }).to_string())?)
         }
     }
-}
-
-fn extract_token(header: Option<&str>) -> Option<&str> {
-    header.and_then(|h| {
-        if h.starts_with("Bearer ") {
-            Some(&h[7..])
-        } else {
-            None
-        }
-    })
 }
 
 fn unauthorized_response() -> Response<String> {

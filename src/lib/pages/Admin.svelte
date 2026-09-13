@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, Database, Package, Search, CheckCircle, XCircle, Filter } from 'lucide-svelte';
+  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, ShoppingBag, Bell, Truck, ExternalLink, Clock, Database, Package, Search, CheckCircle, XCircle } from 'lucide-svelte';
   import { currentUser, products, showToast, loadProducts } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import type { Product, ProductVariant } from '$lib/types';

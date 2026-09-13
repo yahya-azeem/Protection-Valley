@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Package, ShoppingCart, ChevronRight, Boxes, Star, MessageCircle } from 'lucide-svelte';
-  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, goBack, isWholesale, currentCategory, currentUser } from '$lib/stores';
+  import { selectedProduct, selectedVariant, selectedSize, selectedColor, selectedTexture, cart, showToast, isWholesale, currentCategory, currentUser } from '$lib/stores';
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
   import type { CartItem, Product, Review } from '$lib/types';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
@@ -129,7 +129,8 @@
               <OptimizedImage 
                 src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
                 alt={sp.name}
-                class="w-full h-full object-contain transition-lux duration-700"
+                imgClass="object-contain"
+                class="w-full h-full transition-lux duration-700"
                 width={800}
                 height={800}
                 priority={true}
