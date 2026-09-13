@@ -25,6 +25,21 @@
   let processingPayment = $state(false);
 
   let email = $state('');
+  let phone = $state('');
+
+  const STORAGE_KEY = 'pv_checkout_shipping';
+
+  interface SavedShipping {
+    email: string;
+    phone: string;
+    name: string;
+    line1: string;
+    line2: string | null;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+  }
 
   let savedAddress = $state<{
     name: string;

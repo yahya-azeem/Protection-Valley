@@ -303,6 +303,20 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
                 } else {
                     not_found()
                 }
+            } else if remaining.ends_with("/role") {
+                let id_str = &remaining[..remaining.len() - "/role".len()];
+                if let Ok(id) = id_str.parse::<i64>() {
+                    if method == "POST" || method == "PATCH" {
+                        let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                        let bytes = read_body(&mut req).await?;
+                        let body: models::UpdateUserRoleRequest = serde_json::from_slice(&bytes)?;
+                        wrap(admin_handlers::update_user_role(auth_header.as_deref(), id, body).await)
+                    } else {
+                        method_not_allowed()
+                    }
+                } else {
+                    not_found()
+                }
             } else if let Ok(id) = remaining.parse::<i64>() {
                 if method == "PATCH" {
                     let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());

@@ -590,6 +590,41 @@ impl AuthService {
         updated_users.into_iter().next()
             .ok_or_else(|| "Failed to retrieve updated user".to_string())
     }
+
+    pub async fn update_user_role(&self, user_id: i64, role: &str) -> Result<User, String> {
+        let url = format!("{}/rest/v1/wholesale_users?id=eq.{}", self.supabase_url, user_id);
+
+        let is_wholesale_approved = if role == "admin" || role == "wholesale" {
+            Some(true)
+        } else {
+            Some(false)
+        };
+
+        let response = self.client
+            .patch(&url)
+            .headers(self.headers())
+            .header("Prefer", "return=representation")
+            .json(&serde_json::json!({
+                "role": role,
+                "is_wholesale_approved": is_wholesale_approved,
+                "updated_at": Utc::now()
+            }))
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase update error: {}", error));
+        }
+
+        let updated_users: Vec<User> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse updated user: {}", e))?;
+
+        updated_users.into_iter().next()
+            .ok_or_else(|| "Failed to retrieve updated user".to_string())
+    }
 }
 
 fn generate_user_id() -> i64 {

@@ -9,6 +9,7 @@
     id: number;
     email: string;
     name: string;
+    role: string;
     company: string | null;
     sales_tax_id: string | null;
     wholesale_discount: number;
@@ -490,6 +491,30 @@
       showToast('Error updating wholesale status');
     }
   }
+
+  async function updateUserRole(userId: number, newRole: string) {
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/admin/wholesale-users/${userId}/role`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) {
+        const roleLabel = newRole === 'admin' ? 'Admin' : newRole === 'wholesale' ? 'Wholesale' : 'Retail';
+        showToast(`User role changed to ${roleLabel}`);
+        await fetchUsers();
+      } else {
+        showToast('Failed to update role');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error updating role');
+    }
+  }
 </script>
 
 {#if !$currentUser || $currentUser.role !== 'admin'}
@@ -574,8 +599,9 @@
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b border-white/5">
-                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Name</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">User</th>
                   <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Email</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Role</th>
                   <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Company</th>
                   <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold text-center">Discount</th>
                   <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold text-right">Actions</th>
@@ -593,12 +619,38 @@
                       </div>
                     </td>
                     <td class="py-3 px-5 text-[13px] text-zinc-400">{user.email}</td>
+                    <td class="py-3 px-5">
+                      {#if user.role === 'admin'}
+                        <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary/15 text-primary border border-primary/20 rounded-sm">Admin</span>
+                      {:else if user.role === 'wholesale'}
+                        <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-sm">Wholesale</span>
+                      {:else}
+                        <span class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-zinc-500/10 text-zinc-500 border border-zinc-500/20 rounded-sm">Retail</span>
+                      {/if}
+                    </td>
                     <td class="py-3 px-5 text-[13px] text-zinc-400">{user.company || '\u2014'}</td>
                     <td class="py-3 px-5 text-center font-mono font-semibold text-primary text-[13px]">
                       {((user.wholesale_discount ?? 0.30) * 100).toFixed(0)}%
                     </td>
                     <td class="py-3 px-5 text-right">
                       <div class="flex items-center gap-2 justify-end">
+                        {#if user.role !== 'admin'}
+                          <button
+                            onclick={() => updateUserRole(user.id, 'admin')}
+                            class="p-1.5 border border-primary/30 hover:border-primary text-primary hover:text-primary transition-admin rounded-sm"
+                            title="Make Admin"
+                          >
+                            <ShieldAlert class="w-3.5 h-3.5" />
+                          </button>
+                        {:else}
+                          <button
+                            onclick={() => updateUserRole(user.id, 'retail')}
+                            class="p-1.5 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-red-400 transition-admin rounded-sm"
+                            title="Revoke Admin"
+                          >
+                            <ShieldAlert class="w-3.5 h-3.5" />
+                          </button>
+                        {/if}
                         {#if user.is_wholesale_approved === false}
                           <button
                             onclick={() => approveWholesale(user.id, true)}
