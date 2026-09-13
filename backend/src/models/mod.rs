@@ -62,6 +62,16 @@ pub struct UpdateProductRequest {
     pub image_url: Option<String>,
     pub stock: Option<i32>,
     pub ebay_id: Option<String>,
+    #[serde(default)]
+    pub variant_id: Option<i64>,
+    #[serde(default)]
+    pub sku: Option<String>,
+    #[serde(default)]
+    pub color: Option<String>,
+    #[serde(default)]
+    pub size: Option<String>,
+    #[serde(default)]
+    pub texture: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

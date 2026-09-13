@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, RefreshCw, Database } from 'lucide-svelte';
+  import { ShieldAlert, Trash2, Plus, Edit, X, Percent, DollarSign, Users, Award, ShoppingBag, Bell, Truck, ExternalLink, Clock, Database, Package, Search, CheckCircle, XCircle, Filter } from 'lucide-svelte';
   import { currentUser, products, showToast, loadProducts } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import type { Product, ProductVariant } from '$lib/types';
@@ -60,17 +60,18 @@
     updated_at: string;
   }
 
-  let activeTab = $state<'users' | 'prices' | 'orders' | 'notifications' | 'erp'>('users');
+  let activeTab = $state<'users' | 'prices' | 'orders' | 'notifications' | 'erp' | 'products'>('users');
   let token = $state<string | null>(null);
   let users = $state<WholesaleUser[]>([]);
   let loadingUsers = $state(true);
 
   let orders = $state<Order[]>([]);
   let loadingOrders = $state(false);
-  let syncingInventory = $state(false);
   let generatingLabel = $state<Record<string, boolean>>({});
 
   let ordersSubTab = $state<'awaiting' | 'archived'>('awaiting');
+  let orderSearch = $state('');
+  let orderStatusFilter = $state('all');
 
   let awaitingOrders = $derived(
     orders.filter(o => !o.shipping_label_printed && o.status !== 'cancelled')
@@ -85,6 +86,22 @@
     })
   );
 
+  let filteredOrders = $derived.by(() => {
+    let list = ordersSubTab === 'awaiting' ? awaitingOrders : archivedOrders;
+    if (orderSearch.trim()) {
+      const q = orderSearch.toLowerCase();
+      list = list.filter(o =>
+        o.id.toLowerCase().includes(q) ||
+        o.customer_name.toLowerCase().includes(q) ||
+        o.customer_email.toLowerCase().includes(q)
+      );
+    }
+    if (orderStatusFilter !== 'all') {
+      list = list.filter(o => o.status === orderStatusFilter);
+    }
+    return list;
+  });
+
   let editingUser = $state<WholesaleUser | null>(null);
   let editDiscountVal = $state(30);
 
@@ -95,6 +112,12 @@
   let selectedProduct = $state<Product | null>(null);
   let selectedVariant = $state<ProductVariant | null>(null);
   let customPriceVal = $state(0);
+
+  // Product CRUD state
+  let editingProduct = $state<Product | null>(null);
+  let newProduct = $state({ name: '', description: '', category: '', image_url: '', model_number: '', price: 0, stock: 0, sku: '' });
+  let showNewProductForm = $state(false);
+  let savingProduct = $state(false);
 
   onMount(async () => {
     token = localStorage.getItem('authToken');
@@ -208,29 +231,6 @@
       showToast('Error generating shipping label');
     } finally {
       generatingLabel[orderId] = false;
-    }
-  }
-
-  async function triggerEbaySync() {
-    syncingInventory = true;
-    try {
-      const token = localStorage.getItem('authToken');
-      const res = await fetch(`${API_CONFIG.baseUrl}/ebay/sync`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        showToast(`Inventory Sync Successful! Synced ${data.synced} items.`);
-        await loadProducts();
-      } else {
-        showToast('Failed to sync inventory with eBay');
-      }
-    } catch (e) {
-      console.error(e);
-      showToast('Error syncing with eBay');
-    } finally {
-      syncingInventory = false;
     }
   }
 
@@ -381,6 +381,115 @@
     }
     return 0;
   }
+
+  async function createProduct() {
+    if (!newProduct.name || !newProduct.sku) {
+      showToast('Name and SKU are required');
+      return;
+    }
+    savingProduct = true;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/products`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newProduct)
+      });
+      if (res.ok) {
+        showToast('Product created successfully');
+        showNewProductForm = false;
+        newProduct = { name: '', description: '', category: '', image_url: '', model_number: '', price: 0, stock: 0, sku: '' };
+        await loadProducts();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error || 'Failed to create product');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error creating product');
+    } finally {
+      savingProduct = false;
+    }
+  }
+
+  async function updateProduct() {
+    if (!editingProduct) return;
+    savingProduct = true;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/products/${editingProduct.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: editingProduct.name,
+          description: editingProduct.description,
+          category: editingProduct.category,
+          image_url: editingProduct.image_url
+        })
+      });
+      if (res.ok) {
+        showToast('Product updated');
+        editingProduct = null;
+        await loadProducts();
+      } else {
+        showToast('Failed to update product');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error updating product');
+    } finally {
+      savingProduct = false;
+    }
+  }
+
+  async function deleteProduct(id: number) {
+    if (!confirm('Are you sure you want to delete this product and all its variants?')) return;
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/products/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        showToast('Product deleted');
+        await loadProducts();
+      } else {
+        showToast('Failed to delete product');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error deleting product');
+    }
+  }
+
+  async function approveWholesale(userId: number, approved: boolean) {
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${API_CONFIG.baseUrl}/admin/wholesale-users/${userId}/approve`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ approved })
+      });
+      if (res.ok) {
+        showToast(approved ? 'Wholesale access approved' : 'Wholesale access revoked');
+        await fetchUsers();
+      } else {
+        showToast('Failed to update wholesale status');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Error updating wholesale status');
+    }
+  }
 </script>
 
 {#if !$currentUser || $currentUser.role !== 'admin'}
@@ -403,14 +512,6 @@
             <h1 class="text-xl font-sans font-semibold text-white tracking-tight">Admin</h1>
             <p class="text-[11px] text-zinc-500 uppercase tracking-widest font-semibold mt-0.5">Protection Valley Dashboard</p>
           </div>
-          <button
-            onclick={triggerEbaySync}
-            disabled={syncingInventory}
-            class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-admin flex items-center gap-2 border border-white/5 hover:border-white/20 rounded-sm px-4 py-2.5 disabled:opacity-50"
-          >
-            <RefreshCw class="w-3.5 h-3.5 {syncingInventory ? 'animate-spin' : ''}" />
-            Sync eBay
-          </button>
         </div>
       </div>
 
@@ -422,6 +523,13 @@
             {activeTab === 'users' ? 'border-primary text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}"
         >
           <Users class="w-3.5 h-3.5" /> Wholesale Customers
+        </button>
+        <button
+          onclick={() => activeTab = 'products'}
+          class="px-4 pb-3 pt-2 text-[11px] font-semibold uppercase tracking-[0.12em] border-b-2 transition-admin flex items-center gap-2
+            {activeTab === 'products' ? 'border-primary text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}"
+        >
+          <Package class="w-3.5 h-3.5" /> Products
         </button>
         <button
           onclick={() => activeTab = 'prices'}
@@ -490,16 +598,34 @@
                       {((user.wholesale_discount ?? 0.30) * 100).toFixed(0)}%
                     </td>
                     <td class="py-3 px-5 text-right">
-                      <button
-                        onclick={() => {
-                          editingUser = user;
-                          editDiscountVal = Math.round((user.wholesale_discount ?? 0.30) * 100);
-                        }}
-                        class="p-1.5 border border-white/10 hover:border-primary/50 text-zinc-500 hover:text-primary transition-admin rounded-sm"
-                        title="Edit discount rate"
-                      >
-                        <Edit class="w-3.5 h-3.5" />
-                      </button>
+                      <div class="flex items-center gap-2 justify-end">
+                        {#if user.is_wholesale_approved === false}
+                          <button
+                            onclick={() => approveWholesale(user.id, true)}
+                            class="p-1.5 border border-emerald-500/30 hover:border-emerald-500 text-emerald-500 hover:text-emerald-400 transition-admin rounded-sm"
+                            title="Approve wholesale access"
+                          >
+                            <CheckCircle class="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onclick={() => approveWholesale(user.id, false)}
+                            class="p-1.5 border border-red-500/30 hover:border-red-500 text-red-500 hover:text-red-400 transition-admin rounded-sm"
+                            title="Reject wholesale access"
+                          >
+                            <XCircle class="w-3.5 h-3.5" />
+                          </button>
+                        {/if}
+                        <button
+                          onclick={() => {
+                            editingUser = user;
+                            editDiscountVal = Math.round((user.wholesale_discount ?? 0.30) * 100);
+                          }}
+                          class="p-1.5 border border-white/10 hover:border-primary/50 text-zinc-500 hover:text-primary transition-admin rounded-sm"
+                          title="Edit discount rate"
+                        >
+                          <Edit class="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 {/each}
@@ -507,6 +633,115 @@
             </table>
           </div>
         {/if}
+      {:else if activeTab === 'products'}
+        <div class="space-y-5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-zinc-300 uppercase tracking-wider">Product Catalog &middot; {$products.length}</h3>
+            <button
+              onclick={() => showNewProductForm = !showNewProductForm}
+              class="btn-primary py-2 px-4 text-[10px] font-bold tracking-widest rounded-sm flex items-center gap-1.5"
+            >
+              <Plus class="w-3.5 h-3.5" /> {showNewProductForm ? 'CANCEL' : 'ADD PRODUCT'}
+            </button>
+          </div>
+
+          {#if showNewProductForm}
+            <div class="border border-primary/20 rounded-sm p-5 bg-dark-surface space-y-4">
+              <h4 class="text-xs font-semibold text-primary uppercase tracking-wider">New Product</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Name *</label>
+                  <input bind:value={newProduct.name} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" placeholder="Product name" />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">SKU *</label>
+                  <input bind:value={newProduct.sku} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" placeholder="e.g. PV-TB-001" />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Category</label>
+                  <input bind:value={newProduct.category} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" placeholder="e.g. Tool Belts" />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Model Number</label>
+                  <input bind:value={newProduct.model_number} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" placeholder="e.g. PV-2024-TB" />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Price ($)</label>
+                  <input type="number" step="0.01" bind:value={newProduct.price} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white font-mono focus:border-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Stock</label>
+                  <input type="number" bind:value={newProduct.stock} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white font-mono focus:border-primary focus:outline-none" />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Image URL</label>
+                  <input bind:value={newProduct.image_url} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" placeholder="https://..." />
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Description</label>
+                  <textarea bind:value={newProduct.description} rows="3" class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none resize-none" placeholder="Product description..."></textarea>
+                </div>
+              </div>
+              <button onclick={createProduct} disabled={savingProduct || !newProduct.name || !newProduct.sku} class="btn-primary py-2.5 px-5 text-[10px] font-bold tracking-widest rounded-sm flex items-center gap-1.5 disabled:opacity-50">
+                {#if savingProduct}
+                  <span class="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin"></span> SAVING...
+                {:else}
+                  <Plus class="w-3.5 h-3.5" /> CREATE PRODUCT
+                {/if}
+              </button>
+            </div>
+          {/if}
+
+          <div class="overflow-x-auto border border-white/5 rounded-sm bg-dark-surface">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-white/5">
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Product</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Category</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold text-center">Variants</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold text-center">Stock</th>
+                  <th class="py-3 px-5 text-[10px] uppercase tracking-widest text-zinc-500 font-bold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                {#each $products as product}
+                  {@const totalStock = product.variants?.reduce((sum, v) => sum + v.stock, 0) ?? 0}
+                  <tr class="hover:bg-white/[0.02] transition-admin">
+                    <td class="py-3 px-5">
+                      <p class="text-[13px] font-medium text-white">{product.name}</p>
+                      <p class="text-[11px] text-zinc-500 font-mono">{product.model_number}</p>
+                    </td>
+                    <td class="py-3 px-5 text-[13px] text-zinc-400">{product.category}</td>
+                    <td class="py-3 px-5 text-center text-[13px] text-zinc-400">{product.variants?.length ?? 0}</td>
+                    <td class="py-3 px-5 text-center">
+                      <span class="text-[13px] font-mono font-semibold {totalStock > 0 ? 'text-emerald-400' : 'text-red-400'}">
+                        {totalStock}
+                      </span>
+                    </td>
+                    <td class="py-3 px-5 text-right">
+                      <div class="flex items-center gap-2 justify-end">
+                        <button
+                          onclick={() => editingProduct = product}
+                          class="p-1.5 border border-white/10 hover:border-primary/50 text-zinc-500 hover:text-primary transition-admin rounded-sm"
+                          title="Edit product"
+                        >
+                          <Edit class="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onclick={() => deleteProduct(product.id)}
+                          class="p-1.5 border border-white/10 hover:border-red-500/50 text-zinc-500 hover:text-red-500 transition-admin rounded-sm"
+                          title="Delete product"
+                        >
+                          <Trash2 class="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </div>
       {:else if activeTab === 'prices'}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -650,10 +885,10 @@
             {/each}
           </div>
         {:else}
-          {@const activeList = ordersSubTab === 'awaiting' ? awaitingOrders : archivedOrders}
+          {@const activeList = filteredOrders}
           <div class="space-y-5 animate-fade-in-fast">
-            <!-- Sub-tab switcher -->
-            <div class="flex gap-1 border-b border-white/5 pb-3">
+            <!-- Sub-tab switcher and search -->
+            <div class="flex flex-wrap gap-3 items-center border-b border-white/5 pb-3">
               <button
                 onclick={() => ordersSubTab = 'awaiting'}
                 class="px-3 pb-3 pt-1 text-[11px] uppercase tracking-wider font-semibold border-b-2 transition-admin
@@ -668,6 +903,31 @@
               >
                 Archived &middot; {archivedOrders.length}
               </button>
+
+              <div class="flex-1"></div>
+
+              <!-- Search -->
+              <div class="relative">
+                <Search class="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  bind:value={orderSearch}
+                  placeholder="Search orders..."
+                  class="bg-black border border-white/10 rounded-sm pl-9 pr-3 py-1.5 text-[11px] text-white w-48 focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              <!-- Status filter -->
+              <select
+                bind:value={orderStatusFilter}
+                class="bg-black border border-white/10 rounded-sm px-2 py-1.5 text-[11px] text-white focus:border-primary focus:outline-none"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
             </div>
 
             {#if activeList.length === 0}
@@ -955,6 +1215,88 @@
           class="btn-primary py-2 px-5 text-[10px] font-bold tracking-widest rounded-sm flex items-center gap-1.5"
         >
           <Percent class="w-3.5 h-3.5" /> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Edit Product Modal -->
+{#if editingProduct}
+  <div class="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4">
+    <div class="max-w-lg w-full border border-white/10 bg-dark-elevated rounded-sm p-6 relative animate-fade-in-fast max-h-[80vh] overflow-y-auto">
+      <button
+        onclick={() => editingProduct = null}
+        class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-admin"
+      >
+        <X class="w-4 h-4" />
+      </button>
+
+      <h3 class="text-base font-sans font-semibold text-white mb-4">Edit Product</h3>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Name</label>
+          <input bind:value={editingProduct.name} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Category</label>
+          <input bind:value={editingProduct.category} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Model Number</label>
+          <input bind:value={editingProduct.model_number} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Image URL</label>
+          <input bind:value={editingProduct.image_url} class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">Description</label>
+          <textarea bind:value={editingProduct.description} rows="4" class="w-full bg-black border border-white/10 rounded-sm px-3 py-2.5 text-[13px] text-white focus:border-primary focus:outline-none resize-none"></textarea>
+        </div>
+
+        {#if editingProduct.variants && editingProduct.variants.length > 0}
+          <div class="border-t border-white/5 pt-4">
+            <h4 class="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-3">Variants</h4>
+            <div class="space-y-2">
+              {#each editingProduct.variants as variant}
+                <div class="flex items-center justify-between bg-black/50 border border-white/5 rounded-sm px-3 py-2">
+                  <div>
+                    <p class="text-[12px] text-white font-medium">{variant.original_name}</p>
+                    <p class="text-[10px] text-zinc-500 font-mono">{variant.sku}</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[12px] font-mono text-primary">${variant.price.toFixed(2)}</span>
+                    <span class="text-[12px] font-mono {variant.stock > 0 ? 'text-emerald-400' : 'text-red-400'}">
+                      {variant.stock} in stock
+                    </span>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button
+          onclick={() => editingProduct = null}
+          class="border border-white/10 hover:bg-white/5 py-2 px-5 text-[10px] font-bold tracking-widest rounded-sm text-zinc-400 hover:text-white transition-admin"
+        >
+          Cancel
+        </button>
+        <button
+          onclick={updateProduct}
+          disabled={savingProduct}
+          class="btn-primary py-2 px-5 text-[10px] font-bold tracking-widest rounded-sm flex items-center gap-1.5 disabled:opacity-50"
+        >
+          {#if savingProduct}
+            <span class="w-3 h-3 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+          {:else}
+            <Edit class="w-3.5 h-3.5" />
+          {/if}
+          SAVE CHANGES
         </button>
       </div>
     </div>

@@ -163,6 +163,34 @@ pub async fn create_checkout_session(auth_header: Option<&str>, req: CreateCheck
             }).to_string())?);
     }
 
+    // Validate inventory availability
+    for item in &req.items {
+        if let Ok(Some(product)) = product_service.get_product(&item.product_id).await {
+            let variant = if let Some(ref vid_str) = item.variant_id {
+                if let Ok(vid) = vid_str.parse::<i64>() {
+                    product.variants.as_ref()
+                        .and_then(|vs| vs.iter().find(|v| v.id == vid))
+                        .or_else(|| product.variants.as_ref().and_then(|vs| vs.first()))
+                } else {
+                    product.variants.as_ref().and_then(|vs| vs.first())
+                }
+            } else {
+                product.variants.as_ref().and_then(|vs| vs.first())
+            };
+
+            if let Some(v) = variant {
+                if v.stock < item.quantity {
+                    return Ok(Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .header("Content-Type", "application/json")
+                        .body(serde_json::json!({
+                            "error": format!("Insufficient stock for {}. Available: {}, Requested: {}", v.original_name, v.stock, item.quantity)
+                        }).to_string())?);
+                }
+            }
+        }
+    }
+
     // Recalculate shipping cost securely on the server
     let shipping_service = ShippingService::new();
     let shipping_cost = match shipping_service.calculate_shipping_rate(req.shipping_address.clone(), total_weight_oz).await {

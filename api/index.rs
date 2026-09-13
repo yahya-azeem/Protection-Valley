@@ -287,8 +287,23 @@ async fn inner_handler(mut req: Request) -> Result<Response<ResponseBody>, Error
             }
         }
         p if p.starts_with("/api/v1/admin/wholesale-users/") => {
-            let id_str = &p["/api/v1/admin/wholesale-users/".len()..];
-            if let Ok(id) = id_str.parse::<i64>() {
+            let remaining = &p["/api/v1/admin/wholesale-users/".len()..];
+            if remaining.ends_with("/approve") {
+                let id_str = &remaining[..remaining.len() - "/approve".len()];
+                if let Ok(id) = id_str.parse::<i64>() {
+                    if method == "POST" || method == "PATCH" {
+                        let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
+                        let bytes = read_body(&mut req).await?;
+                        let body: serde_json::Value = serde_json::from_slice(&bytes)?;
+                        let approved = body.get("approved").and_then(|v| v.as_bool()).unwrap_or(true);
+                        wrap(admin_handlers::approve_wholesale_user(auth_header.as_deref(), id, approved).await)
+                    } else {
+                        method_not_allowed()
+                    }
+                } else {
+                    not_found()
+                }
+            } else if let Ok(id) = remaining.parse::<i64>() {
                 if method == "PATCH" {
                     let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok()).map(|s| s.to_string());
                     let bytes = read_body(&mut req).await?;

@@ -108,7 +108,11 @@
         return;
       }
 
-      const key = data.stripePublicKey || env.PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51PVA3L2Kwtw5Hn3K2b86fa6';
+      const key = data.stripePublicKey || env.PUBLIC_STRIPE_PUBLISHABLE_KEY;
+      if (!key) {
+        stripeError = 'Stripe is not configured. Please contact support.';
+        return;
+      }
       stripe = (window as any).Stripe(key);
 
       elements = stripe.elements({

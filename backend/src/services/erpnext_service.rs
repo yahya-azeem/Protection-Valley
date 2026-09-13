@@ -149,4 +149,73 @@ impl ErpNextService {
 
         Ok(())
     }
+
+    pub async fn sync_item(&self, sku: &str, name: &str, rate: f64) -> Result<()> {
+        if self.api_key.is_empty() {
+            println!("[erpnext] API credentials not set. Skipping item sync.");
+            return Ok(());
+        }
+
+        // Check if item already exists
+        let check_url = format!("{}/api/resource/Item/{}", self.base_url, urlencoding::encode(sku));
+        if let Ok(resp) = self.client.get(&check_url).headers(self.headers()).send().await {
+            if resp.status().is_success() {
+                // Item exists, skip creation
+                return Ok(());
+            }
+        }
+
+        let url = format!("{}/api/resource/Item", self.base_url);
+        let payload = json!({
+            "item_code": sku,
+            "item_name": name,
+            "item_group": "All Items",
+            "stock_uom": "Nos",
+            "standard_rate": rate,
+            "company": "Protection Valley"
+        });
+
+        let resp = self.client.post(&url)
+            .headers(self.headers())
+            .json(&payload)
+            .send()
+            .await?;
+
+        if !resp.status().is_success() {
+            let err = resp.text().await?;
+            return Err(anyhow!("Failed to sync Item to ERPNext: {}", err));
+        }
+
+        Ok(())
+    }
+
+    pub async fn sync_order_status(&self, order_id: &str, status: &str, tracking: Option<&str>) -> Result<()> {
+        if self.api_key.is_empty() {
+            return Ok(());
+        }
+
+        // Try to update the Sales Order status
+        let erp_status = match status {
+            "processing" => "To Deliver and Bill",
+            "shipped" => "To Bill",
+            "completed" => "Completed",
+            "cancelled" => "Cancelled",
+            _ => "Draft",
+        };
+
+        let url = format!("{}/api/resource/Sales Order/{}", self.base_url, urlencoding::encode(order_id));
+        let mut payload = serde_json::Map::new();
+        payload.insert("status".to_string(), serde_json::to_value(erp_status).unwrap());
+        if let Some(trk) = tracking {
+            payload.insert("tracking_info".to_string(), serde_json::to_value(json!([{"carrier": "", "tracking_number": trk}])).unwrap());
+        }
+
+        let _ = self.client.put(&url)
+            .headers(self.headers())
+            .json(&payload)
+            .send()
+            .await;
+
+        Ok(())
+    }
 }

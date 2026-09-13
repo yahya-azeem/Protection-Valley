@@ -128,16 +128,171 @@ impl ProductService {
         Ok(products.into_iter().next())
     }
 
-    pub async fn create_product(&self, _req: CreateProductRequest) -> Result<Product, String> {
-        Err("Create product via API not implemented yet. Use Supabase directly.".into())
+    pub async fn create_product(&self, req: CreateProductRequest) -> Result<Product, String> {
+        let url = format!("{}/rest/v1/products", self.supabase_url);
+        let payload = serde_json::json!({
+            "name": req.name,
+            "description": req.description,
+            "category": req.category,
+            "image_url": req.image_url,
+            "images": Vec::<String>::new(),
+            "model_number": req.model_number,
+        });
+
+        let response = self.client
+            .post(&url)
+            .headers(self.headers())
+            .header("Prefer", "return=representation")
+            .json(&payload)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        let products: Vec<Product> = response.json()
+            .await
+            .map_err(|e| format!("Failed to parse created product: {}", e))?;
+
+        let product = products.into_iter().next()
+            .ok_or_else(|| "Failed to retrieve created product".to_string())?;
+
+        // Create the initial variant
+        let variant_url = format!("{}/rest/v1/product_variants", self.supabase_url);
+        let variant_payload = serde_json::json!({
+            "product_id": product.id,
+            "sku": req.sku,
+            "ebay_item_id": req.ebay_id,
+            "original_name": req.name,
+            "price": req.price,
+            "stock": req.stock,
+            "size": req.size,
+            "color": req.color,
+            "texture": req.texture,
+            "pack_quantity": 1,
+            "image_url": req.image_url,
+            "images": Vec::<String>::new(),
+            "in_stock": req.stock > 0,
+        });
+
+        let _ = self.client
+            .post(&variant_url)
+            .headers(self.headers())
+            .json(&variant_payload)
+            .send()
+            .await;
+
+        // Re-fetch with variants
+        self.get_product_by_id(product.id).await
+            .map(|opt| opt.unwrap_or(product))
     }
 
-    pub async fn update_product(&self, _id: i64, _req: UpdateProductRequest) -> Result<Option<Product>, String> {
-        Err("Update product via API not implemented yet.".into())
+    pub async fn update_product(&self, id: i64, req: UpdateProductRequest) -> Result<Option<Product>, String> {
+        // Update product fields
+        let url = format!("{}/rest/v1/products?id=eq.{}", self.supabase_url, id);
+
+        let mut payload = serde_json::Map::new();
+        if let Some(ref name) = req.name {
+            payload.insert("name".to_string(), serde_json::to_value(name).unwrap());
+        }
+        if let Some(ref description) = req.description {
+            payload.insert("description".to_string(), serde_json::to_value(description).unwrap());
+        }
+        if let Some(ref category) = req.category {
+            payload.insert("category".to_string(), serde_json::to_value(category).unwrap());
+        }
+        if let Some(ref image_url) = req.image_url {
+            payload.insert("image_url".to_string(), serde_json::to_value(image_url).unwrap());
+        }
+        payload.insert("updated_at".to_string(), serde_json::to_value(chrono::Utc::now().to_rfc3339()).unwrap());
+
+        let response = self.client
+            .patch(&url)
+            .headers(self.headers())
+            .header("Prefer", "return=representation")
+            .json(&payload)
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        // Update variant fields if variant_id is provided
+        if let Some(variant_id) = req.variant_id {
+            let variant_url = format!("{}/rest/v1/product_variants?id=eq.{}", self.supabase_url, variant_id);
+            let mut v_payload = serde_json::Map::new();
+            if let Some(price) = req.price {
+                v_payload.insert("price".to_string(), serde_json::to_value(price).unwrap());
+            }
+            if let Some(stock) = req.stock {
+                v_payload.insert("stock".to_string(), serde_json::to_value(stock).unwrap());
+                v_payload.insert("in_stock".to_string(), serde_json::to_value(stock > 0).unwrap());
+            }
+            if let Some(ref sku) = req.sku {
+                v_payload.insert("sku".to_string(), serde_json::to_value(sku).unwrap());
+            }
+            if let Some(ref color) = req.color {
+                v_payload.insert("color".to_string(), serde_json::to_value(color).unwrap());
+            }
+            if let Some(ref size) = req.size {
+                v_payload.insert("size".to_string(), serde_json::to_value(size).unwrap());
+            }
+            if let Some(ref texture) = req.texture {
+                v_payload.insert("texture".to_string(), serde_json::to_value(texture).unwrap());
+            }
+            v_payload.insert("updated_at".to_string(), serde_json::to_value(chrono::Utc::now().to_rfc3339()).unwrap());
+
+            let _ = self.client
+                .patch(&variant_url)
+                .headers(self.headers())
+                .json(&v_payload)
+                .send()
+                .await;
+        } else if let Some(stock) = req.stock {
+            // If no variant_id but stock is provided, update all variants' stock
+            if let Ok(Some(product)) = self.get_product_by_id(id).await {
+                if let Some(ref variants) = product.variants {
+                    for v in variants {
+                        let _ = self.update_variant_stock(v.id, stock).await;
+                    }
+                }
+            }
+        }
+
+        // Re-fetch with variants
+        self.get_product_by_id(id).await
     }
 
-    pub async fn delete_product(&self, _id: i64) -> Result<bool, String> {
-        Err("Delete product via API not implemented yet.".into())
+    pub async fn delete_product(&self, id: i64) -> Result<bool, String> {
+        // Delete variants first
+        let variant_url = format!("{}/rest/v1/product_variants?product_id=eq.{}", self.supabase_url, id);
+        let _ = self.client
+            .delete(&variant_url)
+            .headers(self.headers())
+            .send()
+            .await;
+
+        // Delete product
+        let url = format!("{}/rest/v1/products?id=eq.{}", self.supabase_url, id);
+        let response = self.client
+            .delete(&url)
+            .headers(self.headers())
+            .send()
+            .await
+            .map_err(|e| format!("Request failed: {}", e))?;
+
+        if !response.status().is_success() {
+            let error = response.text().await.unwrap_or_default();
+            return Err(format!("Supabase error: {}", error));
+        }
+
+        Ok(true)
     }
 
     pub async fn get_customer_specific_prices(&self, user_id: i64) -> Result<Vec<crate::models::CustomerSpecificPrice>, String> {

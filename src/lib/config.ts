@@ -29,6 +29,8 @@ export const API_CONFIG = {
     google_login: '/auth/google/login',
     register: '/auth/register',
     me: '/auth/me',
-    create_checkout_session: '/checkout/create-session'
+    create_checkout_session: '/checkout/create-session',
+    checkout_confirm: '/checkout/confirm',
+    orders: '/orders'
   }
 };
