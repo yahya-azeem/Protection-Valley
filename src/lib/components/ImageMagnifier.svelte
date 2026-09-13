@@ -30,7 +30,7 @@
   function handleKeydown(e: KeyboardEvent) { if (e.key === 'Escape') closeLightbox(); }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div
   bind:this={containerEl}

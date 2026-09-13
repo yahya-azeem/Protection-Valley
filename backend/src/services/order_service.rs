@@ -1,4 +1,4 @@
-use crate::models::{CreateOrderRequest, Order, OrderItem, OrderStatus, Address};
+use crate::models::{CreateOrderRequest, Order, OrderItem, OrderStatus, Address, calculate_sales_tax};
 use crate::services::product_service::ProductService;
 use crate::services::shipping_service::ShippingService;
 use crate::services::email_service::EmailService;
@@ -475,14 +475,4 @@ impl OrderService {
 
         Ok(updated_order)
     }
-}
-
-fn calculate_sales_tax(state: &str, subtotal: f64) -> f64 {
-    let rate = match state.to_uppercase().as_str() {
-        "TX" | "CA" | "NY" | "IL" => 0.0825,
-        "FL" => 0.07,
-        "OR" | "DE" | "MT" | "NH" | "AK" => 0.0,
-        _ => 0.06,
-    };
-    subtotal * rate
 }

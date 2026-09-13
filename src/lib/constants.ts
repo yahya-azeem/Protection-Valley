@@ -58,13 +58,5 @@ export const PRICE_RANGES = [
 
 export const SIZES = ['S', 'M', 'L', 'XL', 'XXL', '3XL', '9', '10', '50'] as const;
 
-export const LEATHER_TYPES = [
-  'Full Grain Cowhide',
-  'Top Grain Cowhide',
-  'Goatskin',
-  'Buffalo',
-  'Canvas',
-  'Ballistic Nylon',
-] as const;
 
 export const WHOLESALE_DISCOUNT = 0.30; // 30% off retail

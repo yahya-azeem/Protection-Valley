@@ -1,7 +1,7 @@
 <script lang="ts">
   import { base } from '$app/paths';
   import { page } from '$app/stores';
-  import { ShoppingBag, Search, User, Menu, X, ChevronDown } from 'lucide-svelte';
+  import { ShoppingBag, Search, User, Menu, X } from 'lucide-svelte';
   import { showPage, cart, cartOpen, searchOpen, currentPage, currentCategory, currentUser } from '$lib/stores';
   import { NAV_ITEMS } from '$lib/constants';
 

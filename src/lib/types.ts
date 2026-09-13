@@ -1,9 +1,3 @@
-export interface ProductColor {
-  name: string;
-  hex: string;
-  image: string;
-}
-
 export interface ProductVariant {
   id: number;
   product_id: number;
@@ -62,28 +56,6 @@ export interface UserData {
 }
 
 
-export interface ApiProduct {
-  id?: number;
-  name: string;
-  description?: string;
-  price: number;
-  category?: string;
-  type?: string;
-  image_url?: string;
-  image?: string;
-  images?: string[];
-  sizes?: string[];
-  colors?: ProductColor[];
-  stock?: number;
-}
-
-export interface SyncResponse {
-  synced: number;
-  created: number;
-  updated: number;
-  errors: string[];
-}
-
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'name';
 
 export interface Review {
@@ -95,12 +67,6 @@ export interface Review {
   comment: string;
   is_verified: boolean;
   created_at: string;
-}
-
-export interface CreateReviewRequest {
-  product_id: number;
-  rating: number;
-  comment: string;
 }
 
 export interface OrderItem {

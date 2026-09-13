@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { X, CreditCard, Send, CheckCircle2, ArrowLeft } from 'lucide-svelte';
+  import { X, CheckCircle2, ArrowLeft } from 'lucide-svelte';
   import { cart, cartTotal, checkoutOpen, showToast, currentUser } from '$lib/stores';
   import { API_CONFIG } from '$lib/config';
   import { env } from '$env/dynamic/public';
