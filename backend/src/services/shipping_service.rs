@@ -108,7 +108,7 @@ impl ShippingService {
             zip: to_address.zip,
             country: to_address.country,
             phone: to_address.phone,
-            email: None,
+            email: to_address.email,
         };
 
         let shipment_req = serde_json::json!({
@@ -178,7 +178,7 @@ impl ShippingService {
             zip: to_address.zip,
             country: to_address.country,
             phone: to_address.phone,
-            email: None,
+            email: to_address.email,
         };
 
         // 2. Create Shipment to get Rates

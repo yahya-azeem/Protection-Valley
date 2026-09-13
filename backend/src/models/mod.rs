@@ -133,6 +133,8 @@ pub struct Address {
     pub zip: String,
     pub country: String,
     pub phone: Option<String>,
+    #[serde(default)]
+    pub email: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -322,6 +324,11 @@ pub struct UpsertCustomerPriceRequest {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateUserDiscountRequest {
     pub wholesale_discount: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateUserRoleRequest {
+    pub role: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

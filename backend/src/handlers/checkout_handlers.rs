@@ -385,6 +385,7 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
                 zip: String::new(),
                 country: "US".to_string(),
                 phone: None,
+                email: None,
             })
         } else {
             Address {
@@ -397,6 +398,7 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
                 zip: String::new(),
                 country: "US".to_string(),
                 phone: None,
+                email: None,
             }
         };
 
@@ -472,6 +474,7 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
                     zip: address.postal_code.unwrap_or_default(),
                     country: address.country.unwrap_or_default(),
                     phone: None,
+                    email: None,
                 }
             }
             None => {
@@ -485,6 +488,7 @@ pub async fn confirm_checkout_session(_auth_header: Option<&str>, req: ConfirmCh
                     zip: String::new(),
                     country: "US".to_string(),
                     phone: None,
+                    email: None,
                 }
             }
         };

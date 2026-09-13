@@ -1,6 +1,6 @@
 use vercel_runtime::{Response, Error};
 use http::{StatusCode, HeaderMap};
-use crate::models::{UpdateUserDiscountRequest, UpsertCustomerPriceRequest};
+use crate::models::{UpdateUserDiscountRequest, UpsertCustomerPriceRequest, UpdateUserRoleRequest};
 use crate::services::auth_service::AuthService;
 use crate::services::product_service::ProductService;
 use crate::auth::{decode_jwt, extract_token};
@@ -133,6 +133,27 @@ pub async fn delete_customer_price(auth_header: Option<&str>, user_id: i64, vari
         Ok(_) => Ok(Response::builder()
             .status(StatusCode::NO_CONTENT)
             .body(String::new())?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": format!("{}", e) }).to_string())?),
+    }
+}
+
+pub async fn update_user_role(auth_header: Option<&str>, user_id: i64, req: UpdateUserRoleRequest) -> Result<Response<String>, Error> {
+    if let Err(err) = verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
+    let service = AuthService::new();
+    match service.update_user_role(user_id, &req.role).await {
+        Ok(user) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&user)?)?),
         Err(e) => Ok(Response::builder()
             .status(StatusCode::INTERNAL_SERVER_ERROR)
             .header("Content-Type", "application/json")

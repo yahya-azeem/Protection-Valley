@@ -4,6 +4,7 @@
   import { WHOLESALE_DISCOUNT } from '$lib/constants';
   import type { CartItem, Product, Review } from '$lib/types';
   import OptimizedImage from '$lib/components/OptimizedImage.svelte';
+  import ImageMagnifier from '$lib/components/ImageMagnifier.svelte';
   import ReviewList from '$lib/components/ReviewList.svelte';
   import ReviewForm from '$lib/components/ReviewForm.svelte';
   import { API_CONFIG } from '$lib/config';
@@ -121,14 +122,19 @@
         <!-- Imagery -->
         <div class="space-y-4 lg:sticky lg:top-24">
           <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden group">
-            <OptimizedImage 
-              src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
+            <ImageMagnifier 
+              src={currentVariant?.image_url || sp.image_url || '/images/logo.png'}
               alt={sp.name}
-              class="w-full h-full object-cover transition-lux duration-700"
-              width={800}
-              height={800}
-              priority={true}
-            />
+            >
+              <OptimizedImage 
+                src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
+                alt={sp.name}
+                class="w-full h-full object-cover transition-lux duration-700"
+                width={800}
+                height={800}
+                priority={true}
+              />
+            </ImageMagnifier>
           </div>
           <div class="grid grid-cols-4 gap-3">
             {#each (sp.variants?.slice(0, 4) || []) as variant}

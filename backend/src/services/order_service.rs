@@ -151,6 +151,7 @@ impl OrderService {
                 zip: address_val["postal_code"].as_str().unwrap_or("").to_string(),
                 country: address_val["country"].as_str().unwrap_or("US").to_string(),
                 phone: None,
+                email: None,
             };
 
             let created_epoch = session["created"].as_i64().unwrap_or(0);
