@@ -5,42 +5,39 @@
     src: string;
     alt: string;
     zoom?: number;
+    lensSize?: number;
   }
 
-  let { src, alt, zoom = 2.5 }: Props = $props();
+  let { src, alt, zoom = 2.5, lensSize = 160 }: Props = $props();
 
-  let containerEl: HTMLDivElement;
-  let lensX = $state(0);
-  let lensY = $state(0);
+  let containerEl: HTMLDivElement = $state()!;
+  let mouseX = $state(0);
+  let mouseY = $state(0);
   let showLens = $state(false);
   let showLightbox = $state(false);
 
   function handleMouseMove(e: MouseEvent) {
     if (!containerEl) return;
     const rect = containerEl.getBoundingClientRect();
-    lensX = ((e.clientX - rect.left) / rect.width) * 100;
-    lensY = ((e.clientY - rect.top) / rect.height) * 100;
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
   }
 
-  function handleMouseEnter() {
-    showLens = true;
-  }
+  function handleMouseEnter() { showLens = true; }
+  function handleMouseLeave() { showLens = false; }
+  function handleClick() { showLightbox = true; }
+  function closeLightbox() { showLightbox = false; }
+  function handleKeydown(e: KeyboardEvent) { if (e.key === 'Escape') closeLightbox(); }
 
-  function handleMouseLeave() {
-    showLens = false;
-  }
+  // Pixel-based positioning — no percentage rounding issues
+  let lensLeft = $derived(mouseX - lensSize / 2);
+  let lensTop = $derived(mouseY - lensSize / 2);
 
-  function handleClick() {
-    showLightbox = true;
-  }
-
-  function closeLightbox() {
-    showLightbox = false;
-  }
-
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') closeLightbox();
-  }
+  // The magnified image is zoom * container size, offset so cursor point is centered
+  let imgWidth = $derived(containerEl ? containerEl.clientWidth * zoom : 0);
+  let imgHeight = $derived(containerEl ? containerEl.clientHeight * zoom : 0);
+  let imgLeft = $derived(-(mouseX * zoom - lensSize / 2));
+  let imgTop = $derived(-(mouseY * zoom - lensSize / 2));
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -63,27 +60,38 @@
   <!-- Magnifying lens -->
   {#if showLens}
     <div
-      class="pointer-events-none absolute z-10 w-40 h-40 rounded-full border-2 border-primary/60 shadow-[0_0_30px_rgba(255,136,0,0.15)] overflow-hidden transition-opacity duration-150"
-      style:left="calc({lensX}% - 80px)"
-      style:top="calc({lensY}% - 80px)"
+      class="pointer-events-none absolute z-10 rounded-full border-2 border-primary/70 shadow-[0_0_40px_rgba(255,136,0,0.2)] overflow-hidden"
+      style:width="{lensSize}px"
+      style:height="{lensSize}px"
+      style:left="{lensLeft}px"
+      style:top="{lensTop}px"
     >
-      <div
-        class="w-full h-full"
-        style:background-image="url('{src}')"
-        style:background-size="{zoom * 100}%"
-        style:background-position="{lensX}% {lensY}%"
-      ></div>
+      <img
+        {src}
+        {alt}
+        class="absolute pointer-events-none select-none"
+        style:width="{imgWidth}px"
+        style:height="{imgHeight}px"
+        style:left="{imgLeft}px"
+        style:top="{imgTop}px"
+        draggable="false"
+      />
     </div>
-    <!-- Crosshair -->
+
+    <!-- Crosshair on cursor -->
     <div
-      class="pointer-events-none absolute z-20 w-px h-8 bg-primary/40"
-      style:left="{lensX}%"
-      style:top="calc({lensY}% - 16px)"
+      class="pointer-events-none absolute z-20 w-px bg-primary/50"
+      style:width="1px"
+      style:height="{lensSize * 0.6}px"
+      style:left="{mouseX}px"
+      style:top="{mouseY - lensSize * 0.3}px"
     ></div>
     <div
-      class="pointer-events-none absolute z-20 h-px w-8 bg-primary/40"
-      style:left="calc({lensX}% - 16px)"
-      style:top="{lensY}%"
+      class="pointer-events-none absolute z-20 bg-primary/50"
+      style:width="{lensSize * 0.6}px"
+      style:height="1px"
+      style:left="{mouseX - lensSize * 0.3}px"
+      style:top="{mouseY}px"
     ></div>
   {/if}
 
@@ -104,7 +112,6 @@
     onkeydown={(e) => { if (e.key === 'Escape') closeLightbox(); }}
     tabindex="-1"
   >
-    <!-- Close button -->
     <button
       class="absolute top-4 right-4 z-[110] p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full text-white transition-all duration-200"
       onclick={closeLightbox}
@@ -113,7 +120,6 @@
       <X class="w-5 h-5" />
     </button>
 
-    <!-- Full image -->
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <img
       {src}
