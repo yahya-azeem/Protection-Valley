@@ -107,10 +107,17 @@ pub async fn update_order_status(auth_header: Option<&str>, id: String, status: 
 
     let service = OrderService::new();
     match service.update_order_status(&id, status).await {
-        Ok(Some(order)) => Ok(Response::builder()
-            .status(StatusCode::OK)
-            .header("Content-Type", "application/json")
-            .body(serde_json::to_string(&order)?)?),
+        Ok(Some(order)) => {
+            // Sync order status to ERPNext
+            let erp_service = crate::services::erpnext_service::ErpNextService::new();
+            let status_str = serde_json::to_string(&order.status).unwrap_or_default();
+            let _ = erp_service.sync_order_status(&order.id, &status_str.trim_matches('"'), order.tracking_number.as_deref()).await;
+
+            Ok(Response::builder()
+                .status(StatusCode::OK)
+                .header("Content-Type", "application/json")
+                .body(serde_json::to_string(&order)?)?)
+        }
         Ok(None) => Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
             .header("Content-Type", "application/json")

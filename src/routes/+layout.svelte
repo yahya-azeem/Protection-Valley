@@ -2,6 +2,7 @@
   import '../app.css';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
   import { isWholesale, showPage, showToast, loadProducts, cart, currentUser } from '$lib/stores';
   import Navbar from '$lib/components/Navbar.svelte';
   import CartSidebar from '$lib/components/CartSidebar.svelte';
@@ -36,6 +37,12 @@
       if (sessionId) {
         confirmCheckout(sessionId);
       }
+      const url = new URL(window.location.href);
+      url.searchParams.delete('checkout');
+      url.searchParams.delete('session_id');
+      window.history.replaceState({}, '', url);
+      goto(`/orders/${sessionId}`);
+      return;
     }
 
     if (checkout === 'cancel') {

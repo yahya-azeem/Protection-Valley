@@ -223,7 +223,7 @@ function createUserStore() {
 export const currentUser = createUserStore();
 export const isWholesale = writable<boolean>(
   typeof localStorage !== 'undefined'
-    ? localStorage.getItem('userRole') === 'wholesale'
+    ? ['wholesale', 'admin'].includes(localStorage.getItem('userRole') || '')
     : false
 );
 

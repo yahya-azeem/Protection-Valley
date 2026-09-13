@@ -102,3 +102,48 @@ export interface CreateReviewRequest {
   rating: number;
   comment: string;
 }
+
+export interface OrderItem {
+  product_id: string;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  sku?: string;
+}
+
+export interface Address {
+  first_name: string;
+  last_name: string;
+  address_line1: string;
+  address_line2?: string | null;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone?: string | null;
+}
+
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'completed' | 'cancelled';
+
+export interface Order {
+  id: string;
+  customer_id: number;
+  customer_name: string;
+  customer_email: string;
+  items: OrderItem[];
+  subtotal: number;
+  shipping_cost: number;
+  sales_tax: number;
+  total: number;
+  status: OrderStatus;
+  shipping_address: Address;
+  payment_method: string;
+  carrier?: string | null;
+  tracking_number?: string | null;
+  shipping_label_url?: string | null;
+  shipping_label_printed: boolean;
+  shipping_label_printed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}

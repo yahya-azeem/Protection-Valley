@@ -382,10 +382,15 @@ impl OrderService {
             }
         }
 
-        // Send Email Notification
+        // Send Admin Email Notification
         let email_service = EmailService::new();
         if let Err(e) = email_service.send_order_notification(&order).await {
-            eprintln!("[order_service] Failed to send email alert: {e}");
+            eprintln!("[order_service] Failed to send admin email alert: {e}");
+        }
+
+        // Send Customer Order Confirmation Email
+        if let Err(e) = email_service.send_customer_order_confirmation(&order).await {
+            eprintln!("[order_service] Failed to send customer order confirmation: {e}");
         }
 
         // Sync Sales Order to ERPNext
@@ -459,7 +464,12 @@ impl OrderService {
 
         let email_service = EmailService::new();
         if let Err(e) = email_service.send_order_notification(&updated_order).await {
-            eprintln!("[order_service] Failed to send email alert: {e}");
+            eprintln!("[order_service] Failed to send admin shipping alert: {e}");
+        }
+
+        // Send Customer Shipping/Tracking Notification Email
+        if let Err(e) = email_service.send_customer_shipping_notification(&updated_order).await {
+            eprintln!("[order_service] Failed to send customer shipping notification: {e}");
         }
 
         Ok(updated_order)

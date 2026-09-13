@@ -57,6 +57,27 @@ pub async fn update_user_discount(auth_header: Option<&str>, user_id: i64, req: 
     }
 }
 
+pub async fn approve_wholesale_user(auth_header: Option<&str>, user_id: i64, approved: bool) -> Result<Response<String>, Error> {
+    if let Err(err) = verify_admin(auth_header) {
+        return Ok(Response::builder()
+            .status(StatusCode::FORBIDDEN)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": err }).to_string())?);
+    }
+
+    let service = AuthService::new();
+    match service.approve_wholesale_user(user_id, approved).await {
+        Ok(user) => Ok(Response::builder()
+            .status(StatusCode::OK)
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&user)?)?),
+        Err(e) => Ok(Response::builder()
+            .status(StatusCode::INTERNAL_SERVER_ERROR)
+            .header("Content-Type", "application/json")
+            .body(serde_json::json!({ "error": format!("{}", e) }).to_string())?),
+    }
+}
+
 pub async fn get_customer_prices(auth_header: Option<&str>, user_id: i64) -> Result<Response<String>, Error> {
     if let Err(err) = verify_admin(auth_header) {
         return Ok(Response::builder()
