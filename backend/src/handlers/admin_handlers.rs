@@ -185,7 +185,13 @@ pub async fn erp_proxy(
     let clean_sub_path = sub_path.trim_start_matches('/');
     if clean_sub_path == "desk" {
         let proxy_secret = std::env::var("ERP_PROXY_SECRET")
-            .unwrap_or_else(|_| "pv-erp-proxy-secret-2026".to_string());
+            .unwrap_or_default();
+        if proxy_secret.is_empty() {
+            return Ok(Response::builder()
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .header("Content-Type", "application/json")
+                .body(vercel_runtime::ResponseBody::from(serde_json::json!({ "error": "ERP_PROXY_SECRET not configured" }).to_string()))?);
+        }
 
         let client = reqwest::Client::new();
         let session_url = format!("{}/api/method/frappe.auth.get_admin_session", erp_url.trim_end_matches('/'));
