@@ -121,11 +121,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         <!-- Imagery -->
         <div class="space-y-4 lg:sticky lg:top-24">
-          <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden group">
-            <ImageMagnifier 
-              src={currentVariant?.image_url || sp.image_url || '/images/logo.png'}
-              alt={sp.name}
-            >
+          <ImageMagnifier 
+            src={currentVariant?.image_url || sp.image_url || '/images/logo.png'}
+            alt={sp.name}
+          >
+            <div class="aspect-square bg-[#0A0A0A] border border-white/10 rounded overflow-hidden">
               <OptimizedImage 
                 src={currentVariant?.image_url || sp.image_url || '/images/logo.png'} 
                 alt={sp.name}
@@ -134,8 +134,8 @@
                 height={800}
                 priority={true}
               />
-            </ImageMagnifier>
-          </div>
+            </div>
+          </ImageMagnifier>
           <div class="grid grid-cols-4 gap-3">
             {#each (sp.variants?.slice(0, 4) || []) as variant}
               <button 
