@@ -1,3 +1,12 @@
+# ===========================================================================
+# DEPRECATED: This Terraform config provisions GCP Cloud Run infrastructure
+# including an UNUSED MariaDB instance. ERPNext now connects to Supabase
+# PostgreSQL directly. This file is kept for reference only.
+#
+# Current deployment: VPS (Debian) + Docker Compose + Supabase PostgreSQL
+# See docker/docker-compose.yml and docker/setup-vps.sh for current IaC.
+# ===========================================================================
+
 provider "google" {
   project = var.gcp_project_id
   region  = var.gcp_region

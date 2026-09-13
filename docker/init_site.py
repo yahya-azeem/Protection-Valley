@@ -1,15 +1,112 @@
 import os
 import sys
 import json
-import psycopg2
+import time
 import subprocess
 import traceback
 import atexit
 
+import psycopg2
+from psycopg2 import sql
+
+# ---------------------------------------------------------------------------
+# Configuration — all credentials from environment, NO hardcoded fallbacks
+# ---------------------------------------------------------------------------
+
+DB_HOST = os.environ.get("DB_HOST", "")
+DB_PORT = int(os.environ.get("DB_PORT", "5432"))
+DB_NAME = os.environ.get("DB_NAME", "postgres")
+DB_USER = os.environ.get("DB_USER", "")
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
+DB_SSLMODE = os.environ.get("DB_SSLMODE", "require")  # Supabase requires SSL
+ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY", "")
+ERP_PROXY_SECRET = os.environ.get("ERP_PROXY_SECRET", "")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin")
+SCHEMA_NAME = os.environ.get("DB_SCHEMA", "erpnext")
+ADVISORY_LOCK_ID = 123456
+
+# Connection retry settings
+MAX_RETRIES = 5
+RETRY_DELAY = 5  # seconds
+
+# Validate required env vars
+_missing = []
+if not DB_HOST:
+    _missing.append("DB_HOST")
+if not DB_USER:
+    _missing.append("DB_USER")
+if not DB_PASSWORD:
+    _missing.append("DB_PASSWORD")
+if not ENCRYPTION_KEY:
+    _missing.append("ENCRYPTION_KEY")
+if _missing:
+    print(f"[FATAL] Required environment variables not set: {', '.join(_missing)}")
+    sys.exit(1)
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _print(*args, **kwargs):
+    """Print with flush for container log visibility."""
+    print(*args, **kwargs, flush=True)
+
+
+def get_ssl_kwargs():
+    """Return SSL kwargs for psycopg2 connections."""
+    return {"sslmode": DB_SSLMODE}
+
+
+def connect_with_retry(label="database", retries=MAX_RETRIES, delay=RETRY_DELAY):
+    """Connect to PostgreSQL with retries and SSL."""
+    for attempt in range(1, retries + 1):
+        try:
+            conn = psycopg2.connect(
+                host=DB_HOST,
+                port=DB_PORT,
+                database=DB_NAME,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                connect_timeout=10,
+                keepalives=30,
+                keepalives_idle=10,
+                keepalives_interval=5,
+                keepalives_count=3,
+                **get_ssl_kwargs(),
+            )
+            conn.autocommit = True
+            return conn
+        except Exception as e:
+            _print(f"[RETRY] {label} connection attempt {attempt}/{retries} failed: {e}")
+            if attempt < retries:
+                time.sleep(delay)
+    raise RuntimeError(f"Failed to connect to {label} after {retries} attempts")
+
+
+def release_lock():
+    """Release the global advisory lock on exit."""
+    global db_lock_conn
+    if db_lock_conn:
+        try:
+            cur = db_lock_conn.cursor()
+            cur.execute("SELECT pg_advisory_unlock(%s);", (ADVISORY_LOCK_ID,))
+            cur.close()
+            db_lock_conn.close()
+            _print("Released global setup/migration advisory lock.")
+        except Exception as e:
+            _print(f"Warning during lock release: {e}")
+        db_lock_conn = None
+
+
+# ---------------------------------------------------------------------------
+# PostgreSQL compatibility patches
+# ---------------------------------------------------------------------------
+
 def patch_database_driver():
     path = "/home/frappe/bench-dir/apps/frappe/frappe/database/postgres/database.py"
     if not os.path.exists(path):
-        print(f"[PATCH] Database driver path {path} not found. Skipping.")
+        _print(f"[PATCH] Database driver path {path} not found. Skipping.")
         return
 
     try:
@@ -20,30 +117,30 @@ def patch_database_driver():
         replacement = 'query = replace_locate_with_strpos(query)\n\tquery = re.sub(r"(?i)\\bFORCE\\s+INDEX\\s*\\([^)]*\\)", "", query)'
 
         if replacement in code:
-            print("[PATCH] Database driver already patched.")
+            _print("[PATCH] Database driver already patched.")
             return
 
         if target in code:
             patched = code.replace(target, replacement)
             with open(path, "w") as f:
                 f.write(patched)
-            print("[PATCH] Successfully patched database driver for FORCE INDEX support!")
+            _print("[PATCH] Successfully patched database driver for FORCE INDEX support!")
         else:
-            print("[PATCH] Target string not found in database driver. Skipping.")
+            _print("[PATCH] Target string not found in database driver. Skipping.")
     except Exception as e:
-        print(f"[PATCH] Error patching database driver: {e}")
+        _print(f"[PATCH] Error patching database driver: {e}")
+
 
 def patch_trends_controller():
     path = "/home/frappe/bench-dir/apps/erpnext/erpnext/controllers/trends.py"
     if not os.path.exists(path):
-        print(f"[PATCH] Trends controller {path} not found. Skipping.")
+        _print(f"[PATCH] Trends controller {path} not found. Skipping.")
         return
 
     try:
         with open(path, "r") as f:
             code = f.read()
 
-        # Define replacements for based_on_group_by
         replacements = [
             (
                 'based_on_details["based_on_group_by"] = "t2.item_code"',
@@ -57,7 +154,6 @@ def patch_trends_controller():
                 'based_on_details["based_on_group_by"] = "t1.supplier"',
                 'based_on_details["based_on_group_by"] = "t1.supplier, t1.supplier_name, t3.supplier_group"'
             ),
-            # Also add t4.default_currency to group_by
             (
                 'based_on_details["based_on_select"] += "t4.default_currency as currency,"',
                 'based_on_details["based_on_select"] += "t4.default_currency as currency,"\n\tbased_on_details["based_on_group_by"] += ", t4.default_currency"'
@@ -74,65 +170,41 @@ def patch_trends_controller():
         if modified:
             with open(path, "w") as f:
                 f.write(patched)
-            print("[PATCH] Successfully patched trends controller for PostgreSQL GROUP BY support!")
+            _print("[PATCH] Successfully patched trends controller for PostgreSQL GROUP BY support!")
         else:
-            print("[PATCH] Trends controller already patched or target strings not found.")
+            _print("[PATCH] Trends controller already patched or target strings not found.")
     except Exception as e:
-        print(f"[PATCH] Error patching trends controller: {e}")
+        _print(f"[PATCH] Error patching trends controller: {e}")
 
-# Apply patches on boot
-patch_database_driver()
-patch_trends_controller()
 
-db_lock_conn = None
+# ---------------------------------------------------------------------------
+# Site configuration
+# ---------------------------------------------------------------------------
 
-def release_lock():
-    global db_lock_conn
-    if db_lock_conn:
-        try:
-            cur = db_lock_conn.cursor()
-            cur.execute("SELECT pg_advisory_unlock(123456);")
-            cur.close()
-            db_lock_conn.close()
-            print("Released global setup/migration advisory lock.")
-        except Exception as e:
-            print(f"Warning during lock release: {e}")
-        db_lock_conn = None
-
-atexit.register(release_lock)
-
-# Force unbuffered output so prints show immediately in Cloud Run logs
-print = lambda *args, **kwargs: __builtins__.__dict__['print'](*args, **kwargs, flush=True)
-
-# Ensure we run in the bench-dir directory
-os.chdir('/home/frappe/bench-dir')
-
-db_host = os.environ.get("DB_HOST", "db.fnirqccmtjzibjhgzyay.supabase.co")
-db_port = int(os.environ.get("DB_PORT", 5432))
-db_name = os.environ.get("DB_NAME", "postgres")
-db_user = os.environ.get("DB_USER", "erpnext_user")
-db_password = os.environ.get("DB_PASSWORD", "PV-erpnext-pass-2026")
-
-if "--config-only" in sys.argv:
-    print("[INIT] Config-only mode. Writing site configurations...")
-    os.makedirs("sites/site1.local", exist_ok=True)
-    os.makedirs("sites/site1.local/logs", exist_ok=True)
+def write_site_config(site_dir):
+    """Write site_config.json with credentials from environment."""
+    os.makedirs(site_dir, exist_ok=True)
+    os.makedirs(f"{site_dir}/logs", exist_ok=True)
     os.makedirs("/home/frappe/logs", exist_ok=True)
+
     site_config = {
-        "db_name": db_name,
-        "db_password": db_password,
+        "db_name": DB_NAME,
+        "db_password": DB_PASSWORD,
         "db_type": "postgres",
-        "db_host": db_host,
-        "db_port": db_port,
-        "db_user": db_user,
-        "db_schema": "erpnext",
-        "encryption_key": "pv_erpnext_encryption_key_2026",
+        "db_host": DB_HOST,
+        "db_port": DB_PORT,
+        "db_user": DB_USER,
+        "db_schema": SCHEMA_NAME,
+        "encryption_key": ENCRYPTION_KEY,
         "default_site": "site1.local"
     }
-    with open("sites/site1.local/site_config.json", "w") as f:
+    with open(f"{site_dir}/site_config.json", "w") as f:
         json.dump(site_config, f, indent=4)
-        
-    common_config_path = "sites/common_site_config.json"
+
+
+def write_common_config():
+    """Write common_site_config.json."""
+    os.makedirs("sites", exist_ok=True)
     common_config = {
         "default_site": "site1.local",
         "redis_cache": "redis://127.0.0.1:6379",
@@ -140,304 +212,297 @@ if "--config-only" in sys.argv:
         "redis_socketio": "redis://127.0.0.1:6379",
         "dns_multitenant": False
     }
-    with open(common_config_path, "w") as f:
+    with open("sites/common_site_config.json", "w") as f:
         json.dump(common_config, f, indent=4)
     with open("sites/currentsite.txt", "w") as f:
         f.write("site1.local")
-    print("[INIT] Site configurations written successfully.")
+
+
+def write_status(status):
+    """Write status to the status file for health checks."""
+    try:
+        with open("/tmp/erpnext_status.txt", "w") as f:
+            f.write(status)
+    except Exception:
+        pass
+
+
+def table_exists_in_schema(cur, schema, table_name):
+    """Check if a specific table exists in a schema using parameterized query."""
+    cur.execute(
+        "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema = %s AND table_name = %s)",
+        (schema, table_name)
+    )
+    return cur.fetchone()[0]
+
+
+# ---------------------------------------------------------------------------
+# Main logic
+# ---------------------------------------------------------------------------
+
+db_lock_conn = None
+
+# Apply patches on boot
+patch_database_driver()
+patch_trends_controller()
+atexit.register(release_lock)
+
+# Ensure we run in the bench-dir directory
+os.chdir('/home/frappe/bench-dir')
+
+# --- Config-only mode ---
+if "--config-only" in sys.argv:
+    _print("[INIT] Config-only mode. Writing site configurations...")
+    write_site_config("sites/site1.local")
+    write_common_config()
+    write_status("config_done")
+    _print("[INIT] Site configurations written successfully.")
     sys.exit(0)
 
-# Acquire global advisory lock to prevent concurrent setup/migrations
+# --- Migrate-only mode ---
+if "--migrate-only" in sys.argv:
+    _print("[INIT] Migrate-only mode. Checking database state...")
+    try:
+        conn = connect_with_retry("migrate-check")
+        cur = conn.cursor()
+
+        # Check if tables exist
+        cur.execute(f"""
+            SELECT COUNT(*)
+            FROM information_schema.tables
+            WHERE table_schema = %s
+            AND table_type = 'BASE TABLE';
+        """, (SCHEMA_NAME,))
+        table_count = cur.fetchone()[0]
+        cur.close()
+        conn.close()
+
+        if table_count < 100:
+            _print(f"[INIT] Migrate-only: only {table_count} tables found, need full init first.")
+            write_status("needs_init")
+            sys.exit(0)
+
+        _print("[INIT] Migrate-only: database has tables, running bench migrate...")
+        write_site_config("sites/site1.local")
+        write_common_config()
+
+        subprocess.run(
+            ["/usr/local/bin/bench", "--site", "site1.local", "migrate"],
+            check=True,
+            timeout=900  # 15 minute timeout
+        )
+        _print("[INIT] Migrate-only: bench migrate complete.")
+        write_status("ready")
+        sys.exit(0)
+    except subprocess.TimeoutExpired:
+        _print("[INIT] Migrate-only: bench migrate timed out after 15 minutes.")
+        write_status("error")
+        sys.exit(1)
+    except Exception as e:
+        _print(f"[INIT] Migrate-only error: {e}")
+        traceback.print_exc()
+        write_status("error")
+        sys.exit(1)
+
+# --- Full initialization / migration ---
+
+# Acquire global advisory lock
 locked = False
 try:
-    print("Connecting to database to acquire global setup/migration lock...")
-    db_lock_conn = psycopg2.connect(
-        host=db_host,
-        port=db_port,
-        database=db_name,
-        user=db_user,
-        password=db_password
-    )
-    db_lock_conn.autocommit = True
+    _print("Connecting to database to acquire global setup/migration lock...")
+    db_lock_conn = connect_with_retry("lock")
     cur = db_lock_conn.cursor()
-    cur.execute("SELECT pg_try_advisory_lock(123456);")
+    cur.execute("SELECT pg_try_advisory_lock(%s);", (ADVISORY_LOCK_ID,))
     locked = cur.fetchone()[0]
     cur.close()
 except Exception as e:
-    print(f"Warning: Database lock connection failed: {e}")
+    _print(f"Warning: Database lock connection failed: {e}")
 
 if not locked:
-    print("Another instance is already running database setup or migration. Entering wait loop...")
+    _print("Another instance is already running database setup or migration. Entering wait loop...")
     if db_lock_conn:
         try:
             db_lock_conn.close()
         except Exception:
             pass
         db_lock_conn = None
-    
-    # Wait loop
-    import time
-    for i in range(36): # 36 * 10 seconds = 6 minutes max
+
+    for i in range(36):  # 36 * 10 seconds = 6 minutes max
         time.sleep(10)
         try:
-            conn = psycopg2.connect(
-                host=db_host,
-                port=db_port,
-                database=db_name,
-                user=db_user,
-                password=db_password
-            )
-            conn.autocommit = True
+            conn = connect_with_retry("wait-loop", retries=1)
             cur = conn.cursor()
-            # Try to acquire the lock to see if the migration instance is finished
-            cur.execute("SELECT pg_try_advisory_lock(123456);")
+            cur.execute("SELECT pg_try_advisory_lock(%s);", (ADVISORY_LOCK_ID,))
             acquired = cur.fetchone()[0]
             if acquired:
-                cur.execute("SELECT pg_advisory_unlock(123456);")
+                cur.execute("SELECT pg_advisory_unlock(%s);", (ADVISORY_LOCK_ID,))
                 cur.close()
                 conn.close()
-                print("[WAIT LOOP] Lock is free! Database is ready. Updating status and exiting.")
-                try:
-                    with open("/tmp/erpnext_status.txt", "w") as f:
-                        f.write("ready")
-                except Exception:
-                    pass
+                _print("[WAIT LOOP] Lock is free! Database is ready.")
+                write_status("ready")
                 sys.exit(0)
             cur.close()
             conn.close()
-            print(f"[WAIT LOOP] Lock is still held by another instance. Waiting...")
+            _print("[WAIT LOOP] Lock is still held by another instance. Waiting...")
         except Exception as e:
-            print(f"[WAIT LOOP] Error checking lock status: {e}")
-            
-    print("[WAIT LOOP] Timeout waiting for database initialization. Exiting with error.")
-    try:
-        with open("/tmp/erpnext_status.txt", "w") as f:
-            f.write("error")
-    except Exception:
-        pass
+            _print(f"[WAIT LOOP] Error checking lock status: {e}")
+
+    _print("[WAIT LOOP] Timeout waiting for database initialization. Exiting with error.")
+    write_status("error")
     sys.exit(1)
 
-print("Acquired global setup/migration lock. Checking database status...")
+_print("Acquired global setup/migration lock. Checking database status...")
 table_exists = False
 needs_migration = True
 current_revision = os.environ.get("K_REVISION", "local")
 
 try:
-    conn = psycopg2.connect(
-        host=db_host,
-        port=db_port,
-        database=db_name,
-        user=db_user,
-        password=db_password
-    )
-    conn.autocommit = True
+    conn = connect_with_retry("schema-check")
     cur = conn.cursor()
-    
-    # Ensure erpnext schema exists
-    cur.execute("CREATE SCHEMA IF NOT EXISTS erpnext;")
-    
-    # Create MySQL helper functions if they don't exist
-    cur.execute("""
-        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val anyelement, false_val anyelement)
-        RETURNS anyelement AS $$
-        BEGIN
-            IF condition THEN
-                RETURN true_val;
-            ELSE
-                RETURN false_val;
-            END IF;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    cur.execute("""
-        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val numeric, false_val numeric)
-        RETURNS numeric AS $$
-        BEGIN
-            IF condition THEN
-                RETURN true_val;
-            ELSE
-                RETURN false_val;
-            END IF;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    cur.execute("""
-        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val double precision, false_val double precision)
-        RETURNS double precision AS $$
-        BEGIN
-            IF condition THEN
-                RETURN true_val;
-            ELSE
-                RETURN false_val;
-            END IF;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    cur.execute("""
-        CREATE OR REPLACE FUNCTION erpnext.if(condition boolean, true_val text, false_val text)
-        RETURNS text AS $$
-        BEGIN
-            IF condition THEN
-                RETURN true_val;
-            ELSE
-                RETURN false_val;
-            END IF;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    
+
+    # Ensure schema exists
+    cur.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {};").format(sql.Identifier(SCHEMA_NAME)))
+
+    # Create MySQL IF() helper functions
+    for pg_type in ["boolean, anyelement, anyelement", "boolean, numeric, numeric",
+                     "boolean, double precision, double precision", "boolean, text, text"]:
+        cur.execute(sql.SQL("""
+            CREATE OR REPLACE FUNCTION {schema}.if(condition boolean, true_val {type}, false_val {type})
+            RETURNS {type} AS $$
+            BEGIN
+                IF condition THEN RETURN true_val; ELSE RETURN false_val; END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        """).format(schema=sql.Identifier(SCHEMA_NAME), type=sql.SQL(pg_type)))
+
     # Check table count
-    cur.execute("""
-        SELECT COUNT(*) 
-        FROM information_schema.tables 
-        WHERE table_schema = 'erpnext' 
+    cur.execute(f"""
+        SELECT COUNT(*)
+        FROM information_schema.tables
+        WHERE table_schema = %s
         AND table_type = 'BASE TABLE';
-    """)
+    """, (SCHEMA_NAME,))
     table_count = cur.fetchone()[0]
     table_exists = table_count > 100
-    
+
     if table_exists:
         # Create revision tracking table if not exists
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS erpnext.current_revision (
+        cur.execute(sql.SQL("""
+            CREATE TABLE IF NOT EXISTS {schema}.current_revision (
                 revision_name VARCHAR(255) PRIMARY KEY,
                 migrated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
-        """)
-        # Check if current revision is already migrated
-        cur.execute("SELECT COUNT(*) FROM erpnext.current_revision WHERE revision_name = %s;", (current_revision,))
+        """).format(schema=sql.Identifier(SCHEMA_NAME)))
+        cur.execute(
+            sql.SQL("SELECT COUNT(*) FROM {schema}.current_revision WHERE revision_name = %s;").format(
+                schema=sql.Identifier(SCHEMA_NAME)
+            ),
+            (current_revision,)
+        )
         revision_migrated = cur.fetchone()[0] > 0
         needs_migration = not revision_migrated
-        
+
     cur.close()
     conn.close()
-    print(f"Database check: tables exist = {table_exists}, needs migration = {needs_migration} (revision: {current_revision})")
+    _print(f"Database check: tables exist = {table_exists}, needs migration = {needs_migration} (revision: {current_revision})")
 except Exception as e:
-    print(f"Warning: Database check failed: {e}")
+    _print(f"Warning: Database check failed: {e}")
     table_exists = False
     needs_migration = True
 
 if table_exists and not needs_migration:
-    print("Database is already populated and migrated for this revision. Skipping migrations.")
-    try:
-        with open("/tmp/erpnext_status.txt", "w") as f:
-            f.write("ready")
-    except Exception:
-        pass
+    _print("Database is already populated and migrated for this revision. Skipping migrations.")
+    write_status("ready")
     sys.exit(0)
 
-
-# Ensure common_site_config has default site and routes all Redis connections to local port 6379
-os.makedirs("sites", exist_ok=True)
-with open("sites/common_site_config.json", "w") as f:
-    json.dump({
-        "default_site": "site1.local",
-        "redis_cache": "redis://127.0.0.1:6379",
-        "redis_queue": "redis://127.0.0.1:6379",
-        "redis_socketio": "redis://127.0.0.1:6379",
-        "dns_multitenant": False
-    }, f)
+# Write configs
+write_site_config("sites/site1.local")
+write_common_config()
 
 if not table_exists:
-    print("Database tables not found or incomplete. Cleaning up schema 'erpnext' first...")
+    _print("Database tables not found or incomplete. Cleaning up schema first...")
     try:
-        conn = psycopg2.connect(
-            host=db_host,
-            port=db_port,
-            database=db_name,
-            user=db_user,
-            password=db_password
-        )
-        conn.autocommit = True
+        conn = connect_with_retry("cleanup")
         cur = conn.cursor()
-        # Find all tables in erpnext schema
-        cur.execute("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'erpnext' 
+        cur.execute(f"""
+            SELECT table_name
+            FROM information_schema.tables
+            WHERE table_schema = %s
             AND table_type = 'BASE TABLE';
-        """)
+        """, (SCHEMA_NAME,))
         tables = [r[0] for r in cur.fetchall()]
-        print(f"Found {len(tables)} tables to drop: {tables}")
+        _print(f"Found {len(tables)} tables to drop.")
         for t in tables:
-            cur.execute(f'DROP TABLE IF EXISTS "erpnext"."{t}" CASCADE;')
+            # Use parameterized identifier to prevent SQL injection
+            cur.execute(sql.SQL("DROP TABLE IF EXISTS {}.{} CASCADE;").format(
+                sql.Identifier(SCHEMA_NAME), sql.Identifier(t)
+            ))
         cur.close()
         conn.close()
-        print("Schema 'erpnext' cleaned successfully!")
+        _print("Schema cleaned successfully!")
     except Exception as e:
-        print(f"Error cleaning schema: {e}")
+        _print(f"Error cleaning schema: {e}")
 
-    print("Initializing site1.local using Python installer...")
+    _print("Initializing site1.local using Python installer...")
     try:
-        print("[INIT] Step 1: Importing frappe...")
+        _print("[INIT] Step 1: Importing frappe...")
         import frappe
-        print("[INIT] Step 1a: Importing frappe.installer...")
+        _print("[INIT] Step 1a: Importing frappe.installer...")
         import frappe.installer
-        print("[INIT] Step 1b: Importing postgres setup modules...")
+        _print("[INIT] Step 1b: Importing postgres setup modules...")
         import frappe.database.postgres.database
         import frappe.database.postgres.setup_db
-        
-        # Monkeypatch PostgresDatabase.get_connection to use db_user instead of hardcoded self.user (which gets set to db_name)
+
+        # Monkeypatch PostgresDatabase.get_connection to use db_user
         def custom_get_connection(self):
-            import psycopg2
+            import psycopg2 as _psycopg2
             from psycopg2.extensions import ISOLATION_LEVEL_REPEATABLE_READ
             conn_settings = {
                 "user": frappe.conf.db_user or self.user,
                 "dbname": self.cur_db_name,
                 "host": self.host or self.socket,
+                "connect_timeout": 10,
+                "keepalives": 30,
+                "keepalives_idle": 10,
+                "keepalives_interval": 5,
+                "keepalives_count": 3,
+                **get_ssl_kwargs(),
             }
             if self.password:
                 conn_settings["password"] = self.password
             if not self.socket and self.port:
                 conn_settings["port"] = self.port
 
-            conn = psycopg2.connect(**conn_settings)
+            conn = _psycopg2.connect(**conn_settings)
             conn.set_isolation_level(ISOLATION_LEVEL_REPEATABLE_READ)
             return conn
-            
+
         frappe.database.postgres.database.PostgresDatabase.get_connection = custom_get_connection
 
-        # Monkeypatch import_db_from_sql to use db_user instead of db_name
+        # Monkeypatch import_db_from_sql to use db_user
         def custom_import_db_from_sql(source_sql=None, verbose=False):
             if verbose:
-                print("Custom database import running...")
-            db_name = frappe.conf.db_name
-            db_user = frappe.conf.db_user
+                _print("Custom database import running...")
+            _db_name = frappe.conf.db_name
+            _db_user = frappe.conf.db_user
             if not source_sql:
-                import os
                 source_sql = os.path.join(os.path.dirname(frappe.database.postgres.setup_db.__file__), "framework_postgres.sql")
             from frappe.database.db_manager import DbManager
             DbManager(frappe.local.db).restore_database(
-                verbose, db_name, source_sql, db_user, frappe.conf.db_password
+                verbose, _db_name, source_sql, _db_user, frappe.conf.db_password
             )
             if verbose:
-                print("Custom imported from database {}".format(source_sql))
-                
+                _print(f"Custom imported from database {source_sql}")
+
         frappe.database.postgres.setup_db.import_db_from_sql = custom_import_db_from_sql
-        print("[INIT] Step 1c: Imports and monkeypatches complete.")
-        
+        _print("[INIT] Step 1c: Imports and monkeypatches complete.")
+
         site = "site1.local"
-        
-        # Write site_config.json manually first so that frappe.init() loads all DB credentials in memory
-        print("[INIT] Step 2: Writing site_config.json...")
-        os.makedirs(f"sites/{site}", exist_ok=True)
-        site_config = {
-            "db_name": db_name,
-            "db_password": db_password,
-            "db_type": "postgres",
-            "db_host": db_host,
-            "db_port": db_port,
-            "db_user": db_user,
-            "db_schema": "erpnext",
-            "encryption_key": "pv_erpnext_encryption_key_2026",
-            "default_site": "site1.local"
-        }
-        with open(f"sites/{site}/site_config.json", "w") as f:
-            json.dump(site_config, f, indent=4)
-        print("[INIT] Step 2: site_config.json written.")
-        
-        # Update common_site_config.json with default_site to resolve Cloud Run domain routing
-        print("[INIT] Updating common_site_config.json...")
+
+        _print("[INIT] Step 2: Writing site_config.json...")
+        write_site_config(f"sites/{site}")
+
+        # Update common_site_config
         common_config_path = "sites/common_site_config.json"
         common_config = {}
         if os.path.exists(common_config_path):
@@ -449,81 +514,57 @@ if not table_exists:
         common_config["default_site"] = "site1.local"
         with open(common_config_path, "w") as f:
             json.dump(common_config, f, indent=4)
-        print("[INIT] common_site_config.json updated.")
-        
-        # Create logs directories that frappe's database logger expects
+
+        # Create logs directories
         os.makedirs("/home/frappe/logs", exist_ok=True)
         os.makedirs(f"/home/frappe/bench-dir/{site}/logs", exist_ok=True)
         os.makedirs(f"sites/{site}/logs", exist_ok=True)
-            
-        print("[INIT] Step 3: Calling frappe.init()...")
+
+        _print("[INIT] Step 3: Calling frappe.init()...")
         frappe.init(site=site, new_site=True, sites_path="sites")
-        print("[INIT] Step 3: frappe.init() complete.")
-        
-        # Ensure frappe.conf is fully updated in memory
-        print("[INIT] Step 4: Updating frappe.conf in memory...")
+        _print("[INIT] Step 3: frappe.init() complete.")
+
+        _print("[INIT] Step 4: Updating frappe.conf in memory...")
+        site_config = json.load(open(f"sites/{site}/site_config.json"))
         for k, v in site_config.items():
             frappe.conf[k] = v
-        print(f"[INIT] Step 4: frappe.conf.db_name={frappe.conf.db_name}, db_type={frappe.conf.db_type}")
-        
-        print("[INIT] Step 5: Creating site directories...")
+
+        _print("[INIT] Step 5: Creating site directories...")
         frappe.installer.make_site_dirs()
-        print("[INIT] Step 5: Site directories created.")
-        
-        print("[INIT] Step 6: Running install_db...")
+
+        _print("[INIT] Step 6: Running install_db...")
         frappe.installer.install_db(
-            db_name=db_name,
-            db_password=db_password,
+            db_name=DB_NAME,
+            db_password=DB_PASSWORD,
             db_type="postgres",
-            db_host=db_host,
-            db_port=db_port,
-            site_config={"db_user": db_user, "encryption_key": "pv_erpnext_encryption_key_2026"},
-            admin_password="admin",
+            db_host=DB_HOST,
+            db_port=DB_PORT,
+            site_config={"db_user": DB_USER, "encryption_key": ENCRYPTION_KEY},
+            admin_password=ADMIN_PASSWORD,
             setup=False,
             force=True
         )
-        print("[INIT] Step 6: install_db complete.")
-        
-        print("[INIT] Step 7: Installing frappe app...")
+        _print("[INIT] Step 6: install_db complete.")
+
+        _print("[INIT] Step 7: Installing frappe app...")
         frappe.installer.install_app("frappe")
-        print("[INIT] Step 7: frappe app installed.")
-        
-        print("[INIT] Step 8: Installing erpnext app...")
+
+        _print("[INIT] Step 8: Installing erpnext app...")
         frappe.installer.install_app("erpnext")
-        print("[INIT] Step 8: erpnext app installed.")
-        
+
         frappe.db.commit()
         frappe.destroy()
-        print("[INIT] DONE: Site initialized successfully via Python!")
+        _print("[INIT] DONE: Site initialized successfully via Python!")
     except Exception as e:
-        print(f"[INIT] ERROR during site initialization: {e}")
+        _print(f"[INIT] ERROR during site initialization: {e}")
         traceback.print_exc()
-        try:
-            with open("/tmp/erpnext_status.txt", "w") as f:
-                f.write("error")
-        except Exception:
-            pass
+        write_status("error")
         sys.exit(1)
 else:
-    print("Database tables found. Restoring site configuration...")
-    os.makedirs("sites/site1.local", exist_ok=True)
-    os.makedirs("sites/site1.local/logs", exist_ok=True)
-    os.makedirs("/home/frappe/logs", exist_ok=True)
-    site_config = {
-        "db_name": db_name,
-        "db_password": db_password,
-        "db_type": "postgres",
-        "db_host": db_host,
-        "db_port": db_port,
-        "db_user": db_user,
-        "db_schema": "erpnext",
-        "encryption_key": "pv_erpnext_encryption_key_2026",
-        "default_site": "site1.local"
-    }
-    with open("sites/site1.local/site_config.json", "w") as f:
-        json.dump(site_config, f, indent=4)
-        
-    print("Updating common_site_config.json...")
+    _print("Database tables found. Restoring site configuration...")
+    write_site_config("sites/site1.local")
+
+    _print("Updating common_site_config.json...")
     common_config_path = "sites/common_site_config.json"
     common_config = {}
     if os.path.exists(common_config_path):
@@ -538,67 +579,62 @@ else:
         json.dump(common_config, f, indent=4)
     with open("sites/currentsite.txt", "w") as f:
         f.write("site1.local")
-    print("common_site_config.json updated.")
-    
-    # Terminate other active DB connections using the global lock connection
+
+    # Terminate other active DB connections using the lock connection
     if db_lock_conn:
         try:
-            print("Terminating other active DB connections...")
+            _print("Terminating other active DB connections...")
             cur = db_lock_conn.cursor()
             cur.execute("""
-                SELECT pg_terminate_backend(pid) 
-                FROM pg_stat_activity 
-                WHERE usename = %s 
+                SELECT pg_terminate_backend(pid)
+                FROM pg_stat_activity
+                WHERE usename = %s
                   AND pid != pg_backend_pid();
-            """, (db_user,))
+            """, (DB_USER,))
             cur.close()
-            print("Connections terminated successfully.")
+            _print("Connections terminated successfully.")
         except Exception as e:
-            print(f"Warning: Could not terminate other connections: {e}")
-        
-    print("Running migrations...")
+            _print(f"Warning: Could not terminate other connections: {e}")
+
+    _print("Running migrations...")
     try:
-        subprocess.run([
-            "/usr/local/bin/bench", "--site", "site1.local", "migrate"
-        ], check=True)
+        subprocess.run(
+            ["/usr/local/bin/bench", "--site", "site1.local", "migrate"],
+            check=True,
+            timeout=900  # 15 minute timeout
+        )
+    except subprocess.TimeoutExpired:
+        _print("Migration timed out after 15 minutes.")
+        write_status("error")
+        sys.exit(1)
     except Exception as e:
-        print(f"Migration failed: {e}")
-        try:
-            with open("/tmp/erpnext_status.txt", "w") as f:
-                f.write("error")
-        except Exception:
-            pass
-        raise e
+        _print(f"Migration failed: {e}")
+        write_status("error")
+        raise
 
 # Log that this revision has completed its setup/migration successfully
 current_revision = os.environ.get("K_REVISION", "local")
 try:
-    print(f"Logging successful migration for revision {current_revision} in database...")
-    conn = psycopg2.connect(
-        host=db_host,
-        port=db_port,
-        database=db_name,
-        user=db_user,
-        password=db_password
-    )
-    conn.autocommit = True
+    _print(f"Logging successful migration for revision {current_revision} in database...")
+    conn = connect_with_retry("revision-log")
     cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS erpnext.current_revision (
+    cur.execute(sql.SQL("""
+        CREATE TABLE IF NOT EXISTS {schema}.current_revision (
             revision_name VARCHAR(255) PRIMARY KEY,
             migrated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
-    """)
-    cur.execute("INSERT INTO erpnext.current_revision (revision_name) VALUES (%s) ON CONFLICT DO NOTHING;", (current_revision,))
+    """).format(schema=sql.Identifier(SCHEMA_NAME)))
+    cur.execute(
+        sql.SQL("INSERT INTO {schema}.current_revision (revision_name) VALUES (%s) ON CONFLICT DO NOTHING;").format(
+            schema=sql.Identifier(SCHEMA_NAME)
+        ),
+        (current_revision,)
+    )
     cur.close()
     conn.close()
-    print(f"Logged current revision {current_revision} in database.")
+    _print(f"Logged current revision {current_revision} in database.")
 except Exception as e:
-    print(f"Warning: Could not log revision in database: {e}")
+    _print(f"Warning: Could not log revision in database: {e}")
 
-print("Site initialization completed successfully!")
-try:
-    with open("/tmp/erpnext_status.txt", "w") as f:
-        f.write("ready")
-except Exception:
-    pass
+_print("Site initialization completed successfully!")
+write_status("ready")
