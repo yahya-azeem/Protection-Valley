@@ -1,6 +1,16 @@
 FROM python:3.11-slim-bookworm
 
-# Prevent interactive prompts
+# ---------------------------------------------------------------------------
+# ERPNext Dockerfile — Pinned versions + verified patches
+#
+# Frappe:  v15.120.0 (commit 755b5cb)
+# ERPNext: v15.121.0 (commit 1a0bf0b)
+#
+# All patches are verified after application. If a patch fails to apply,
+# the build will fail with a clear error message indicating the upstream
+# code has changed and the patch needs updating.
+# ---------------------------------------------------------------------------
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
@@ -21,52 +31,79 @@ RUN apt-get update && apt-get install -y \
     make \
     && rm -rf /var/lib/apt/lists/*
 
-# Install yarn globally
 RUN npm install -g yarn
 
-# Install Frappe Bench
 RUN pip3 install --break-system-packages frappe-bench
 
-# Create frappe user
 RUN useradd -ms /bin/bash frappe
 
 USER frappe
 WORKDIR /home/frappe
 
-# Initialize bench using stable version-15
-RUN bench init --frappe-branch version-15 --skip-redis-config-generation --skip-assets bench-dir
+# --- Pin Frappe to v15.120.0 ---
+RUN bench init \
+    --frappe-branch v15.120.0 \
+    --skip-redis-config-generation \
+    --skip-assets \
+    bench-dir
 
 WORKDIR /home/frappe/bench-dir
 
-# Get stable version-15 of ERPNext
-RUN bench get-app --branch version-15 erpnext
+# --- Pin ERPNext to v15.121.0 ---
+RUN bench get-app --branch v15.121.0 erpnext
 
-# Patch Frappe database connection to use db_user from site_config.json if specified
-RUN sed -i 's/user=local.conf.db_name or db_name/user=local.conf.get("db_user") or local.conf.db_name or db_name/g' /home/frappe/bench-dir/apps/frappe/frappe/__init__.py
+# ===========================================================================
+# PATCH 1: Database driver — use db_user from site_config.json
+# ===========================================================================
+RUN sed -i 's/user=local.conf.db_name or db_name/user=local.conf.get("db_user") or local.conf.db_name or db_name/g' \
+    /home/frappe/bench-dir/apps/frappe/frappe/__init__.py
 
-# Patch to add custom get_admin_session endpoint for proxy login bypass
-# SECURITY: ERP_PROXY_SECRET must be set at runtime via environment variable.
-# No hardcoded fallback — connection will fail if not configured.
-RUN printf '\n@frappe.whitelist(allow_guest=True)\ndef get_admin_session():\n    import os\n    import frappe\n    proxy_secret = frappe.get_request_header("X-Proxy-Secret")\n    expected_secret = os.environ.get("ERP_PROXY_SECRET", "")\n    if not expected_secret:\n        frappe.local.response["http_status_code"] = 500\n        return {"error": "ERP_PROXY_SECRET not configured"}\n    if not proxy_secret or proxy_secret != expected_secret:\n        frappe.local.response["http_status_code"] = 403\n        return {"error": "Unauthorized"}\n    try:\n        frappe.db.set_value("User", "Administrator", "desk_theme", "Dark")\n        frappe.db.commit()\n    except Exception:\n        pass\n    from frappe.auth import LoginManager\n    frappe.local.login_manager = LoginManager()\n    frappe.local.login_manager.user = "Administrator"\n    frappe.local.login_manager.post_login()\n    return {"sid": frappe.session.sid}\n' >> /home/frappe/bench-dir/apps/frappe/frappe/auth.py
+# Verify patch 1 applied
+RUN grep -q 'local.conf.get("db_user") or local.conf.db_name or db_name' \
+    /home/frappe/bench-dir/apps/frappe/frappe/__init__.py || \
+    (echo "PATCH 1 FAILED: db_user patch did not apply. Upstream code may have changed." && exit 1)
 
-# Patch CookieManager to use SameSite=None and Secure=True for cross-origin iframe support
-RUN sed -i 's/secure=False,/secure=True,/g' /home/frappe/bench-dir/apps/frappe/frappe/auth.py && \
-    sed -i 's/samesite="Lax",/samesite="None",/g' /home/frappe/bench-dir/apps/frappe/frappe/auth.py
+# ===========================================================================
+# PATCH 2: Add get_admin_session endpoint for proxy login bypass
+# SECURITY: ERP_PROXY_SECRET must be set via environment variable at runtime
+# ===========================================================================
+RUN printf '\n@frappe.whitelist(allow_guest=True)\ndef get_admin_session():\n    import os\n    import frappe\n    proxy_secret = frappe.get_request_header("X-Proxy-Secret")\n    expected_secret = os.environ.get("ERP_PROXY_SECRET", "")\n    if not expected_secret:\n        frappe.local.response["http_status_code"] = 500\n        return {"error": "ERP_PROXY_SECRET not configured"}\n    if not proxy_secret or proxy_secret != expected_secret:\n        frappe.local.response["http_status_code"] = 403\n        return {"error": "Unauthorized"}\n    try:\n        frappe.db.set_value("User", "Administrator", "desk_theme", "Dark")\n        frappe.db.commit()\n    except Exception:\n        pass\n    from frappe.auth import LoginManager\n    frappe.local.login_manager = LoginManager()\n    frappe.local.login_manager.user = "Administrator"\n    frappe.local.login_manager.post_login()\n    return {"sid": frappe.session.sid}\n' \
+    >> /home/frappe/bench-dir/apps/frappe/frappe/auth.py
 
+# Verify patch 2 applied
+RUN grep -q 'def get_admin_session' \
+    /home/frappe/bench-dir/apps/frappe/frappe/auth.py || \
+    (echo "PATCH 2 FAILED: get_admin_session endpoint did not apply." && exit 1)
+
+# ===========================================================================
+# PATCH 3: Cookie security — SameSite=None, Secure=True for cross-origin iframe
+# ===========================================================================
+RUN sed -i 's/secure=False,/secure=True,/g' \
+    /home/frappe/bench-dir/apps/frappe/frappe/auth.py && \
+    sed -i 's/samesite="Lax",/samesite="None",/g' \
+    /home/frappe/bench-dir/apps/frappe/frappe/auth.py
+
+# Verify patch 3 applied (check for SameSite=None)
+RUN grep -q 'samesite="None"' \
+    /home/frappe/bench-dir/apps/frappe/frappe/auth.py || \
+    (echo "PATCH 3 FAILED: Cookie security patch did not apply." && exit 1)
+
+# ===========================================================================
 # Build assets
+# ===========================================================================
 RUN bench build
 
-# Setup entrypoint and init scripts (placed at the end to maximize Docker caching)
+# Setup entrypoint and init scripts
 USER root
 COPY docker/entrypoint.sh /home/frappe/entrypoint.sh
 COPY docker/init_site.py /home/frappe/init_site.py
 COPY docker/wsgi.py /home/frappe/bench-dir/wsgi.py
-RUN chmod +x /home/frappe/entrypoint.sh && chown frappe:frappe /home/frappe/entrypoint.sh /home/frappe/init_site.py /home/frappe/bench-dir/wsgi.py
+COPY docker/test_erpnext_supabase.py /home/frappe/test_erpnext_supabase.py
+RUN chmod +x /home/frappe/entrypoint.sh && \
+    chown frappe:frappe /home/frappe/entrypoint.sh /home/frappe/init_site.py /home/frappe/bench-dir/wsgi.py /home/frappe/test_erpnext_supabase.py
 
 USER frappe
 
-# Expose Cloud Run default port
 EXPOSE 8080
 
-# Run startup script
 ENTRYPOINT ["/home/frappe/entrypoint.sh"]
