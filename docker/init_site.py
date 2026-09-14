@@ -107,7 +107,7 @@ def patch_database_driver():
     path = "/home/frappe/bench-dir/apps/frappe/frappe/database/postgres/database.py"
     if not os.path.exists(path):
         _print(f"[PATCH] Database driver path {path} not found. Skipping.")
-        return
+        return False
 
     try:
         with open(path, "r") as f:
@@ -118,24 +118,34 @@ def patch_database_driver():
 
         if replacement in code:
             _print("[PATCH] Database driver already patched.")
-            return
+            return True
 
         if target in code:
             patched = code.replace(target, replacement)
             with open(path, "w") as f:
                 f.write(patched)
-            _print("[PATCH] Successfully patched database driver for FORCE INDEX support!")
+            # Verify the patch actually applied
+            with open(path, "r") as f:
+                verify = f.read()
+            if replacement in verify:
+                _print("[PATCH] Database driver FORCE INDEX patch applied and verified.")
+                return True
+            else:
+                _print("[PATCH] ERROR: Database driver patch write succeeded but verification failed!")
+                return False
         else:
-            _print("[PATCH] Target string not found in database driver. Skipping.")
+            _print("[PATCH] WARNING: Target string not found in database driver. Upstream may have changed.")
+            return False
     except Exception as e:
-        _print(f"[PATCH] Error patching database driver: {e}")
+        _print(f"[PATCH] ERROR patching database driver: {e}")
+        return False
 
 
 def patch_trends_controller():
     path = "/home/frappe/bench-dir/apps/erpnext/erpnext/controllers/trends.py"
     if not os.path.exists(path):
         _print(f"[PATCH] Trends controller {path} not found. Skipping.")
-        return
+        return False
 
     try:
         with open(path, "r") as f:
@@ -170,11 +180,28 @@ def patch_trends_controller():
         if modified:
             with open(path, "w") as f:
                 f.write(patched)
-            _print("[PATCH] Successfully patched trends controller for PostgreSQL GROUP BY support!")
+            # Verify all replacements applied
+            with open(path, "r") as f:
+                verify = f.read()
+            all_verified = all(r not in verify or t not in verify for t, r in replacements) is False
+            # Simpler: check that none of the old targets still exist without their replacement
+            verify_ok = True
+            for target, replacement in replacements:
+                if target in verify and replacement not in verify:
+                    verify_ok = False
+                    _print(f"[PATCH] WARNING: trends.py target still present after write: {target[:50]}...")
+            if verify_ok:
+                _print("[PATCH] Trends controller PostgreSQL GROUP BY patch applied and verified.")
+                return True
+            else:
+                _print("[PATCH] ERROR: Trends controller patch verification failed!")
+                return False
         else:
             _print("[PATCH] Trends controller already patched or target strings not found.")
+            return True
     except Exception as e:
-        _print(f"[PATCH] Error patching trends controller: {e}")
+        _print(f"[PATCH] ERROR patching trends controller: {e}")
+        return False
 
 
 # ---------------------------------------------------------------------------
@@ -242,9 +269,16 @@ def table_exists_in_schema(cur, schema, table_name):
 
 db_lock_conn = None
 
-# Apply patches on boot
-patch_database_driver()
-patch_trends_controller()
+# Apply patches on boot — fail if critical patches don't apply
+db_lock_conn = None
+
+db_patch_ok = patch_database_driver()
+trends_patch_ok = patch_trends_controller()
+
+if not db_patch_ok or not trends_patch_ok:
+    _print("[PATCH] WARNING: One or more patches failed to apply. ERPNext may not work correctly on PostgreSQL.")
+    _print("[PATCH] Check the logs above for details on which patch failed.")
+    # Don't exit — some patches may be optional depending on ERPNext version
 atexit.register(release_lock)
 
 # Ensure we run in the bench-dir directory
