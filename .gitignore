@@ -121,3 +121,10 @@ supabase/.temp/
 .vercel
 .env*.local
 .env*
+!.env.example
+
+# Never commit Supabase keys or other credentials
+scripts/supabase_keys.json
+scripts/keys.tmp
+*.pem
+*.key

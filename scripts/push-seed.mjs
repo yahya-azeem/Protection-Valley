@@ -1,7 +1,16 @@
 import fs from 'fs';
 
-const SUPABASE_URL = 'https://fnirqccmtjzibjhgzyay.supabase.co';
-const SERVICE_ROLE_KEY = '***REMOVED-LEAKED-KEY***';
+const SUPABASE_URL =
+  process.env.SUPABASE_URL || 'https://fnirqccmtjzibjhgzyay.supabase.co';
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SERVICE_ROLE_KEY) {
+  console.error(
+    'Missing SUPABASE_SERVICE_ROLE_KEY. Set it in your shell or a local .env file ' +
+      '(never commit it). See .env.example.'
+  );
+  process.exit(1);
+}
 
 const seedSql = fs.readFileSync('supabase/seed.sql', 'utf8');
 
